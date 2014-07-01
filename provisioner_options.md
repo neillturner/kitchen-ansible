@@ -19,7 +19,6 @@ playbook | 'site.yml' | playbook for ansible-playbook to run
 modules_path | | ansible repo manifests directory
 ansible_verbose| false| Extra information logging
 update_package_repos| true| update OS repository metadata
-ansible_facts| Hash.new | Hash to set the ansible facts before running ansible-playbook
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
 ansiblefile_path | | Path to Aansiblefile
 
