@@ -3,9 +3,9 @@ A Test Kitchen Provisioner for Ansible
 
 The provider works by passing the ansible repository based on attributes in .kitchen.yml & calling ansible-playbook.
 
-It install ansible on the server and run ansible-playbook running on localhost.
+It install ansible on the server and runs ansible-playbook using host localhost.
 
-This provider has been tested against the Ubuntu 1204 and Centos 6.5 boxes running in vagrant/virtualbox.
+Has been tested against the Ubuntu 1204 and Centos 6.5 boxes running in vagrant/virtualbox.
 
 ## Requirements
 You'll need a driver box without a chef installation so ansible can be installed.
