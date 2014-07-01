@@ -22,7 +22,7 @@ Ansible Provisioner for Test Kitchen
 
 == FEATURES:
 
-Supports running ansible playbook
+Supports running ansible-playbook
 
 EOF
 
