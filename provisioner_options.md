@@ -14,12 +14,12 @@ ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of a
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
 host_vars_path | host_vars | ansible repo hosts directory
-extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile_playbook command
-playbook | 'site.yml' | playbook for ansible playbook to run
+extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile-playbook command
+playbook | 'site.yml' | playbook for ansible-playbook to run
 modules_path | | ansible repo manifests directory
 ansible_verbose| false| Extra information logging
 update_package_repos| true| update OS repository metadata
-ansible_facts| Hash.new | Hash to set the ansible facts before running ansible playbook
+ansible_facts| Hash.new | Hash to set the ansible facts before running ansible-playbook
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
 ansiblefile_path | | Path to Aansiblefile
 
