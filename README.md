@@ -18,7 +18,7 @@ Please see the Provisioner Options (https://github.com/neillturner/kitchen-ansib
 ## Example kitchen.yml file
 
 based on the example ansible setup for tomcat at  https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone
-
+```
 ---
 driver:
     name: vagrant
@@ -42,4 +42,4 @@ platforms:
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
-
+```
