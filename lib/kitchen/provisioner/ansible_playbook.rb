@@ -45,6 +45,7 @@ module Kitchen
       default_config :ansible_omnibus_remote_path, '/opt/ansible'
       default_config :ansible_version, nil
       default_config :require_ansible_repo, true
+      default_config :extra_vars, {}
       default_config :ansible_apt_repo, "ppa:rquillo/ansible"
       default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
@@ -64,18 +65,9 @@ module Kitchen
          provisioner.calculate_path('host_vars', :directory)
       end
 
-    # TO DO : Add modules support
-    #  default_config :modules_path do |provisioner|
-    #    modules_path = provisioner.calculate_path('modules')
-    #    if modules_path.nil? && provisioner.calculate_path('Ansiblefile', :file).nil?
-    #      raise 'No modules_path detected. Please specify one in .kitchen.yml'
-    #    end
-    #    modules_path
-    #  end
-
-    # TO DO: allow extra variables
-    # -e VARS, --extra-vars=VARS
-    # Extra variables to inject into a playbook, in key=value key=value format.
+      default_config :modules_path do |provisioner|
+         provisioner.calculate_path('modules', :directory)
+      end
 
       default_config :ansiblefile_path do |provisioner|
         provisioner.calculate_path('Ansiblefile', :file)
@@ -88,7 +80,6 @@ module Kitchen
 
 
 
-    #  TO DO: do i need this???
     #  def calculate_path(path, type = :directory)
     #    base = config[:test_base_path]
     #    candidates = []
@@ -163,7 +154,7 @@ module Kitchen
            #   #{sudo('apt-get')} -y install ansible#{ansible_debian_version}
                #{sudo('add-apt-repository')} #{ansible_apt_repo}
 	       #{sudo('apt-get')} update
-               #{sudo('apt-get')} -y install ansible
+               #{sudo('apt-get')} -y install ansible#{ansible_debian_version}
             fi
           fi
           #{install_busser}
@@ -246,6 +237,7 @@ module Kitchen
             "-i #{File.join(config[:root_path], 'hosts')}",
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
+            extra_vars,
             "#{File.join(config[:root_path], config[:playbook])}",
           ].join(" ")
         end
@@ -315,13 +307,13 @@ module Kitchen
           config[:update_package_repos] ? "#{sudo('yum')} makecache" : nil
         end
 
-       # def custom_facts
-       #   return nil if config[:custom_facts].none?
-       #   bash_vars = config[:custom_facts].map { |k,v| "FACTER_#{k}=#{v}" }.join(" ")
-       #   bash_vars = "export #{bash_vars};"
-       #   debug(bash_vars)
-       #   bash_vars
-       # end
+        def extra_vars
+          return nil if config[:extra_vars].none?
+          bash_vars = config[:extra_vars].map { |k,v| "#{k}=#{v}" }.join(" ")
+          bash_vars = "-e \"#{bash_vars}\""
+          debug(bash_vars)
+          bash_vars
+        end
 
         def ansible_apt_repo
           config[:ansible_apt_repo]
@@ -353,7 +345,7 @@ module Kitchen
         def prepare_ansible_cfg
           info('Preparing ansible.cfg file')
           ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-          if config[:roles].nil?
+          if config[:roles_path].nil?
             info('No roles has been set. empty ansible.cfg generated')
             File.open(ansible_config_file, "wb") do |file|
                file.write("#no roles path specified\n")
@@ -361,7 +353,7 @@ module Kitchen
           else
             debug("Using role from #{roles}")
             File.open( ansible_config_file, "wb") do |file|
-               file.write("roles_path = #{File.join(config[:root_path], roles)}\n")
+               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], roles)}\n")
             end
           end
         end
