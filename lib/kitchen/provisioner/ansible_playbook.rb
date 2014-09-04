@@ -255,6 +255,18 @@ module Kitchen
           File.join(sandbox_path, 'modules')
         end
 
+        def tmp_playbook_path
+          File.join(sandbox_path, File.basename(playbook))
+        end
+
+        def tmp_host_vars_dir
+          File.join(sandbox_path, 'host_vars')
+        end
+
+        def tmp_roles_dir
+          File.join(sandbox_path, 'roles')
+        end
+
         def ansiblefile
           config[:ansiblefile_path] or ''
         end
@@ -334,10 +346,13 @@ module Kitchen
         def prepare_roles
           info('Preparing roles')
           debug("Using roles from #{roles}")
+          
+          # Detect whether we are running tests on a role
+          # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
+          role_name = File.basename(roles) == 'roles' ? '' : File.basename(roles)
 
-          tmp_roles_dir = File.join(sandbox_path, 'roles')
-          FileUtils.mkdir_p(tmp_roles_dir)
-          FileUtils.cp_r(Dir.glob("#{roles}/*"), tmp_roles_dir)
+          FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
+          FileUtils.cp_r(Dir.glob("#{roles}/*"), File.join(tmp_roles_dir, role_name))
         end
 
         # /etc/ansible/ansible.cfg should contain
@@ -377,8 +392,8 @@ module Kitchen
 
         def prepare_playbook
           info('Preparing playbook')
-          debug("Using playbook from #{playbook}")
-          FileUtils.cp_r(playbook, File.join(sandbox_path, playbook))
+          debug("Copying playbook from #{playbook} to #{tmp_playbook_path}")
+          FileUtils.cp_r(playbook, tmp_playbook_path)
         end
 
 
@@ -398,7 +413,6 @@ module Kitchen
 
         def prepare_host_vars
           info('Preparing host_vars')
-          tmp_host_vars_dir = File.join(sandbox_path, 'host_vars')
           FileUtils.mkdir_p(tmp_host_vars_dir)
 
           unless File.directory?(host_vars)
