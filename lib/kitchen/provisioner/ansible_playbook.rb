@@ -251,7 +251,7 @@ module Kitchen
           end
         end
 
-        def tmpmodules_dir
+        def tmp_modules_dir
           File.join(sandbox_path, 'modules')
         end
 
@@ -413,11 +413,11 @@ module Kitchen
         def prepare_modules
           info('Preparing modules')
 
-          FileUtils.mkdir_p(tmpmodules_dir)
+          FileUtils.mkdir_p(tmp_modules_dir)
 
           if modules && File.directory?(modules)
             debug("Using modules from #{modules}")
-            FileUtils.cp_r(Dir.glob("#{modules}/*"), tmpmodules_dir, remove_destination: true)
+            FileUtils.cp_r(Dir.glob("#{modules}/*"), tmp_modules_dir, remove_destination: true)
           else
             info 'nothing to do for modules'
           end
@@ -428,7 +428,7 @@ module Kitchen
 
         def resolve_with_librarian
           Kitchen.mutex.synchronize do
-            Ansible::Librarian.new(ansiblefile, tmpmodules_dir, logger).resolve
+            Ansible::Librarian.new(ansiblefile, tmp_modules_dir, logger).resolve
           end
         end
     end
