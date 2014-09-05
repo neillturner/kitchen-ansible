@@ -81,11 +81,11 @@ module Kitchen
 
       def verbosity_level(level = 1)
         level = level.to_sym if level.is_a? String
-        if level.is_a? Symbol
-          log_levels = { :info => 1, :warn => 2, :debug => 3, :trace => 4 }
+        log_levels = { :info => 1, :warn => 2, :debug => 3, :trace => 4 }
+        if level.is_a? Symbol and log_levels.include? level
           # puts "Log Level is: #{log_levels[level]}"
           log_levels[level]
-        elsif level.is_a? Integer
+        elsif level.is_a? Integer and level > 0
           # puts "Log Level is: #{level}"
           level
         else
