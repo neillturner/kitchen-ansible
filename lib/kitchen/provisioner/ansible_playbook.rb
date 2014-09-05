@@ -367,7 +367,9 @@ module Kitchen
         def prepare_roles
           info('Preparing roles')
           debug("Using roles from #{roles}")
-          
+
+          resolve_with_librarian if File.exists?(ansiblefile)
+                    
           # Detect whether we are running tests on a role
           # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
 
@@ -386,9 +388,9 @@ module Kitchen
                file.write("#no roles path specified\n")
             end
           else
-            debug("Setting roles_path inside VM to #{File.join(config[:root_path], 'roles', role_name)}")
+            debug("Setting roles_path inside VM to #{File.join(config[:root_path], 'roles')}")
             File.open( ansible_config_file, "wb") do |file|
-               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], 'roles', role_name)}\n")
+               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], 'roles')}\n")
             end
           end
         end
@@ -455,14 +457,11 @@ module Kitchen
           else
             info 'nothing to do for modules'
           end
-
-          resolve_with_librarian if File.exists?(ansiblefile)
-
         end
 
         def resolve_with_librarian
           Kitchen.mutex.synchronize do
-            Ansible::Librarian.new(ansiblefile, tmp_modules_dir, logger).resolve
+            Ansible::Librarian.new(ansiblefile, tmp_roles_dir, logger).resolve
           end
         end
     end
