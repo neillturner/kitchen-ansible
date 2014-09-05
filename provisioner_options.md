@@ -37,6 +37,7 @@ The provisioner can be configured globally or per suite, global settings act as 
       hosts: tomcat-servers
       require_ansible_repo: true
       ansible_verbose: true
+      ansible_verbosity: 2
 
     platforms:
     - name: nocm_ubuntu-12.04
