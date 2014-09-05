@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Neill Turner (<neillwturner@gmail.com>)
+# Author:: James Cuzella (<james.cuzella@lyraphase.com>)
 #
-# Copyright (C) 2013,2014 Neill Turner
+# Copyright (C) 2014, James Cuzella
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,18 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require_relative '../../spec_helper'
-require 'kitchen'
+# Add lib dir to Ruby's LOAD_PATH so we can easily require things in there
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+#$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), 'lib'))
 
-# Work around for lazy loading
-require 'kitchen/provisioner/ansible_playbook'
+require 'rspec'
 
-describe Kitchen::Provisioner::AnsiblePlaybook do
-  let(:provisioner) do
-    Kitchen::Provisioner.for_plugin("ansible_playbook", {})
-  end
-
-  it "should give a sane run_command" do
-    provisioner.run_command.must_match /ansible-playbook/
-  end
+RSpec.configure do |config|
+  config.tty = true
+  config.color = true
 end

@@ -18,6 +18,7 @@ extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile-playbook c
 playbook | 'site.yml' | playbook for ansible-playbook to run
 modules_path | | ansible repo manifests directory
 ansible_verbose| false| Extra information logging
+ansible_verbosity| 1| Sets the verbosity flag appropriately (e.g.: `1 => '-v', 2 => '-vv', 3 => '-vvv" ...`) Valid values are one of: `1, 2, 3, 4` OR `:info, :warn, :debug, :trace`.
 update_package_repos| true| update OS repository metadata
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
 ansiblefile_path | | Path to Aansiblefile
@@ -36,6 +37,7 @@ The provisioner can be configured globally or per suite, global settings act as 
       hosts: tomcat-servers
       require_ansible_repo: true
       ansible_verbose: true
+      ansible_verbosity: 2
 
     platforms:
     - name: nocm_ubuntu-12.04
