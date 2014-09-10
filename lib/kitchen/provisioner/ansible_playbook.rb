@@ -135,14 +135,29 @@ module Kitchen
           info("Installing ansible on #{ansible_platform}")
           <<-INSTALL
           if [ ! $(which ansible) ]; then
+            ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
+            #{sudo('apt-get')} -y install apt-utils
+            ## Fix debconf tty warning messages
+            export DEBIAN_FRONTEND=noninteractive
+            ## 13.10, 14.04 include add-apt-repository in software-properties-common
+            #{sudo('apt-get')} -y install software-properties-common
+            ## 10.04, 12.04 include add-apt-repository in 
+            #{sudo('apt-get')} -y install python-software-properties
           #  #{sudo('wget')} #{ansible_apt_repo}
           #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
+          #  #{sudo('apt-get')} -y autoremove ## These autoremove/autoclean are sometimes useful but
+          #  #{sudo('apt-get')} -y autoclean  ## don't seem necessary for the Ubuntu OpsCode bento boxes that are not EOL by Canonical
           #  #{update_packages_debian_cmd}
-          #  #{sudo('apt-get')} -y install ansible#{ansible_debian_version}
-            #{sudo('add-apt-repository')} #{ansible_apt_repo}
-	    #{sudo('apt-get')} update
+          #  #{sudo('apt-get')} -y --force-yes install ansible#{ansible_debian_version} python-selinux
+            ## 10.04 version of add-apt-repository doesn't accept --yes
+            ## later versions require interaction from user, so we must specify --yes
+            ## First try with -y flag, else if it fails, try without.
+            ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
+            #{sudo('add-apt-repository')} -y #{ansible_apt_repo} || #{sudo('add-apt-repository')} #{ansible_apt_repo}
+            #{sudo('apt-get')} update
             #{sudo('apt-get')} -y install ansible
-
+            ## This test works on ubuntu to test if ansible repo has been installed via rquillo ppa repo
+            ## if [ $(apt-cache madison ansible | grep -c rquillo ) -gt 0 ]; then echo 'success'; else echo 'fail'; fi
           fi
           #{install_busser}
           INSTALL
@@ -152,7 +167,7 @@ module Kitchen
           if [ ! $(which ansible) ]; then
             #{sudo('rpm')} -ivh #{ansible_yum_repo}
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install ansible#{ansible_redhat_version}
+            #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
           fi
           #{install_busser}
           INSTALL
@@ -163,15 +178,31 @@ module Kitchen
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                #{sudo('rpm')} -ivh #{ansible_yum_repo}
                #{update_packages_redhat_cmd}
-               #{sudo('yum')} -y install ansible#{ansible_redhat_version}
+               #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
             else
-           #   #{sudo('wget')} #{ansible_apt_repo}
-           #   #{sudo('dpkg')} -i #{ansible_apt_repo_file}
-           #   #{update_packages_debian_cmd}
-           #   #{sudo('apt-get')} -y install ansible#{ansible_debian_version}
-               #{sudo('add-apt-repository')} #{ansible_apt_repo}
-	       #{sudo('apt-get')} update
-               #{sudo('apt-get')} -y install ansible#{ansible_debian_version}
+           ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
+            #{sudo('apt-get')} -y install apt-utils
+            ## Fix debconf tty warning messages
+            export DEBIAN_FRONTEND=noninteractive
+            ## 13.10, 14.04 include add-apt-repository in software-properties-common
+            #{sudo('apt-get')} -y install software-properties-common
+            ## 10.04, 12.04 include add-apt-repository in 
+            #{sudo('apt-get')} -y install python-software-properties
+          #  #{sudo('wget')} #{ansible_apt_repo}
+          #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
+          #  #{sudo('apt-get')} -y autoremove ## These autoremove/autoclean are sometimes useful but
+          #  #{sudo('apt-get')} -y autoclean  ## don't seem necessary for the Ubuntu OpsCode bento boxes that are not EOL by Canonical
+          #  #{update_packages_debian_cmd}
+          #  #{sudo('apt-get')} -y --force-yes install ansible#{ansible_debian_version} python-selinux
+            ## 10.04 version of add-apt-repository doesn't accept --yes
+            ## later versions require interaction from user, so we must specify --yes
+            ## First try with -y flag, else if it fails, try without.
+            ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
+            #{sudo('add-apt-repository')} -y #{ansible_apt_repo} || #{sudo('add-apt-repository')} #{ansible_apt_repo}
+            #{sudo('apt-get')} update
+            #{sudo('apt-get')} -y install ansible
+            ## This test works on ubuntu to test if ansible repo has been installed via rquillo ppa repo
+            ## if [ $(apt-cache madison ansible | grep -c rquillo ) -gt 0 ]; then echo 'success'; else echo 'fail'; fi
             fi
           fi
           #{install_busser}
