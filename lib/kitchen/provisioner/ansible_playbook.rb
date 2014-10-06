@@ -50,7 +50,9 @@ module Kitchen
       default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
 
-      default_config :playbook, 'site.yml'
+      default_config :playbook do |provisioner|
+        provisioner.calculate_path('site.yml', :file)
+      end
 
       default_config :roles_path do |provisioner|
          provisioner.calculate_path('roles') or
@@ -93,18 +95,20 @@ module Kitchen
         end
       end
 
-    #  def calculate_path(path, type = :directory)
-    #    base = config[:test_base_path]
-    #    candidates = []
-    #    candidates << File.join(base, instance.suite.name, 'ansible', path)
-    #    candidates << File.join(base, instance.suite.name, path)
-    #    candidates << File.join(base, path)
-    #    candidates << File.join(Dir.pwd, path)
-    #
-    #    candidates.find do |c|
-    #      type == :directory ? File.directory?(c) : File.file?(c)
-    #    end
-    #  end
+      def calculate_path(path, type = :directory)
+        base = config[:test_base_path]
+        candidates = []
+        candidates << File.join(base, instance.suite.name, 'ansible', path)
+        candidates << File.join(base, instance.suite.name, path)
+        candidates << File.join(base, path)
+        candidates << File.join(Dir.pwd, path)
+        candidates << File.join(Dir.pwd) if path == 'roles'
+    
+        debug("Calculating path for #{path}, candidates are: #{candidates.to_s}")
+        candidates.find do |c|
+          type == :directory ? File.directory?(c) : File.file?(c)
+        end
+      end
 
       def install_command
         return unless config[:require_ansible_omnibus] or config[:require_ansible_repo]
@@ -282,7 +286,7 @@ module Kitchen
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
             extra_vars,
-            "#{File.join(config[:root_path], config[:playbook])}",
+            "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
           ].join(" ")
         end
 
@@ -295,8 +299,20 @@ module Kitchen
           end
         end
 
-        def tmpmodules_dir
+        def tmp_modules_dir
           File.join(sandbox_path, 'modules')
+        end
+
+        def tmp_playbook_path
+          File.join(sandbox_path, File.basename(playbook))
+        end
+
+        def tmp_host_vars_dir
+          File.join(sandbox_path, 'host_vars')
+        end
+
+        def tmp_roles_dir
+          File.join(sandbox_path, 'roles')
         end
 
         def ansiblefile
@@ -313,6 +329,10 @@ module Kitchen
 
         def roles
           config[:roles_path]
+        end
+
+        def role_name
+          File.basename(roles) == 'roles' ? '' : File.basename(roles)
         end
 
         def modules
@@ -378,10 +398,12 @@ module Kitchen
         def prepare_roles
           info('Preparing roles')
           debug("Using roles from #{roles}")
+          
+          # Detect whether we are running tests on a role
+          # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
 
-          tmp_roles_dir = File.join(sandbox_path, 'roles')
-          FileUtils.mkdir_p(tmp_roles_dir)
-          FileUtils.cp_r(Dir.glob("#{roles}/*"), tmp_roles_dir)
+          FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
+          FileUtils.cp_r(Dir.glob("#{roles}/*"), File.join(tmp_roles_dir, role_name))
         end
 
         # /etc/ansible/ansible.cfg should contain
@@ -395,9 +417,9 @@ module Kitchen
                file.write("#no roles path specified\n")
             end
           else
-            debug("Using role from #{roles}")
+            debug("Setting roles_path inside VM to #{File.join(config[:root_path], 'roles', role_name)}")
             File.open( ansible_config_file, "wb") do |file|
-               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], roles)}\n")
+               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], 'roles', role_name)}\n")
             end
           end
         end
@@ -421,8 +443,8 @@ module Kitchen
 
         def prepare_playbook
           info('Preparing playbook')
-          debug("Using playbook from #{playbook}")
-          FileUtils.cp_r(playbook, File.join(sandbox_path, playbook))
+          debug("Copying playbook from #{playbook} to #{tmp_playbook_path}")
+          FileUtils.cp_r(playbook, tmp_playbook_path)
         end
 
 
@@ -442,7 +464,6 @@ module Kitchen
 
         def prepare_host_vars
           info('Preparing host_vars')
-          tmp_host_vars_dir = File.join(sandbox_path, 'host_vars')
           FileUtils.mkdir_p(tmp_host_vars_dir)
 
           unless File.directory?(host_vars)
@@ -457,11 +478,11 @@ module Kitchen
         def prepare_modules
           info('Preparing modules')
 
-          FileUtils.mkdir_p(tmpmodules_dir)
+          FileUtils.mkdir_p(tmp_modules_dir)
 
           if modules && File.directory?(modules)
             debug("Using modules from #{modules}")
-            FileUtils.cp_r(Dir.glob("#{modules}/*"), tmpmodules_dir, remove_destination: true)
+            FileUtils.cp_r(Dir.glob("#{modules}/*"), tmp_modules_dir, remove_destination: true)
           else
             info 'nothing to do for modules'
           end
@@ -472,7 +493,7 @@ module Kitchen
 
         def resolve_with_librarian
           Kitchen.mutex.synchronize do
-            Ansible::Librarian.new(ansiblefile, tmpmodules_dir, logger).resolve
+            Ansible::Librarian.new(ansiblefile, tmp_modules_dir, logger).resolve
           end
         end
     end
