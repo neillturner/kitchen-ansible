@@ -340,8 +340,8 @@ module Kitchen
 
         def extra_vars
           return nil if config[:extra_vars].none?
-          bash_vars = config[:extra_vars].map { |k,v| "#{k}=#{v}" }.join(" ")
-          bash_vars = "-e \"#{bash_vars}\""
+          bash_vars = JSON.dump(config[:extra_vars])
+          bash_vars = "-e '#{bash_vars}'"
           debug(bash_vars)
           bash_vars
         end
