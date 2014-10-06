@@ -74,11 +74,24 @@ module Kitchen
       end
 
       default_config :ansible_verbose, false
-      default_config :ansible_noop, false   # what is ansible equivalent of dry_run????
+      default_config :ansible_verbosity, 1
+      default_config :ansible_noop, false   # what is ansible equivalent of dry_run???? ##JMC: I think it's [--check mode](http://docs.ansible.com/playbooks_checkmode.html) TODO: Look into this...
       default_config :ansible_platform, ''
       default_config :update_package_repos, true
 
-
+      def verbosity_level(level = 1)
+        level = level.to_sym if level.is_a? String
+        log_levels = { :info => 1, :warn => 2, :debug => 3, :trace => 4 }
+        if level.is_a? Symbol and log_levels.include? level
+          # puts "Log Level is: #{log_levels[level]}"
+          log_levels[level]
+        elsif level.is_a? Integer and level > 0
+          # puts "Log Level is: #{level}"
+          level
+        else
+          raise 'Invalid ansible_verbosity setting.  Valid values are: 1, 2, 3, 4 OR :info, :warn, :debug, :trace'
+        end
+      end
 
     #  def calculate_path(path, type = :directory)
     #    base = config[:test_base_path]
@@ -323,7 +336,7 @@ module Kitchen
         end
 
         def ansible_verbose_flag
-          config[:ansible_verbose] ? '-v' : nil
+          config[:ansible_verbose] ? '-' << ('v' * verbosity_level(config[:ansible_verbosity])) : nil
         end
 
         def ansible_platform
