@@ -21,7 +21,7 @@ ansible_verbose| false| Extra information logging
 ansible_verbosity| 1| Sets the verbosity flag appropriately (e.g.: `1 => '-v', 2 => '-vv', 3 => '-vvv" ...`) Valid values are one of: `1, 2, 3, 4` OR `:info, :warn, :debug, :trace`.
 update_package_repos| true| update OS repository metadata
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
-ansiblefile_path | | Path to Aansiblefile
+ansiblefile_path | | Path to Ansiblefile
 
 ## Configuring Provisioner Options
 
@@ -60,7 +60,7 @@ To override a setting at the suite-level, specify the setting name under the sui
 
 ### Per-suite Structure
 
-It can be beneficial to keep different Aansible layouts for different suites. Rather than having to specify the roles, modules, etc for each suite, you can create the following directory structure and they will automatically be found:
+It can be beneficial to keep different Ansible layouts for different suites. Rather than having to specify the roles, modules, etc for each suite, you can create the following directory structure and they will automatically be found:
 
     $kitchen_root/ansible/$suite_name/roles
     $kitchen_root/ansible/$suite_name/modules
