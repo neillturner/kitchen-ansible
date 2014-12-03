@@ -51,7 +51,8 @@ module Kitchen
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
 
       default_config :playbook do |provisioner|
-        provisioner.calculate_path('site.yml', :file)
+        provisioner.calculate_path('default.yml', :file) or
+          raise "No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default wrapper playbook for your role in test/integration/playbooks/default.yml or test/integration/default.yml"
       end
 
       default_config :roles_path do |provisioner|
