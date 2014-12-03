@@ -45,7 +45,7 @@ module Kitchen
 
         def resolve
           version = ::Librarian::Ansible::VERSION
-          info("Resolving module dependencies with Librarian-Ansible #{version}...")
+          info("Resolving role dependencies with Librarian-Ansible #{version}...")
           debug("Using Ansiblefile from #{ansiblefile}")
 
           env = ::Librarian::Ansible::Environment.new(
