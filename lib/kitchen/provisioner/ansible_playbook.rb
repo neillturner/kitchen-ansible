@@ -314,6 +314,7 @@ module Kitchen
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
             ansible_check_flag,
+            ansible_diff_flag,
             extra_vars,
             tags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
@@ -399,6 +400,10 @@ module Kitchen
 
         def ansible_check_flag
           config[:ansible_check] ? '--check' : nil
+        end
+
+        def ansible_diff_flag
+          config[:ansible_diff] ? '--diff' : nil
         end
 
         def ansible_platform
