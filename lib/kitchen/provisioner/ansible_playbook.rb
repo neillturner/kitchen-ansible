@@ -286,6 +286,7 @@ module Kitchen
             "-i #{File.join(config[:root_path], 'hosts')}",
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
+            ansible_check_flag,
             extra_vars,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
           ].join(" ")
@@ -358,6 +359,10 @@ module Kitchen
 
         def ansible_verbose_flag
           config[:ansible_verbose] ? '-' << ('v' * verbosity_level(config[:ansible_verbosity])) : nil
+        end
+
+        def ansible_check_flag
+          config[:ansible_check] ? '--check' : nil
         end
 
         def ansible_platform
