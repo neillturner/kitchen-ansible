@@ -46,7 +46,7 @@ module Kitchen
       default_config :ansible_version, nil
       default_config :require_ansible_repo, true
       default_config :extra_vars, {}
-      default_config :ansible_apt_repo, "ppa:rquillo/ansible"
+      default_config :ansible_apt_repo, "ppa:ansible/ansible"
       default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
 
