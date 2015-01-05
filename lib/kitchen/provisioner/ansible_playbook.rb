@@ -76,6 +76,7 @@ module Kitchen
         provisioner.calculate_path('Ansiblefile', :file)
       end
 
+      default_config :requirements_path, false
       default_config :ansible_verbose, false
       default_config :ansible_verbosity, 1
       default_config :ansible_noop, false   # what is ansible equivalent of dry_run???? ##JMC: I think it's [--check mode](http://docs.ansible.com/playbooks_checkmode.html) TODO: Look into this...
@@ -288,6 +289,13 @@ module Kitchen
               sudo('cp -r'), File.join(config[:root_path],'host_vars'), '/etc/ansible/.',
           ].join(' ')
 
+          if galaxy_requirements
+            commands << [
+               sudo('ansible-galaxy'), 'install', '--force',
+               '-r', File.join(config[:root_path], galaxy_requirements),
+            ].join(' ')
+          end
+
           command = commands.join(' && ')
           debug(command)
           command
@@ -332,6 +340,10 @@ module Kitchen
 
         def ansiblefile
           config[:ansiblefile_path] or ''
+        end
+
+        def galaxy_requirements
+          config[:requirements_path] or nil
         end
 
         def playbook
@@ -419,6 +431,10 @@ module Kitchen
           debug("Using roles from #{roles}")
 
           resolve_with_librarian if File.exists?(ansiblefile)
+
+          if galaxy_requirements
+            FileUtils.cp(galaxy_requirements, File.join(sandbox_path, galaxy_requirements))
+          end
                     
           # Detect whether we are running tests on a role
           # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
