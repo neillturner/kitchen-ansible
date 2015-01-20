@@ -53,11 +53,16 @@ The provisioner can be configured globally or per suite, global settings act as 
 
 in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the defailt manifest site.yml
 
-To override a setting at the suite-level, specify the setting name under the suite:
+To override a setting at the suite-level, specify the setting name under the suite's attributes:
 
     suites:
-     - name: default
-       playbook: foobar.yml
+     - name: server
+       attributes:
+         extra_vars:
+           server_installer_url: http://downloads.app.com/v1.0
+         tags:
+           - server
+
 
 ### Per-suite Structure
 

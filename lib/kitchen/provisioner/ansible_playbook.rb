@@ -46,6 +46,7 @@ module Kitchen
       default_config :ansible_version, nil
       default_config :require_ansible_repo, true
       default_config :extra_vars, {}
+      default_config :tags, []
       default_config :ansible_apt_repo, "ppa:ansible/ansible"
       default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
@@ -309,6 +310,7 @@ module Kitchen
             ansible_verbose_flag,
             ansible_check_flag,
             extra_vars,
+            tags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
           ].join(" ")
         end
@@ -403,11 +405,26 @@ module Kitchen
         end
 
         def extra_vars
-          return nil if config[:extra_vars].none?
-          bash_vars = JSON.dump(config[:extra_vars])
+          bash_vars = config[:extra_vars]
+          if config.key?(:attributes) && config[:attributes].key?(:extra_vars) && config[:attributes][:extra_vars].is_a?(Hash)
+            bash_vars = config[:attributes][:extra_vars]
+          end
+
+          return nil if bash_vars.none?
+          bash_vars = JSON.dump(bash_vars)
           bash_vars = "-e '#{bash_vars}'"
           debug(bash_vars)
           bash_vars
+        end
+
+        def tags
+          bash_tags = config.key?(:attributes) && config[:attributes].key?(:tags) && config[:attributes][:tags].is_a?(Array) ? config[:attributes][:tags] : config[:tags]
+          return nil if bash_tags.empty?
+
+          bash_tags = bash_tags.join(",")
+          bash_tags = "-t '#{bash_tags}'"
+          debug(bash_tags)
+          bash_tags
         end
 
         def ansible_apt_repo
