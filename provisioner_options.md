@@ -14,6 +14,7 @@ ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of a
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
 host_vars_path | host_vars | ansible repo hosts directory
+additional_copy_path | | arbitrary directory to copy into test environment, relative to CWD. (eg, vars)
 extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile-playbook command
 playbook | 'site.yml' | playbook for ansible-playbook to run
 modules_path | | ansible repo manifests directory
