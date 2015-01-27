@@ -65,6 +65,10 @@ module Kitchen
          provisioner.calculate_path('group_vars', :directory)
       end
 
+      default_config :additional_copy_path do |provisioner|
+         provisioner.calculate_path('addt_dir', :directory)
+      end
+
       default_config :host_vars_path do |provisioner|
          provisioner.calculate_path('host_vars', :directory)
       end
@@ -263,6 +267,7 @@ module Kitchen
           prepare_roles
           prepare_ansible_cfg
           prepare_group_vars
+          prepare_addt_dir
           prepare_host_vars
           prepare_hosts
           info('Finished Preparing files for transfer')
@@ -370,6 +375,10 @@ module Kitchen
 
         def group_vars
           config[:group_vars_path].to_s
+        end
+
+        def addt_dir
+          config[:additional_copy_path].to_s
         end
 
         def host_vars
@@ -514,6 +523,20 @@ module Kitchen
 
           debug("Using group_vars from #{group_vars}")
           FileUtils.cp_r(Dir.glob("#{group_vars}/*"), tmp_group_vars_dir)
+        end
+
+        def prepare_addt_dir
+          info('Preparing additional_copy_path')
+          tmp_addt_dir = File.join(sandbox_path, File.basename(addt_dir))
+          FileUtils.mkdir_p(tmp_addt_dir)
+
+          unless File.directory?(addt_dir)
+            info 'nothing to do for additional_copy_path'
+            return
+          end
+
+          debug("Using additional_copy_path from #{addt_dir}")
+          FileUtils.cp_r(Dir.glob("#{addt_dir}/*"), tmp_addt_dir)
         end
 
         def prepare_host_vars
