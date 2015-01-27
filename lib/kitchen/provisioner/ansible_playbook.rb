@@ -138,6 +138,7 @@ module Kitchen
           info("Installing ansible on #{ansible_platform}")
           <<-INSTALL
           if [ ! $(which ansible) ]; then
+           #{update_packages_debian_cmd}
             ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
             #{sudo('apt-get')} -y install apt-utils
             ## Fix debconf tty warning messages
@@ -150,7 +151,6 @@ module Kitchen
           #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
           #  #{sudo('apt-get')} -y autoremove ## These autoremove/autoclean are sometimes useful but
           #  #{sudo('apt-get')} -y autoclean  ## don't seem necessary for the Ubuntu OpsCode bento boxes that are not EOL by Canonical
-          #  #{update_packages_debian_cmd}
           #  #{sudo('apt-get')} -y --force-yes install ansible#{ansible_debian_version} python-selinux
             ## 10.04 version of add-apt-repository doesn't accept --yes
             ## later versions require interaction from user, so we must specify --yes
@@ -183,6 +183,7 @@ module Kitchen
                #{update_packages_redhat_cmd}
                #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
             else
+           #{update_packages_debian_cmd}
            ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
             #{sudo('apt-get')} -y install apt-utils
             ## Fix debconf tty warning messages
@@ -195,7 +196,6 @@ module Kitchen
           #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
           #  #{sudo('apt-get')} -y autoremove ## These autoremove/autoclean are sometimes useful but
           #  #{sudo('apt-get')} -y autoclean  ## don't seem necessary for the Ubuntu OpsCode bento boxes that are not EOL by Canonical
-          #  #{update_packages_debian_cmd}
           #  #{sudo('apt-get')} -y --force-yes install ansible#{ansible_debian_version} python-selinux
             ## 10.04 version of add-apt-repository doesn't accept --yes
             ## later versions require interaction from user, so we must specify --yes
