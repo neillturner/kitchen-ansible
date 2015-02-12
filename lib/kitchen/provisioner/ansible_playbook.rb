@@ -284,6 +284,11 @@ module Kitchen
         def prepare_command
           commands = []
 
+          # Prevent failure when ansible package installation doesn't contain /etc/ansible
+          commands << [
+              sudo("bash -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          ]
+
           commands << [
               sudo('cp'),File.join(config[:root_path], 'ansible.cfg'),'/etc/ansible',
           ].join(' ')
