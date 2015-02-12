@@ -107,6 +107,35 @@ Create your serverspec tests in `test/integration/default/serverspec/localhost/m
         end
       end
 
+### Testing multiple playbooks
+To test different playbooks in different suites you can easily overwrite the provisioner settings in each suite seperately.
+```yaml
+---
+  driver:
+    name: vagrant
+
+  provisioner:
+    name: ansible_playbook
+
+  platforms:
+    - name: ubuntu-12.04
+      driver_config:
+        box: ubuntu/precise32
+    - name: centos-7
+      driver_config:
+         box: chef/centos-7.0
+
+  suites:
+    - name: database
+      provisioner:
+        playbook: postgres.yml
+        hosts: database
+    - name: application
+      provisioner:
+        playbook: web_app.yml
+        hosts: web_application
+```
+
 *Notes*
 
 * The `default` in all of the above is the name of the test suite defined in the 'suites' section of your `.kitchen.yml`, so if you have more than suite of tests or change the name, you'll need to adapt my example accordingly.
