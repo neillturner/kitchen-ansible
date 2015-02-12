@@ -84,7 +84,8 @@ module Kitchen
       default_config :requirements_path, false
       default_config :ansible_verbose, false
       default_config :ansible_verbosity, 1
-      default_config :ansible_noop, false   # what is ansible equivalent of dry_run???? ##JMC: I think it's [--check mode](http://docs.ansible.com/playbooks_checkmode.html) TODO: Look into this...
+      default_config :ansible_check, false
+      default_config :ansible_diff, false
       default_config :ansible_platform, ''
       default_config :update_package_repos, true
 
@@ -314,6 +315,7 @@ module Kitchen
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
             ansible_check_flag,
+            ansible_diff_flag,
             extra_vars,
             tags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
@@ -399,6 +401,10 @@ module Kitchen
 
         def ansible_check_flag
           config[:ansible_check] ? '--check' : nil
+        end
+
+        def ansible_diff_flag
+          config[:ansible_diff] ? '--diff' : nil
         end
 
         def ansible_platform
