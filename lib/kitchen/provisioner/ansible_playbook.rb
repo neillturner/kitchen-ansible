@@ -303,7 +303,8 @@ module Kitchen
 
           if galaxy_requirements
             commands << [
-               sudo('ansible-galaxy'), 'install', '--force',
+               'ansible-galaxy', 'install', '--force',
+               '-p', File.join(config[:root_path], 'roles'),
                '-r', File.join(config[:root_path], galaxy_requirements),
             ].join(' ')
           end
