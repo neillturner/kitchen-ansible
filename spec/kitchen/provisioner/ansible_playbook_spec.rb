@@ -23,12 +23,29 @@ require 'kitchen'
 require 'kitchen/provisioner/ansible_playbook'
 
 describe Kitchen::Provisioner::AnsiblePlaybook do
-  let(:provisioner) do
-    Kitchen::Provisioner.for_plugin("ansible_playbook", config)
-  end
+
+  let(:logged_output)   { StringIO.new }
+  let(:logger)          { Logger.new(logged_output) }
 
   let(:config) do
-    {}
+    {
+      :test_base_path => "/b",
+      :kitchen_root => "/r",
+      :log_level => :info,
+      :playbook => "playbook.yml"
+    }
+  end
+
+  let(:suite) do
+    instance_double("Kitchen::Suite", :name => "fries")
+  end
+
+  let(:instance) do
+    instance_double("Kitchen::Instance", :name => "coolbeans", :logger => logger, :suite => suite)
+  end
+
+  let(:provisioner) do
+    Kitchen::Provisioner::AnsiblePlaybook.new(config).finalize_config!(instance)
   end
 
   describe "#run_command" do

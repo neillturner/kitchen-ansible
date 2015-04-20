@@ -354,11 +354,11 @@ module Kitchen
         end
 
         def ansiblefile
-          config[:ansiblefile_path] or ''
+          config[:ansiblefile_path] || ''
         end
 
         def galaxy_requirements
-          config[:requirements_path] or nil
+          config[:requirements_path] || nil
         end
 
         def playbook

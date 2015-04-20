@@ -25,5 +25,9 @@ Ansible Provisioner for Test Kitchen
 Supports running ansible-playbook
 
 EOF
+  s.add_runtime_dependency 'test-kitchen'
+  
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'pry'
 
 end
