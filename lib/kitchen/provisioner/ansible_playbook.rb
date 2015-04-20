@@ -487,7 +487,7 @@ module Kitchen
           info('Preparing ansible.cfg file')
           ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
           if config[:roles_path].nil?
-            info('No roles has been set. empty ansible.cfg generated')
+            info('No roles have been set. empty ansible.cfg generated')
             File.open(ansible_config_file, "wb") do |file|
                file.write("#no roles path specified\n")
             end
@@ -507,7 +507,7 @@ module Kitchen
           info('Preparing hosts file')
 
           if config[:hosts].nil?
-            raise 'No hosts has been set. Please specify one in .kitchen.yml'
+            raise 'No hosts have been set. Please specify one in .kitchen.yml'
           else
             debug("Using host from #{hosts}")
             File.open(File.join(sandbox_path, "hosts"), "wb") do |file|
