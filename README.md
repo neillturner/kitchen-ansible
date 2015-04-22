@@ -1,4 +1,7 @@
 # kitchen-ansible
+
+[![Gem Version](https://badge.fury.io/rb/kitchen-ansible.svg)](http://badge.fury.io/rb/kitchen-ansible)
+
 A Test Kitchen Provisioner for Ansible
 
 The provider works by passing the ansible repository based on attributes in .kitchen.yml & calling ansible-playbook.
