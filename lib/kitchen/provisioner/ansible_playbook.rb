@@ -81,6 +81,10 @@ module Kitchen
         provisioner.calculate_path('Ansiblefile', :file)
       end
 
+      default_config :filter_plugins_path do |provisioner|
+         provisioner.calculate_path('filter_plugins', :directory)
+      end
+
       default_config :requirements_path, false
       default_config :ansible_verbose, false
       default_config :ansible_verbosity, 1
@@ -271,6 +275,7 @@ module Kitchen
           prepare_addt_dir
           prepare_host_vars
           prepare_hosts
+          prepare_filter_plugins
           info('Finished Preparing files for transfer')
 
         end
@@ -353,6 +358,10 @@ module Kitchen
           File.join(sandbox_path, 'roles')
         end
 
+        def tmp_filter_plugins_dir
+          File.join(sandbox_path, 'filter_plugins')
+        end
+
         def ansiblefile
           config[:ansiblefile_path] || ''
         end
@@ -392,6 +401,11 @@ module Kitchen
         def host_vars
 	  config[:host_vars_path].to_s
         end
+        
+        def filter_plugins
+          config[:filter_plugins_path].to_s
+        end
+
 
         def ansible_debian_version
           config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
@@ -574,6 +588,18 @@ module Kitchen
             FileUtils.cp_r(Dir.glob("#{modules}/*"), tmp_modules_dir, remove_destination: true)
           else
             info 'nothing to do for modules'
+          end
+        end
+
+        def prepare_filter_plugins
+          info('Preparing filter_plugins')
+          FileUtils.mkdir_p(tmp_filter_plugins_dir)
+
+          if filter_plugins && File.directory?(filter_plugins)
+            debug("Using filter_plugins from #{filter_plugins}")
+            FileUtils.cp_r(Dir.glob("#{filter_plugins}/*.py"), tmp_filter_plugins_dir, remove_destination: true)
+          else
+            info 'nothing to do for filter_plugins'
           end
         end
 
