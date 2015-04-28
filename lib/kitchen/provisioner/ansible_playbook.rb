@@ -149,7 +149,7 @@ module Kitchen
           if [ ! $(which ansible) ]; then
            #{update_packages_debian_cmd}
             ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
-            #{sudo('apt-get')} -y install apt-utils
+            #{sudo('apt-get')} -y install apt-utils git
             ## Fix debconf tty warning messages
             export DEBIAN_FRONTEND=noninteractive
             ## 13.10, 14.04 include add-apt-repository in software-properties-common
