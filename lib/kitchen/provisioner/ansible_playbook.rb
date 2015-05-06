@@ -85,6 +85,10 @@ module Kitchen
          provisioner.calculate_path('filter_plugins', :directory)
       end
 
+      default_config :ansible_vault_password_file do |provisioner|
+        provisioner.calculate_path('ansible-vault-password', :file)
+      end
+
       default_config :requirements_path, false
       default_config :ansible_verbose, false
       default_config :ansible_verbosity, 1
@@ -276,6 +280,7 @@ module Kitchen
           prepare_host_vars
           prepare_hosts
           prepare_filter_plugins
+          prepare_ansible_vault_password_file
           info('Finished Preparing files for transfer')
 
         end
@@ -327,6 +332,7 @@ module Kitchen
             ansible_verbose_flag,
             ansible_check_flag,
             ansible_diff_flag,
+            ansible_vault_flag,
             extra_vars,
             tags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
@@ -360,6 +366,10 @@ module Kitchen
 
         def tmp_filter_plugins_dir
           File.join(sandbox_path, 'filter_plugins')
+        end
+
+        def tmp_ansible_vault_password_file_path
+          File.join(sandbox_path, File.basename(ansible_vault_password_file))
         end
 
         def ansiblefile
@@ -406,6 +416,9 @@ module Kitchen
           config[:filter_plugins_path].to_s
         end
 
+        def ansible_vault_password_file
+          config[:ansible_vault_password_file]
+        end
 
         def ansible_debian_version
           config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
@@ -425,6 +438,11 @@ module Kitchen
 
         def ansible_diff_flag
           config[:ansible_diff] ? '--diff' : nil
+        end
+
+        def ansible_vault_flag
+          debug(config[:ansible_vault_password_file])
+          config[:ansible_vault_password_file] ? "--vault-password-file=#{File.join(config[:root_path], File.basename(config[:ansible_vault_password_file]))}" : nil
         end
 
         def ansible_platform
@@ -601,6 +619,12 @@ module Kitchen
           else
             info 'nothing to do for filter_plugins'
           end
+        end
+
+        def prepare_ansible_vault_password_file
+          info('Preparing ansible vault password')
+          debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
+          FileUtils.cp(ansible_vault_password_file, tmp_ansible_vault_password_file_path)
         end
 
         def resolve_with_librarian
