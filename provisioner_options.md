@@ -27,6 +27,7 @@ update_package_repos| true| update OS repository metadata
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
+ansible_vault_password_file| | Path of Ansible Vault Password File
 
 ## Configuring Provisioner Options
 
