@@ -395,7 +395,7 @@ module Kitchen
         end
 
         def addt_dir
-          config[:additional_copy_path].to_s
+          config[:additional_copy_path]
         end
 
         def host_vars
@@ -553,16 +553,23 @@ module Kitchen
 
         def prepare_addt_dir
           info('Preparing additional_copy_path')
-          tmp_addt_dir = File.join(sandbox_path, File.basename(addt_dir))
-          FileUtils.mkdir_p(tmp_addt_dir)
 
-          unless File.directory?(addt_dir)
-            info 'nothing to do for additional_copy_path'
-            return
+          additional_dirs = addt_dir.kind_of?(Array) ? addt_dir : [addt_dir]
+
+          additional_dirs.each do |additional_dir|
+            additional_dir = additional_dir.to_s
+
+            tmp_addt_dir = File.join(sandbox_path, File.basename(additional_dir))
+            FileUtils.mkdir_p(tmp_addt_dir)
+
+            unless File.directory?(additional_dir)
+              info "invalid value #{additional_dir} in additional_copy_path"
+              return
+            end
+
+            debug("Using additional_copy_path from #{additional_dir}")
+            FileUtils.cp_r(Dir.glob("#{additional_dir}/*"), tmp_addt_dir)
           end
-
-          debug("Using additional_copy_path from #{addt_dir}")
-          FileUtils.cp_r(Dir.glob("#{addt_dir}/*"), tmp_addt_dir)
         end
 
         def prepare_host_vars
