@@ -405,7 +405,7 @@ module Kitchen
         end
 
         def addt_dir
-          config[:additional_copy_path].to_s
+          config[:additional_copy_path]
         end
 
         def host_vars
@@ -518,15 +518,22 @@ module Kitchen
         def prepare_ansible_cfg
           info('Preparing ansible.cfg file')
           ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-          if config[:roles_path].nil?
+
+          roles_paths = []
+          roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
+          additional_dirs.each do |additional_dir|
+            roles_paths << File.join(config[:root_path], File.basename(additional_dir))
+          end
+
+          if roles_paths.empty?
             info('No roles have been set. empty ansible.cfg generated')
             File.open(ansible_config_file, "wb") do |file|
                file.write("#no roles path specified\n")
             end
           else
-            debug("Setting roles_path inside VM to #{File.join(config[:root_path], 'roles')}")
+            debug("Setting roles_path inside VM to #{ roles_paths.join(':') }")
             File.open( ansible_config_file, "wb") do |file|
-               file.write("[defaults]\nroles_path = #{File.join(config[:root_path], 'roles')}\n")
+               file.write("[defaults]\nroles_path = #{ roles_paths.join(':') }\n")
             end
           end
         end
@@ -571,16 +578,30 @@ module Kitchen
 
         def prepare_addt_dir
           info('Preparing additional_copy_path')
-          tmp_addt_dir = File.join(sandbox_path, File.basename(addt_dir))
-          FileUtils.mkdir_p(tmp_addt_dir)
 
-          unless File.directory?(addt_dir)
-            info 'nothing to do for additional_copy_path'
-            return
+          additional_dirs.each do |additional_dir|
+
+            tmp_addt_dir = File.join(sandbox_path, File.basename(additional_dir))
+            FileUtils.mkdir_p(tmp_addt_dir)
+
+            unless File.directory?(additional_dir)
+              info "invalid value #{additional_dir} in additional_copy_path"
+              return
+            end
+
+            debug("Using additional_copy_path from #{additional_dir}")
+            FileUtils.cp_r(Dir.glob("#{additional_dir}/*"), tmp_addt_dir)
+          end
+        end
+
+        def additional_dirs
+          additional_dirs = []
+
+          if ( addt_dir )
+            additional_dirs = addt_dir.kind_of?(Array) ? addt_dir : [addt_dir]
           end
 
-          debug("Using additional_copy_path from #{addt_dir}")
-          FileUtils.cp_r(Dir.glob("#{addt_dir}/*"), tmp_addt_dir)
+          additional_dirs.map { |additional_dir| additional_dir.to_s }
         end
 
         def prepare_host_vars
