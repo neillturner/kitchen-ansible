@@ -8,7 +8,7 @@ ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo
 ansible_yum_repo | "https://download.fedoraproject.org | yum repo
-| /pub/epel/6/i386/epel-release-6-8.noarch.rpm" |
+  | /pub/epel/6/i386/epel-release-6-8.noarch.rpm" |
 require_ansible_omnibus | false | Set if using omnibus ansible install
 ansible_omnibus_url | | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
