@@ -57,7 +57,7 @@ The provisioner can be configured globally or per suite, global settings act as 
 
     suites:
      - name: default
-'''
+```
 
 **NOTE:** With Test-Kitchen 1.4 you not longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
 
