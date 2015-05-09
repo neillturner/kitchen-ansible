@@ -59,6 +59,15 @@ The provisioner can be configured globally or per suite, global settings act as 
      - name: default
 '''
 
+**NOTE:** With Test-Kitchen 1.4 you not longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
+
+```yaml
+  verifier:
+    ruby_bindir: '/usr/bin'
+```
+where /usr/bin is the location of the ruby command. 
+
+
 in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the defailt manifest site.yml
 
 To override a setting at the suite-level, specify the setting name under the suite's attributes:
