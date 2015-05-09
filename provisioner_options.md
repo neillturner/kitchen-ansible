@@ -25,7 +25,7 @@ ansible_verbosity| 1| Sets the verbosity flag appropriately (e.g.: `1 => '-v', 2
 ansible_check| false| Sets the `--check` flag when running Ansible
 ansible_diff| false| Sets the `--diff` flag when running Ansible
 update_package_repos| true| update OS repository metadata
-chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests)
+chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests) NOTE: kitchen 1.4 only requires ruby to run busser so this is not required. 
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
