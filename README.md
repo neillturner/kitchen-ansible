@@ -82,7 +82,7 @@ Create a `.kitchen.yml`, much like one the described above:
 
 **NOTE:** With Test-Kitchen 1.4 you not longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
 
-```
+```yaml
   verifier:
     ruby_bindir: '/usr/bin'
 ```
