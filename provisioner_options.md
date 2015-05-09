@@ -72,6 +72,7 @@ in this example, vagrant will download a box for ubuntu 1204 with no configurati
 
 To override a setting at the suite-level, specify the setting name under the suite's attributes:
 
+```yaml
     suites:
      - name: server
        attributes:
@@ -79,7 +80,7 @@ To override a setting at the suite-level, specify the setting name under the sui
            server_installer_url: http://downloads.app.com/v1.0
          tags:
            - server
-
+```
 
 ### Per-suite Structure
 
