@@ -34,6 +34,7 @@ ansible_vault_password_file| | Path of Ansible Vault Password File
 
 The provisioner can be configured globally or per suite, global settings act as defaults for all suites, you can then customise per suite, for example:
 
+```yaml
     ---
     driver:
         name: vagrant
@@ -56,7 +57,7 @@ The provisioner can be configured globally or per suite, global settings act as 
 
     suites:
      - name: default
-
+'''
 
 in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the defailt manifest site.yml
 
