@@ -26,6 +26,9 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform) do
+    platform = instance_double(Kitchen::Platform, :os_type => nil)
+  end
 
   let(:config) do
     {
@@ -41,7 +44,11 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   end
 
   let(:instance) do
-    instance_double("Kitchen::Instance", :name => "coolbeans", :logger => logger, :suite => suite)
+    instance_double("Kitchen::Instance", 
+      :name => "coolbeans",
+      :logger => logger,
+      :suite => suite,
+      :platform => platform)
   end
 
   let(:provisioner) do
