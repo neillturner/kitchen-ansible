@@ -181,9 +181,11 @@ module Kitchen
           info("Installing ansible on #{ansible_platform}")
           <<-INSTALL
           if [ ! $(which ansible) ]; then
-            #{sudo('rpm')} -ivh #{ansible_yum_repo}
+            if [ ! $(rpm -q epel-release) ]; then
+              #{sudo('rpm')} -ivh #{ansible_yum_repo}
+            fi
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
+            #{sudo('yum')} --enablerepo=epel -y install ansible#{ansible_redhat_version} libselinux-python
           fi
           #{install_busser}
           INSTALL
@@ -191,10 +193,12 @@ module Kitchen
           info("Installing ansible, will try to determine platform os")
           <<-INSTALL
           if [ ! $(which ansible) ]; then
-            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-               #{sudo('rpm')} -ivh #{ansible_yum_repo}
-               #{update_packages_redhat_cmd}
-               #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ] || [ -f /etc/system-release ]; then
+              if [ ! $(rpm -q epel-release) ]; then
+                #{sudo('rpm')} -ivh #{ansible_yum_repo}
+              fi
+              #{update_packages_redhat_cmd}
+              #{sudo('yum')} --enablerepo=epel -y install ansible#{ansible_redhat_version} libselinux-python
             else
            #{update_packages_debian_cmd}
            ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
