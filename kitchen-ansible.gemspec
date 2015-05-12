@@ -5,6 +5,7 @@ require 'kitchen-ansible/version'
 
 Gem::Specification.new do |s|
   s.name          = "kitchen-ansible"
+  s.license       = "Apache-2.0"
   s.version       = Kitchen::Ansible::VERSION
   s.authors       = ["Neill Turner"]
   s.email         = ["neillwturner@gmail.com"]
