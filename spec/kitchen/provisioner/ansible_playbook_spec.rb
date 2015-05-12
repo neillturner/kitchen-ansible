@@ -26,13 +26,17 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
   let(:logged_output)   { StringIO.new }
   let(:logger)          { Logger.new(logged_output) }
+  let(:platform) do
+    platform = instance_double(Kitchen::Platform, :os_type => nil)
+  end
 
   let(:config) do
     {
       :test_base_path => "/b",
       :kitchen_root => "/r",
       :log_level => :info,
-      :playbook => "playbook.yml"
+      :playbook => "playbook.yml",
+      :ansible_vault_password_file => 'spec/fixtures/vault_password_file'
     }
   end
 
@@ -41,7 +45,11 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   end
 
   let(:instance) do
-    instance_double("Kitchen::Instance", :name => "coolbeans", :logger => logger, :suite => suite)
+    instance_double("Kitchen::Instance", 
+      :name => "coolbeans",
+      :logger => logger,
+      :suite => suite,
+      :platform => platform)
   end
 
   let(:provisioner) do
@@ -51,6 +59,24 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   describe "#run_command" do
     it "should give a sane run_command" do
       expect(provisioner.run_command).to match(/ansible-playbook/)
+    end
+  end
+
+  describe "#prepare_ansible_vault_password_file" do
+    
+    it "copies the password file to the sandbox when present" do
+      allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
+      provisioner.send(:prepare_ansible_vault_password_file)
+    end
+    
+    it "noops when the ansible_vault_password_file is not configured" do
+      provision_without_vault_configured = Kitchen::Provisioner::AnsiblePlaybook.new(
+        config.tap{|config| config.delete(:ansible_vault_password_file)}
+      ).finalize_config!(instance)
+
+      allow(provision_without_vault_configured).to receive(:sandbox_path).and_return(Dir.tmpdir)
+
+      expect{ provision_without_vault_configured.send(:prepare_ansible_vault_password_file) }.not_to raise_error
     end
   end
 
