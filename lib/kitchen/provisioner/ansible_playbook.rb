@@ -66,7 +66,7 @@ module Kitchen
       end
 
       default_config :additional_copy_path do |provisioner|
-         provisioner.calculate_path('addt_dir', :directory)
+         provisioner.calculate_path('additional_copy', :directory)
       end
 
       default_config :host_vars_path do |provisioner|
@@ -276,7 +276,7 @@ module Kitchen
           prepare_roles
           prepare_ansible_cfg
           prepare_group_vars
-          prepare_addt_dir
+          prepare_additional_copy_path
           prepare_host_vars
           prepare_hosts
           prepare_filter_plugins
@@ -404,7 +404,7 @@ module Kitchen
           config[:group_vars_path].to_s
         end
 
-        def addt_dir
+        def additional_copy
           config[:additional_copy_path]
         end
 
@@ -521,8 +521,8 @@ module Kitchen
 
           roles_paths = []
           roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
-          additional_dirs.each do |additional_dir|
-            roles_paths << File.join(config[:root_path], File.basename(additional_dir))
+          additional_files.each do |additional_file|
+            roles_paths << File.join(config[:root_path], File.basename(additional_file))
           end
 
           if roles_paths.empty?
@@ -576,32 +576,26 @@ module Kitchen
           FileUtils.cp_r(Dir.glob("#{group_vars}/*"), tmp_group_vars_dir)
         end
 
-        def prepare_addt_dir
+        def prepare_additional_copy_path
           info('Preparing additional_copy_path')
-
-          additional_dirs.each do |additional_dir|
-
-            tmp_addt_dir = File.join(sandbox_path, File.basename(additional_dir))
-            FileUtils.mkdir_p(tmp_addt_dir)
-
-            unless File.directory?(additional_dir)
-              info "invalid value #{additional_dir} in additional_copy_path"
-              return
+          additional_files.each do |file|
+            destination = File.join(sandbox_path, File.basename(file))
+            if File.directory?(file)
+              info("Copy dir: #{file} #{destination}")
+              FileUtils.cp_r(file, destination)
+            else
+              info("Copy file: #{file} #{destination}")
+              FileUtils.cp file, destination
             end
-
-            debug("Using additional_copy_path from #{additional_dir}")
-            FileUtils.cp_r(Dir.glob("#{additional_dir}/*"), tmp_addt_dir)
           end
         end
 
-        def additional_dirs
-          additional_dirs = []
-
-          if ( addt_dir )
-            additional_dirs = addt_dir.kind_of?(Array) ? addt_dir : [addt_dir]
+        def additional_files
+          additional_files = []
+          if ( additional_copy )
+            additional_files = additional_copy.kind_of?(Array) ? additional_copy : [additional_copy]
           end
-
-          additional_dirs.map { |additional_dir| additional_dir.to_s }
+          additional_files.map { |additional_dir | additional_dir.to_s }
         end
 
         def prepare_host_vars
