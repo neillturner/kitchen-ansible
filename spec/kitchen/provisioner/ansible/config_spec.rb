@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Neill Turner (<neillwturner@gmail.com>)
+# Author:: Michael Heap (<m@michaelheap.com>)
 #
-# Copyright (C) 2013,2014 Neill Turner
+# Copyright (C) 2015 Michael Heap
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

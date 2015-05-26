@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 #
-# Author:: Neill Turner (<neillwturner@gmail.com>)
+# Author:: Michael Heap (<m@michaelheap.com>)
 #
-# Copyright (C) 2013,2014 Neill Turner
+# Copyright (C) 2015 Michael Heap
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
-# See https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md
-# for documentation configuration parameters with ansible_playbook provisioner.
 #
 
 require 'json'
