@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     kitchen-ansible (0.0.16)
+      librarian-ansible
       test-kitchen
 
 GEM
@@ -9,8 +10,18 @@ GEM
   specs:
     coderay (1.1.0)
     diff-lcs (1.2.5)
+    faraday (0.9.1)
+      multipart-post (>= 1.2, < 3)
+    highline (1.7.2)
+    librarian (0.1.2)
+      highline
+      thor (~> 0.15)
+    librarian-ansible (1.0.6)
+      faraday
+      librarian (~> 0.1.0)
     method_source (0.8.2)
-    mixlib-shellout (2.0.1)
+    mixlib-shellout (2.1.0)
+    multipart-post (2.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
