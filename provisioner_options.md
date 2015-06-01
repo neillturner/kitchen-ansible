@@ -25,6 +25,8 @@ ansible_verbosity| 1| Sets the verbosity flag appropriately (e.g.: `1 => '-v', 2
 ansible_check| false| Sets the `--check` flag when running Ansible
 ansible_diff| false| Sets the `--diff` flag when running Ansible
 update_package_repos| true| update OS repository metadata
+require_ruby_for_busser|true|install ruby to run busser for tests
+require_chef_for_busser|false|install chef to run busser for tests
 chef_bootstrap_url |"https://www.getchef.com/chef/install.sh"| the chef (needed for busser to run tests) NOTE: kitchen 1.4 only requires ruby to run busser so this is not required. 
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements

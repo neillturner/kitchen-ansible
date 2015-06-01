@@ -50,6 +50,8 @@ module Kitchen
       default_config :ansible_apt_repo, "ppa:ansible/ansible"
       default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
       default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
+      default_config :require_chef_for_busser, false
+      default_config :require_ruby_for_busser, true
 
       default_config :playbook do |provisioner|
         provisioner.calculate_path('default.yml', :file) or
@@ -143,7 +145,7 @@ module Kitchen
             do_download #{config[:ansible_omnibus_url]} /tmp/ansible_install.sh
             #{sudo('sh')} /tmp/ansible_install.sh #{version}
           fi
-          #{install_busser}
+          #{install_busser_prereqs}
           INSTALL
         else
           case ansible_platform
@@ -175,7 +177,7 @@ module Kitchen
             ## This test works on ubuntu to test if ansible repo has been installed via rquillo ppa repo
             ## if [ $(apt-cache madison ansible | grep -c rquillo ) -gt 0 ]; then echo 'success'; else echo 'fail'; fi
           fi
-          #{install_busser}
+          #{install_busser_prereqs}
           INSTALL
           when "redhat", "centos", "fedora"
           info("Installing ansible on #{ansible_platform}")
@@ -185,7 +187,7 @@ module Kitchen
             #{update_packages_redhat_cmd}
             #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
           fi
-          #{install_busser}
+          #{install_busser_prereqs}
           INSTALL
          else
           info("Installing ansible, will try to determine platform os")
@@ -221,13 +223,13 @@ module Kitchen
             ## if [ $(apt-cache madison ansible | grep -c rquillo ) -gt 0 ]; then echo 'success'; else echo 'fail'; fi
             fi
           fi
-          #{install_busser}
+          #{install_busser_prereqs}
           INSTALL
          end
         end
       end
 
-      def install_busser
+      def install_busser_prereqs
         install = ''
         install << <<-INSTALL
           #{Util.shell_helpers}
@@ -238,12 +240,36 @@ module Kitchen
               #{sudo('ln')} -s $L /usr/bin/ruby
           fi
           INSTALL
-        if chef_url then
+
+        if require_ruby_for_busser
+          install << <<-INSTALL
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            rhelversion=$(cat /etc/redhat-release | grep 'release 6')
+            # For CentOS6/RHEL6 install ruby from SCL
+            if [ -n "$rhelversion" ]; then
+            echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
+            #{sudo_env('yum')} install -y centos-release-SCL
+            #{sudo_env('yum')} install -y ruby193
+            #{sudo_env('yum')} install -y ruby193-ruby-devel
+            echo "-----> Enabling ruby193"
+            source /opt/rh/ruby193/enable
+            echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
+            sudo ldconfig
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+            else
+              #{update_packages_redhat_cmd}
+              #{sudo_env('yum')} -y install ruby ruby-devel
+            fi
+            else
+            #{update_packages_debian_cmd}
+            #{sudo('apt-get')} -y install ruby1.9.1 ruby1.9.1-dev         
+           fi
+           INSTALL
+           
+        elsif require_chef_for_busser && chef_url then
           install << <<-INSTALL
             # install chef omnibus so that busser works as this is needed to run tests :(
-            # TODO: work out how to install enough ruby
-            # and set busser: { :ruby_bindir => '/usr/bin/ruby' } so that we dont need the
-            # whole chef client
             if [ ! -d "/opt/chef" ]
             then
               echo "-----> Installing Chef Omnibus to install busser to run tests"
@@ -255,7 +281,7 @@ module Kitchen
 
         install
       end
-
+      
         def init_command
           dirs = %w{modules roles group_vars host_vars}.
             map { |dir| File.join(config[:root_path], dir) }.join(" ")
