@@ -228,32 +228,24 @@ module Kitchen
       end
 
       def install_busser
-        install = ''
-        install << <<-INSTALL
-          #{Util.shell_helpers}
-          # Fix for https://github.com/test-kitchen/busser/issues/12
-          if [ -h /usr/bin/ruby ]; then
-              L=$(readlink -f /usr/bin/ruby)
-              #{sudo('rm')} /usr/bin/ruby
-              #{sudo('ln')} -s $L /usr/bin/ruby
-          fi
-          INSTALL
-        if chef_url then
-          install << <<-INSTALL
-            # install chef omnibus so that busser works as this is needed to run tests :(
-            # TODO: work out how to install enough ruby
-            # and set busser: { :ruby_bindir => '/usr/bin/ruby' } so that we dont need the
-            # whole chef client
-            if [ ! -d "/opt/chef" ]
-            then
-              echo "-----> Installing Chef Omnibus to install busser to run tests"
-              do_download #{chef_url} /tmp/install.sh
-              #{sudo('sh')} /tmp/install.sh
-            fi
-            INSTALL
-        end
+        <<-INSTALL
+          echo "-----> Installing Busser (CentOS)"
+            sudo yum install -y centos-release-SCL
+            sudo yum install -y ruby193
+            echo "-----> Enabling ruby193"
+            source /opt/rh/ruby193/enable
+            echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
+            sudo ldconfig
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+            echo "-----> Installing gem"
+            gem install busser
+        INSTALL
 
-        install
+        #<<-INSTALL
+        #  echo "-----> Installing Busser (Ruby >= 1.9)"
+        #    #{sudo('gem')} install busser
+        #INSTALL
       end
 
         def init_command
