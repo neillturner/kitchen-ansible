@@ -121,7 +121,7 @@ module Kitchen
         candidates << File.join(base, path)
         candidates << File.join(Dir.pwd, path)
         candidates << File.join(Dir.pwd) if path == 'roles'
-    
+
         debug("Calculating path for #{path}, candidates are: #{candidates.to_s}")
         candidates.find do |c|
           type == :directory ? File.directory?(c) : File.file?(c)
@@ -160,7 +160,7 @@ module Kitchen
             export DEBIAN_FRONTEND=noninteractive
             ## 13.10, 14.04 include add-apt-repository in software-properties-common
             #{sudo('apt-get')} -y install software-properties-common
-            ## 10.04, 12.04 include add-apt-repository in 
+            ## 10.04, 12.04 include add-apt-repository in
             #{sudo('apt-get')} -y install python-software-properties
           #  #{sudo('wget')} #{ansible_apt_repo}
           #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
@@ -205,7 +205,7 @@ module Kitchen
             export DEBIAN_FRONTEND=noninteractive
             ## 13.10, 14.04 include add-apt-repository in software-properties-common
             #{sudo('apt-get')} -y install software-properties-common
-            ## 10.04, 12.04 include add-apt-repository in 
+            ## 10.04, 12.04 include add-apt-repository in
             #{sudo('apt-get')} -y install python-software-properties
           #  #{sudo('wget')} #{ansible_apt_repo}
           #  #{sudo('dpkg')} -i #{ansible_apt_repo_file}
@@ -247,26 +247,32 @@ module Kitchen
             rhelversion=$(cat /etc/redhat-release | grep 'release 6')
             # For CentOS6/RHEL6 install ruby from SCL
             if [ -n "$rhelversion" ]; then
-            echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
-            #{sudo_env('yum')} install -y centos-release-SCL
-            #{sudo_env('yum')} install -y ruby193
-            #{sudo_env('yum')} install -y ruby193-ruby-devel
-            echo "-----> Enabling ruby193"
-            source /opt/rh/ruby193/enable
-            echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
-            sudo ldconfig
-            sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
-            sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
-            else
-              #{update_packages_redhat_cmd}
-              #{sudo_env('yum')} -y install ruby ruby-devel
+            if [ ! -d "/opt/rh/ruby193" ]; then
+              echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
+              #{sudo_env('yum')} install -y centos-release-SCL
+              #{sudo_env('yum')} install -y ruby193
+              #{sudo_env('yum')} install -y ruby193-ruby-devel
+              echo "-----> Enabling ruby193"
+              source /opt/rh/ruby193/enable
+              echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
+              sudo ldconfig
+              sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+              sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
             fi
             else
-            #{update_packages_debian_cmd}
-            #{sudo('apt-get')} -y install ruby1.9.1 ruby1.9.1-dev         
+              if [ ! $(which ruby) ]; then
+                #{update_packages_redhat_cmd}
+                #{sudo_env('yum')} -y install ruby ruby-devel
+              fi
+            fi
+            else
+              if [ ! $(which ruby) ]; then
+                #{update_packages_debian_cmd}
+                #{sudo('apt-get')} -y install ruby1.9.1 ruby1.9.1-dev
+              fi
            fi
            INSTALL
-           
+
         elsif require_chef_for_busser && chef_url then
           install << <<-INSTALL
             # install chef omnibus so that busser works as this is needed to run tests :(
@@ -281,7 +287,7 @@ module Kitchen
 
         install
       end
-      
+
         def init_command
           dirs = %w{modules roles group_vars host_vars}.
             map { |dir| File.join(config[:root_path], dir) }.join(" ")
@@ -435,9 +441,9 @@ module Kitchen
         end
 
         def host_vars
-	  config[:host_vars_path].to_s
+          config[:host_vars_path].to_s
         end
-        
+
         def filter_plugins
           config[:filter_plugins_path].to_s
         end
@@ -531,7 +537,7 @@ module Kitchen
           if galaxy_requirements
             FileUtils.cp(galaxy_requirements, File.join(sandbox_path, galaxy_requirements))
           end
-                    
+
           # Detect whether we are running tests on a role
           # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
 
@@ -566,7 +572,7 @@ module Kitchen
 
 
         # localhost ansible_connection=local
-	# [example_servers]
+        # [example_servers]
         # localhost
         def prepare_hosts
           info('Preparing hosts file')
