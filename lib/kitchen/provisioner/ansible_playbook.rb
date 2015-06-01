@@ -229,9 +229,23 @@ module Kitchen
 
       def install_busser
         <<-INSTALL
-          echo "-----> Installing Busser"
-          #{sudo('gem')} install busser
+          echo "-----> Installing Busser (CentOS)"
+            sudo yum install -y centos-release-SCL
+            sudo yum install -y ruby193
+            echo "-----> Enabling ruby193"
+            source /opt/rh/ruby193/enable
+            echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
+            sudo ldconfig
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+            sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+            echo "-----> Installing gem"
+            gem install busser
         INSTALL
+
+        #<<-INSTALL
+        #  echo "-----> Installing Busser (Ruby >= 1.9)"
+        #    #{sudo('gem')} install busser
+        #INSTALL
       end
 
         def init_command
