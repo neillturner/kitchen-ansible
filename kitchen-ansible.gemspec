@@ -30,5 +30,6 @@ EOF
 
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
+  s.add_development_dependency 'rake'
   s.add_runtime_dependency 'librarian-ansible'
 end
