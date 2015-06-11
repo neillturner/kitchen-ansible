@@ -122,7 +122,7 @@ module Kitchen
           if [ ! $(which ansible) ]; then
             #{sudo('rpm')} -ivh #{ansible_yum_repo}
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
+            #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
           fi
           #{install_busser_prereqs}
           INSTALL
@@ -133,11 +133,11 @@ module Kitchen
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                #{sudo('rpm')} -ivh #{ansible_yum_repo}
                #{update_packages_redhat_cmd}
-               #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python
+               #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
             else
            #{update_packages_debian_cmd}
            ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
-            #{sudo('apt-get')} -y install apt-utils
+            #{sudo('apt-get')} -y install apt-utils git
             ## Fix debconf tty warning messages
             export DEBIAN_FRONTEND=noninteractive
             ## 13.10, 14.04 include add-apt-repository in software-properties-common
