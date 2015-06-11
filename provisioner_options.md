@@ -7,7 +7,7 @@ ansible_version | "latest"| desired version, affects apt installs
 ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net/~ansible/+archive/ubuntu/ansible or rquillo/ansible
-ansible_yum_repo | "https://download.fedoraproject.org | yum repo
+ansible_yum_repo | https://download.fedoraproject.org /pub/epel/6/i386/epel-release-6-8.noarch.rpm | yum repo
   | /pub/epel/6/i386/epel-release-6-8.noarch.rpm" |
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
