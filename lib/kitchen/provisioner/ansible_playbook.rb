@@ -186,9 +186,9 @@ module Kitchen
             if [ -n "$rhelversion" ]; then
             if [ ! -d "/opt/rh/ruby193" ]; then
               echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
-              #{sudo_env('yum')} install -y centos-release-SCL
-              #{sudo_env('yum')} install -y ruby193
-              #{sudo_env('yum')} install -y ruby193-ruby-devel
+              #{sudo('yum')} install -y centos-release-SCL
+              #{sudo('yum')} install -y ruby193
+              #{sudo('yum')} install -y ruby193-ruby-devel
               echo "-----> Enabling ruby193"
               source /opt/rh/ruby193/enable
               echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
@@ -199,7 +199,7 @@ module Kitchen
             else
               if [ ! $(which ruby) ]; then
                 #{update_packages_redhat_cmd}
-                #{sudo_env('yum')} -y install ruby ruby-devel
+                #{sudo('yum')} -y install ruby ruby-devel
               fi
             fi
             else
@@ -464,7 +464,15 @@ module Kitchen
         def chef_url
           config[:chef_bootstrap_url]
         end
-
+        
+        def require_ruby_for_busser
+          config[:require_ruby_for_busser]
+        end 
+        
+        def require_chef_for_busser
+          config[:require_chef_for_busser]
+        end
+        
         def prepare_roles
           info('Preparing roles')
           debug("Using roles from #{roles}")
