@@ -126,14 +126,34 @@ module Kitchen
           fi
           #{install_busser_prereqs}
           INSTALL
+          when "amazon"
+          info("Installing ansible on #{ansible_platform}")
+          <<-INSTALL
+          if [ ! $(which ansible) ]; then
+            #{sudo('yum-config-manager')} --enable epel/x86_64
+	    #{sudo('yum')} -y install ansible#{ansible_redhat_version} git
+            #{sudo('alternatives')} --set python /usr/bin/python2.6
+            #{sudo('yum')} clean all
+            #{sudo('yum')} install yum-python26 -y
+          fi
+          #{install_busser_prereqs}
+          INSTALL
          else
           info("Installing ansible, will try to determine platform os")
           <<-INSTALL
           if [ ! $(which ansible) ]; then
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then
                #{sudo('rpm')} -ivh #{ansible_yum_repo}
                #{update_packages_redhat_cmd}
                #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
+            else
+               #{sudo('yum-config-manager')} --enable epel/x86_64
+	       #{sudo('yum')} -y install ansible#{ansible_redhat_version} git
+               #{sudo('alternatives')} --set python /usr/bin/python2.6
+               #{sudo('yum')} clean all
+               #{sudo('yum')} install yum-python26 -y               
+            fi
             else
            #{update_packages_debian_cmd}
            ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
@@ -181,6 +201,7 @@ module Kitchen
         if require_ruby_for_busser
           install << <<-INSTALL
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then
             rhelversion=$(cat /etc/redhat-release | grep 'release 6')
             # For CentOS6/RHEL6 install ruby from SCL
             if [ -n "$rhelversion" ]; then
@@ -201,6 +222,10 @@ module Kitchen
                 #{update_packages_redhat_cmd}
                 #{sudo('yum')} -y install ruby ruby-devel
               fi
+            fi
+            else
+                #{update_packages_redhat_cmd}
+                #{sudo('yum')} -y install ruby ruby-devel gcc
             fi
             else
               if [ ! $(which ruby) ]; then
