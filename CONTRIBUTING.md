@@ -7,7 +7,7 @@ For now, there's not much guidance for new contributors. If you encounter an iss
 To contribute, you need to install the project's dependencies. You can install all dependencies for kitchen-ansible via Bundler. To do so, run the following (this will install dependencies local to the project):
 
 ```
-bundler install --path vendor/bundle
+bundle install --path vendor/bundle
 ```
 
 # Running the tests
