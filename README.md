@@ -6,9 +6,9 @@
 
 A Test Kitchen Provisioner for Ansible
 
-The provider works by passing the ansible repository based on attributes in .kitchen.yml & calling ansible-playbook.
+The provisioner works by passing the ansible repository based on attributes in .kitchen.yml & calling ansible-playbook.
 
-It install ansible on the server and runs ansible-playbook using host localhost.
+It installs Ansible on the server and runs ansible-playbook using host localhost.
 
 Has been tested against the Ubuntu 1204 and Centos 6.5 boxes running in vagrant/virtualbox.
 
@@ -81,7 +81,7 @@ Create a `.kitchen.yml`, much like one the described above:
     - name: default
 ```
 
-**NOTE:** With Test-Kitchen 1.4 you not longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
+**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
 
 ```yaml
   verifier:
@@ -159,12 +159,30 @@ To test different playbooks in different suites you can easily overwrite the pro
         hosts: web_application
 ```
 
+### Alternative Virtualization/Cloud providers for Vagrant
+This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
+```yaml
+platforms:
+    - name: ubuntu-12.04
+      driver_config:
+        provider: aws
+        box: my_base_box
+        # username is based on what is configured in your box/ami
+        username: ubuntu
+        customize:
+          access_key_id: "AKKJHG659868LHGLH"
+          secret_access_key: "G8t7o+6HLG876JGF/58"
+          ami: ami-7865ab765d
+          instance_type: t2.micro
+          # more customisation can go here, based on what the vagrant provider supports
+          #security-groups: []
+```
+
 *Notes*
 
 * The `default` in all of the above is the name of the test suite defined in the 'suites' section of your `.kitchen.yml`, so if you have more than suite of tests or change the name, you'll need to adapt my example accordingly.
 * serverspec test files *must* be named `_spec.rb`
 * Since I'm using Vagrant, my `box` definitions refer to Vagrant boxes, either standard, published boxes available from <http://atlas.hashicorp.com/boxes> or custom-created boxes (perhaps using [Packer][packer] and [bento][bento]), in which case you'll need to provide the url in `box_url`.
-* This could be adapted to using Openstack/AWS/whatever VMs as supported by Vagrant.
 
 [Serverspec]: http://serverspec.org
 [packer]: https://packer.io
