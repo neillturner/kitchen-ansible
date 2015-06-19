@@ -52,6 +52,7 @@ module Kitchen
         default_config :ansible_diff, false
         default_config :ansible_platform, ''
         default_config :update_package_repos, true
+        default_config :require_ansible_source, false
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) or
