@@ -30,6 +30,7 @@ ansible_omnibus_url | | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
 require_chef_for_busser|false|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required. 
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
+require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 
 ## Configuring Provisioner Options
 
