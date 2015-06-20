@@ -255,7 +255,7 @@ module Kitchen
           ansible_vault_flag,
           extra_vars,
           tags,
-          "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
+          "#{File.join(tmp_playbook_path, File.basename(config[:playbook]))}",
         ].join(" ")
       end
 
@@ -363,7 +363,11 @@ module Kitchen
       end
 
       def tmp_playbook_path
-        File.join(sandbox_path, File.basename(playbook))
+        if playbooks
+          File.join(sandbox_path, playbooks, File.basename(playbook))
+        else
+          File.join(sandbox_path, File.basename(playbook))
+        end
       end
 
       def tmp_host_vars_dir
@@ -404,6 +408,10 @@ module Kitchen
 
       def role_name
         File.basename(roles) == 'roles' ? '' : File.basename(roles)
+      end
+
+      def playbooks
+        config[:playbook_path]
       end
 
       def modules

@@ -15,6 +15,7 @@ filter_plugins | filter_plugins | ansible repo filter_plugins directory
 additional_copy_path | | arbitrary array of files and directories to copy into test environment, relative to CWD. (eg, vars or included playbooks)
 extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile-playbook command
 playbook | 'default.yml' | playbook for ansible-playbook to run
+playbook_path | | subdirectory to copy the playbook to
 modules_path | | ansible repo manifests directory
 ansible_verbose| false| Extra information logging
 ansible_verbosity| 1| Sets the verbosity flag appropriately (e.g.: `1 => '-v', 2 => '-vv', 3 => '-vvv" ...`) Valid values are one of: `1, 2, 3, 4` OR `:info, :warn, :debug, :trace`.
