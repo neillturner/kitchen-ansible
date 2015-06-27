@@ -112,6 +112,10 @@ module Kitchen
           return config.key?(k)
         end
 
+        def keys
+          config.keys
+        end
+
         def calculate_path(path, type = :directory)
 
           if not instance

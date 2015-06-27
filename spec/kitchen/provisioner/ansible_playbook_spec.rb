@@ -30,7 +30,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
     platform = instance_double(Kitchen::Platform, :os_type => nil)
   end
 
-  let(:config) do
+  let(:custom_config) do
     {
       :test_base_path => "/b",
       :kitchen_root => "/r",
@@ -38,6 +38,10 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       :playbook => "playbook.yml",
       :ansible_vault_password_file => 'spec/fixtures/vault_password_file'
     }
+  end
+
+  let(:config) do
+    custom_config.dup
   end
 
   let(:suite) do
@@ -118,6 +122,15 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
         # puts "Setting ansible_verbosity to: #{invalid_level} which should raise error"
         config[:ansible_verbosity] = invalid_level
         expect{ provisioner.send(:ansible_verbose_flag) }.to raise_error
+      end
+    end
+  end
+
+  describe "#diagnose" do
+    it "should give a sane diagnostic information" do
+      expect{ provisioner.send(:diagnose) }.to_not raise_error
+      custom_config.each do |k, v|
+        expect( provisioner.send(:diagnose)[k] ).to eq v
       end
     end
   end
