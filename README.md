@@ -48,8 +48,9 @@ platforms:
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
-  verifier:
-    ruby_bindir: '/usr/bin'      
+      
+verifier:
+  ruby_bindir: '/usr/bin'      
 ```
 **NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
 
