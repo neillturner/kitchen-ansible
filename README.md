@@ -48,7 +48,17 @@ platforms:
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
+  verifier:
+    ruby_bindir: '/usr/bin'      
 ```
+**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
+
+```yaml
+  verifier:
+    ruby_bindir: '/usr/bin'
+```
+where /usr/bin is the location of the ruby command. 
+
 
 ## Test-Kitchen/Ansible/Serverspec
 
@@ -77,18 +87,12 @@ Create a `.kitchen.yml`, much like one the described above:
       driver_config:
          box: chef/centos-7.0
 
+  verifier:
+    ruby_bindir: '/usr/bin'    
+
   suites:
     - name: default
 ```
-
-**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
-
-```yaml
-  verifier:
-    ruby_bindir: '/usr/bin'
-```
-where /usr/bin is the location of the ruby command. 
-
 
 Then for serverspec:
     
