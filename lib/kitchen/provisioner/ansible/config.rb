@@ -59,6 +59,10 @@ module Kitchen
             raise "No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default wrapper playbook for your role in test/integration/playbooks/default.yml or test/integration/default.yml"
         end
 
+        default_config :playbook_path do |provisioner|
+          provisioner.calculate_path('playbook_path', :directory)
+        end
+
         default_config :roles_path do |provisioner|
           provisioner.calculate_path('roles') or
             raise 'No roles_path detected. Please specify one in .kitchen.yml'
