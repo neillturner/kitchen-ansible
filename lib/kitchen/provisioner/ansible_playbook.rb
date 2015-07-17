@@ -273,15 +273,15 @@ module Kitchen
         if [ ! -d #{config[:root_path]}/ansible ]; then
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
+            #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev 
           else
             #{update_packages_debian_cmd}
-            #{sudo('apt-get')} -y install git python python-setuptools
+            #{sudo('apt-get')} -y install git python python-setuptools build-essential python-dev
           fi
 
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
           #{sudo('easy_install')} pip
-          sudo -EH 'pip' install paramiko PyYAML Jinja2 httplib2
+          #{setup_ansible_env_from_source} && pip install paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
       end
