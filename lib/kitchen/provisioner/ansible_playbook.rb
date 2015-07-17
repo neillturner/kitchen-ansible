@@ -68,6 +68,9 @@ module Kitchen
       def install_command
         if config[:require_ansible_omnibus]
           cmd = install_omnibus_command
+        elsif config[:require_ansible_source]
+          info("Installing ansible from source")
+          cmd = install_ansible_from_source_command
         elsif config[:require_ansible_repo]
           case ansible_platform
           when "debian", "ubuntu"
@@ -95,9 +98,6 @@ module Kitchen
             fi
             INSTALL
           end
-        elsif config[:require_ansible_source]
-          info("Installing ansible from source")
-          cmd = install_ansible_from_source_command
         else
           return
         end
