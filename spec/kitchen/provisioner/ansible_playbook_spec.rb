@@ -36,7 +36,8 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       :kitchen_root => "/r",
       :log_level => :info,
       :playbook => "playbook.yml",
-      :ansible_vault_password_file => 'spec/fixtures/vault_password_file'
+      :ansible_vault_password_file => 'spec/fixtures/vault_password_file',
+      :ansible_inventory_file => 'spec/fixtures/hosts'
     }
   end
 
@@ -49,7 +50,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   end
 
   let(:instance) do
-    instance_double("Kitchen::Instance", 
+    instance_double("Kitchen::Instance",
       :name => "coolbeans",
       :logger => logger,
       :suite => suite,
@@ -67,12 +68,12 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   end
 
   describe "#prepare_ansible_vault_password_file" do
-    
+
     it "copies the password file to the sandbox when present" do
       allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
       provisioner.send(:prepare_ansible_vault_password_file)
     end
-    
+
     it "noops when the ansible_vault_password_file is not configured" do
       provision_without_vault_configured = Kitchen::Provisioner::AnsiblePlaybook.new(
         config.tap{|config| config.delete(:ansible_vault_password_file)}
@@ -81,6 +82,13 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provision_without_vault_configured).to receive(:sandbox_path).and_return(Dir.tmpdir)
 
       expect{ provision_without_vault_configured.send(:prepare_ansible_vault_password_file) }.not_to raise_error
+    end
+  end
+
+  describe "#prepare_inventory_file" do
+    it "copies the inventory file to the sandbox when present" do
+      allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
+      provisioner.send(:prepare_inventory_file)
     end
   end
 
