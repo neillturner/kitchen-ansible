@@ -131,9 +131,9 @@ module Kitchen
               echo "-----> Enabling ruby193"
               source /opt/rh/ruby193/enable
               echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
-              sudo ldconfig
-              sudo ln -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
-              sudo ln -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+              #{sudo('ldconfig')}
+              #{sudo('ln')} -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+              #{sudo('ln')} -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
             fi
             else
               if [ ! $(which ruby) ]; then
@@ -284,7 +284,7 @@ module Kitchen
 
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
           #{sudo('easy_install')} pip
-          sudo pip install paramiko PyYAML Jinja2 httplib2
+          #{sudo('pip')} install paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
       end
