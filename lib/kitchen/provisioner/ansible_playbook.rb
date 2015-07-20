@@ -242,7 +242,8 @@ module Kitchen
 
       def run_command
         if config[:require_ansible_source]
-          cmd = "#{setup_ansible_env_from_source} && ansible-playbook"
+          # this is an ugly hack to get around the fact that extra vars uses ' and " 
+          cmd = sudo("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
         else
           cmd = sudo("ansible-playbook")
         end
@@ -283,7 +284,7 @@ module Kitchen
 
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
           #{sudo('easy_install')} pip
-          #{setup_ansible_env_from_source} && pip install paramiko PyYAML Jinja2 httplib2
+          sudo pip install paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
       end
