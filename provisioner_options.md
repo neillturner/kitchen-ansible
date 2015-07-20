@@ -25,6 +25,8 @@ require_ruby_for_busser|true|install ruby to run busser for tests
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
+ansible_connection | local | Connection for Hosts and Groups
+ansible_inventory_file | hosts | Custom inventory file
 require_ansible_omnibus | false | Set if using omnibus ansible install
 ansible_omnibus_url | | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
