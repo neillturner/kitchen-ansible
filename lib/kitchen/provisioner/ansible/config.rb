@@ -51,6 +51,7 @@ module Kitchen
         default_config :ansible_check, false
         default_config :ansible_diff, false
         default_config :ansible_platform, ''
+        default_config :ansible_connection, 'local'
         default_config :update_package_repos, true
         default_config :require_ansible_source, false
 
@@ -90,6 +91,10 @@ module Kitchen
 
         default_config :ansible_vault_password_file do |provisioner|
           provisioner.calculate_path('ansible-vault-password', :file)
+        end
+
+        default_config :ansible_inventory_file do |provisioner|
+          provisioner.calculate_path('hosts', :file)
         end
 
         def initialize(config = {})

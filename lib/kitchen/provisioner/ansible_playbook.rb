@@ -184,6 +184,7 @@ module Kitchen
         yield if block_given?
 
         prepare_playbook
+        prepare_inventory_file
         prepare_modules
         prepare_roles
         prepare_ansible_cfg
@@ -247,7 +248,8 @@ module Kitchen
         end
         [
           cmd,
-          "-i #{File.join(config[:root_path], 'hosts')}",
+          ansible_inventory_flag,
+          "-c #{config[:ansible_connection]}",
           "-M #{File.join(config[:root_path], 'modules')}",
           ansible_verbose_flag,
           ansible_check_flag,
@@ -382,6 +384,10 @@ module Kitchen
         File.join(sandbox_path, File.basename(ansible_vault_password_file))
       end
 
+      def tmp_inventory_file_path
+        File.join(sandbox_path, File.basename(ansible_inventory_file))
+      end
+
       def ansiblefile
         config[:ansiblefile_path] || ''
       end
@@ -430,6 +436,10 @@ module Kitchen
         config[:ansible_vault_password_file]
       end
 
+      def ansible_inventory_file
+        config[:ansible_inventory_file]
+      end
+
       def ansible_debian_version
         config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
       end
@@ -453,6 +463,10 @@ module Kitchen
       def ansible_vault_flag
         debug(config[:ansible_vault_password_file])
         config[:ansible_vault_password_file] ? "--vault-password-file=#{File.join(config[:root_path], File.basename(config[:ansible_vault_password_file]))}" : nil
+      end
+
+      def ansible_inventory_flag
+          config[:ansible_inventory_file] ? "--inventory-file=#{File.join(config[:root_path], File.basename(config[:ansible_inventory_file]))}" : "--inventory-file=#{File.join(config[:root_path], 'hosts')}"
       end
 
       def ansible_platform
@@ -508,7 +522,7 @@ module Kitchen
 
       def require_ruby_for_busser
         config[:require_ruby_for_busser]
-      end 
+      end
 
       def require_chef_for_busser
         config[:require_chef_for_busser]
@@ -556,6 +570,14 @@ module Kitchen
         end
       end
 
+      def prepare_inventory_file
+        info('Preparing inventory file')
+
+        if ansible_inventory_file
+            debug("Copying inventory file from #{ansible_inventory_file} to #{tmp_inventory_file_path}")
+            FileUtils.cp_r(ansible_inventory_file, tmp_inventory_file_path)
+        end
+      end
 
       # localhost ansible_connection=local
       # [example_servers]
@@ -578,7 +600,6 @@ module Kitchen
         debug("Copying playbook from #{playbook} to #{tmp_playbook_path}")
         FileUtils.cp_r(playbook, tmp_playbook_path)
       end
-
 
       def prepare_group_vars
         info('Preparing group_vars')

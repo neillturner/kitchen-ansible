@@ -42,6 +42,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_check, false],
       [:ansible_diff, false],
       [:ansible_platform, ''],
+      [:ansible_connection, 'local'],
       [:update_package_repos, true]
     ].each do |item|
       it "should contain the correct default value for '#{item[0]}'" do
@@ -71,6 +72,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_check, true],
       [:ansible_diff, true],
       [:ansible_platform, 'banana'],
+      [:ansible_connection, 'ssh'],
       [:update_package_repos, false]
     ].each do |item|
       it "should contain the correct set value for '#{item[0]}'" do
