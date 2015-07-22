@@ -20,6 +20,10 @@ platforms:
     driver_config:
       box: chef/centos-6.6
       box_url: https://atlas.hashicorp.com/chef/boxes/centos-6.6
+  - name: debian-jessie
+    driver_config:
+      box: debian/jessie64
+      box_url: https://atlas.hashicorp.com/debian/boxes/jessie64
 
 suites:
   - name: default

@@ -148,7 +148,17 @@ module Kitchen
             else
               if [ ! $(which ruby) ]; then
                 #{update_packages_debian_cmd}
-                #{sudo('apt-get')} -y install ruby1.9.1 ruby1.9.1-dev
+                # default package selection for Debian/Ubuntu machines
+                PACKAGES="ruby1.9.1 ruby1.9.1-dev"
+                if [ "$(lsb_release -si)" = "Debian" ]; then
+                  debvers=$(sed 's/\\..*//' /etc/debian_version)
+                  if [ $debvers -ge 8 ]; then
+                    # this is jessie or better, where ruby1.9.1 is
+                    # no longer in the repositories
+                    PACKAGES="ruby ruby-dev"
+                  fi
+                fi
+                #{sudo('apt-get')} -y install $PACKAGES
               fi
            fi
            INSTALL
