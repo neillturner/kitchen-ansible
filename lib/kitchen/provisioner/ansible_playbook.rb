@@ -155,7 +155,7 @@ module Kitchen
                   if [ $debvers -ge 8 ]; then
                     # this is jessie or better, where ruby1.9.1 is
                     # no longer in the repositories
-                    PACKAGES="ruby ruby-dev"
+                    PACKAGES="ruby ruby-dev ruby2.1 ruby2.1-dev"
                   fi
                 fi
                 #{sudo('apt-get')} -y install $PACKAGES
