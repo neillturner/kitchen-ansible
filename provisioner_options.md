@@ -4,6 +4,7 @@
 key | default value | Notes
 ----|---------------|--------
 ansible_version | "latest"| desired version, affects apt installs
+ansible_sudo | true | drives whether ansible-playbook is executed as root or as the current authenticated user
 ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /~ansible/+archive/ubuntu/ansible or rquillo/ansible
@@ -30,7 +31,7 @@ ansible_inventory_file | hosts | Custom inventory file
 require_ansible_omnibus | false | Set if using omnibus ansible install
 ansible_omnibus_url | | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
-require_chef_for_busser|false|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required. 
+require_chef_for_busser|false|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required.
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
 require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 
@@ -69,10 +70,10 @@ The provisioner can be configured globally or per suite, global settings act as 
   verifier:
     ruby_bindir: '/usr/bin'
 ```
-where /usr/bin is the location of the ruby command. 
+where /usr/bin is the location of the ruby command.
 
 
-in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the defailt manifest site.yml
+in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the default manifest site.yml
 
 To override a setting at the suite-level, specify the setting name under the suite's attributes:
 

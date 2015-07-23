@@ -25,6 +25,7 @@ describe Kitchen::Provisioner::Ansible::Config do
   describe "default values" do
 
     [
+      [:ansible_sudo, true],
       [:ansible_verbose, false],
       [:require_ansible_omnibus, false],
       [:ansible_omnibus_url, nil],
@@ -55,6 +56,7 @@ describe Kitchen::Provisioner::Ansible::Config do
   describe "set values" do
 
     [
+      [:ansible_sudo, false],
       [:ansible_verbose, 4],
       [:require_ansible_omnibus, true],
       [:ansible_omnibus_url, 'http://example.com'],
