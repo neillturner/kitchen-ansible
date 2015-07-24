@@ -252,10 +252,10 @@ module Kitchen
 
       def run_command
         if config[:require_ansible_source]
-          # this is an ugly hack to get around the fact that extra vars uses ' and " 
-          cmd = sudo("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
+          # this is an ugly hack to get around the fact that extra vars uses ' and "
+          cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
         else
-          cmd = sudo("ansible-playbook")
+          cmd = ansible_command("ansible-playbook")
         end
         [
           cmd,
@@ -272,6 +272,10 @@ module Kitchen
         ].join(" ")
       end
 
+      def ansible_command(script)
+        config[:ansible_sudo].nil? || config[:ansible_sudo] == true ? sudo(script) : script
+      end
+
       protected
 
       def load_needed_dependencies!
@@ -286,7 +290,7 @@ module Kitchen
         if [ ! -d #{config[:root_path]}/ansible ]; then
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev 
+            #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
           else
             #{update_packages_debian_cmd}
             #{sudo('apt-get')} -y install git python python-setuptools build-essential python-dev

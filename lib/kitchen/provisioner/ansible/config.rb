@@ -32,6 +32,7 @@ module Kitchen
 
         attr_reader :instance
 
+        default_config :ansible_sudo, true
         default_config :ansible_verbose, false
         default_config :require_ansible_omnibus, false
         default_config :ansible_omnibus_url, nil
