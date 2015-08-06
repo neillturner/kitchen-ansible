@@ -203,6 +203,7 @@ module Kitchen
         prepare_host_vars
         prepare_hosts
         prepare_filter_plugins
+        prepare_lookup_plugins
         prepare_ansible_vault_password_file
         info('Finished Preparing files for transfer')
 
@@ -395,6 +396,10 @@ module Kitchen
         File.join(sandbox_path, 'filter_plugins')
       end
 
+      def tmp_lookup_plugins_dir
+        File.join(sandbox_path, 'lookup_plugins')
+      end
+
       def tmp_ansible_vault_password_file_path
         File.join(sandbox_path, File.basename(ansible_vault_password_file))
       end
@@ -445,6 +450,10 @@ module Kitchen
 
       def filter_plugins
         config[:filter_plugins_path].to_s
+      end
+
+      def lookup_plugins
+        config[:lookup_plugins_path].to_s
       end
 
       def ansible_vault_password_file
@@ -687,6 +696,18 @@ module Kitchen
           FileUtils.cp_r(Dir.glob("#{filter_plugins}/*.py"), tmp_filter_plugins_dir, remove_destination: true)
         else
           info 'nothing to do for filter_plugins'
+        end
+      end
+
+      def prepare_lookup_plugins
+        info('Preparing lookup_plugins')
+        FileUtils.mkdir_p(tmp_lookup_plugins_dir)
+
+        if lookup_plugins && File.directory?(lookup_plugins)
+          debug("Using lookup_plugins from #{lookup_plugins}")
+          FileUtils.cp_r(Dir.glob("#{lookup_plugins}/*.py"), tmp_lookup_plugins_dir, remove_destination: true)
+        else
+          info 'nothing to do for lookup_plugins'
         end
       end
 
