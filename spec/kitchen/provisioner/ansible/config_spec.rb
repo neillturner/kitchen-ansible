@@ -69,6 +69,8 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:tags, ["one", "two"]],
       [:ansible_apt_repo, "ppa:demo/ansible"],
       [:ansible_yum_repo, "https://example.com/ansible.rpm"],
+      [:ansible_sles_repo, "http://example.com/ansible.repo"],
+      [:python_sles_repo, "http://example.com/python.repo"],
       [:chef_bootstrap_url, "https://www.example.com/install_chef.sh"],
       [:requirements_path, "/path/to/req"],
       [:ansible_verbose, true],
