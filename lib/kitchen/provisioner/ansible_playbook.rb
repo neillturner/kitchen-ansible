@@ -302,11 +302,13 @@ module Kitchen
             #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
           else
 	    if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+              #{sudo('zypper')} ar #{python_sles_repo}
               #{update_packages_suse_cmd}
-              #{sudo('zypper')} --non-interactive install python python-devel git python-setuptools python-pip
+              #{sudo('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel
             else
               #{update_packages_debian_cmd}
               #{sudo('apt-get')} -y install git python python-setuptools build-essential python-dev
+            fi
           fi
 
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
