@@ -631,7 +631,7 @@ module Kitchen
         FileUtils.mkdir_p(tmp_group_vars_dir)
 
         unless File.directory?(group_vars)
-          info 'nothing to do for group_vars'
+          info('nothing to do for group_vars')
           return
         end
 
