@@ -90,6 +90,10 @@ module Kitchen
           provisioner.calculate_path('filter_plugins', :directory)
         end
 
+        default_config :lookup_plugins_path do |provisioner|
+          provisioner.calculate_path('lookup_plugins', :directory)
+        end
+
         default_config :ansible_vault_password_file do |provisioner|
           provisioner.calculate_path('ansible-vault-password', :file)
         end
