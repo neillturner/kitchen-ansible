@@ -46,8 +46,10 @@ module Kitchen
 	default_config :ansible_sles_repo, "http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo"
 	default_config :python_sles_repo, "http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo"
         default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
-        default_config :require_chef_for_busser, false
-        default_config :require_ruby_for_busser, true
+        # Until we can truly make busser work without /opt/chef/embedded/bin/gem being installed, we still need Chef Omnibus
+        # (Reference: https://github.com/neillturner/kitchen-ansible/issues/66 )
+        default_config :require_chef_for_busser, true
+        default_config :require_ruby_for_busser, false
         default_config :requirements_path, false
         default_config :ansible_verbose, false
         default_config :ansible_verbosity, 1
