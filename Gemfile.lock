@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kitchen-ansible (0.0.23)
+    kitchen-ansible (0.0.24)
       librarian-ansible
       test-kitchen
 
@@ -61,3 +61,6 @@ DEPENDENCIES
   pry
   rake
   rspec
+
+BUNDLED WITH
+   1.10.3
