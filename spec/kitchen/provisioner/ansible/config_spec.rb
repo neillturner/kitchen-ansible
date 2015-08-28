@@ -28,7 +28,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_sudo, true],
       [:ansible_verbose, false],
       [:require_ansible_omnibus, false],
-      [:ansible_omnibus_url, nil],
+      [:ansible_omnibus_url, 'https://raw.githubusercontent.com/neillturner/omnibus-ansible/master/ansible_install.sh'],
       [:ansible_omnibus_remote_path, '/opt/ansible'],
       [:ansible_version, nil],
       [:require_ansible_repo, true],
