@@ -9,8 +9,8 @@ ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /~ansible/+archive/ubuntu/ansible or rquillo/ansible
 ansible_yum_repo | https://download.fedoraproject.org /pub/epel/6/i386/epel-release-6-8.noarch.rpm | yum repo
-ansible_sles_repo | http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo | zypper suse ansible repo
-python_sles_repo | http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo | zypper suse python repo
+ansible_sles_repo | http://download.opensuse.org /repositories/systemsmanagement/SLE_12/systemsmanagement.repo | zypper suse ansible repo
+python_sles_repo | http://download.opensuse.org /repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo | zypper suse python repo
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
 host_vars_path | host_vars | ansible repo hosts directory
@@ -31,8 +31,8 @@ requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
 ansible_connection | local | Connection for Hosts and Groups
 ansible_inventory_file | hosts | Custom inventory file
-require_ansible_omnibus | false | Set if using omnibus ansible install
-ansible_omnibus_url | | omnibus ansible install location.
+require_ansible_omnibus | false | Set if using omnibus ansible pip install
+ansible_omnibus_url | https://raw.githubusercontent.com /neillturner/omnibus-ansible/master/ansible_install.sh | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
 require_chef_for_busser|false|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required.
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
