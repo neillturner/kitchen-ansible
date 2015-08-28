@@ -35,7 +35,7 @@ module Kitchen
         default_config :ansible_sudo, true
         default_config :ansible_verbose, false
         default_config :require_ansible_omnibus, false
-        default_config :ansible_omnibus_url, nil
+        default_config :ansible_omnibus_url, 'https://raw.githubusercontent.com/neillturner/omnibus-ansible/master/ansible_install.sh'
         default_config :ansible_omnibus_remote_path, '/opt/ansible'
         default_config :ansible_version, nil
         default_config :require_ansible_repo, true
