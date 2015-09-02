@@ -116,8 +116,8 @@ module Kitchen
           # Fix for https://github.com/test-kitchen/busser/issues/12
           if [ -h /usr/bin/ruby ]; then
               L=$(readlink -f /usr/bin/ruby)
-              #{sudo('rm')} /usr/bin/ruby
-              #{sudo('ln')} -s $L /usr/bin/ruby
+              #{sudo_env('rm')} /usr/bin/ruby
+              #{sudo_env('ln')} -s $L /usr/bin/ruby
           fi
           INSTALL
 
@@ -130,30 +130,30 @@ module Kitchen
             if [ -n "$rhelversion" ]; then
             if [ ! -d "/opt/rh/ruby193" ]; then
               echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
-              #{sudo('yum')} install -y centos-release-SCL
-              #{sudo('yum')} install -y ruby193
-              #{sudo('yum')} install -y ruby193-ruby-devel
+              #{sudo_env('yum')} install -y centos-release-SCL
+              #{sudo_env('yum')} install -y ruby193
+              #{sudo_env('yum')} install -y ruby193-ruby-devel
               echo "-----> Enabling ruby193"
               source /opt/rh/ruby193/enable
               echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
-              #{sudo('ldconfig')}
-              #{sudo('ln')} -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
-              #{sudo('ln')} -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+              #{sudo_env('ldconfig')}
+              #{sudo_env('ln')} -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
+              #{sudo_env('ln')} -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
             fi
             else
               if [ ! $(which ruby) ]; then
                 #{update_packages_redhat_cmd}
-                #{sudo('yum')} -y install ruby ruby-devel
+                #{sudo_env('yum')} -y install ruby ruby-devel
               fi
             fi
             else
                 #{update_packages_redhat_cmd}
-                #{sudo('yum')} -y install ruby ruby-devel gcc
+                #{sudo_env('yum')} -y install ruby ruby-devel gcc
             fi
             elif [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
                 #{update_packages_suse_cmd}
-                #{sudo('zypper')} --non-interactive install ruby ruby-devel ca-certificates ca-certificates-cacert ca-certificates-mozilla
-		#{sudo('gem')} sources --add https://rubygems.org/ 
+                #{sudo_env('zypper')} --non-interactive install ruby ruby-devel ca-certificates ca-certificates-cacert ca-certificates-mozilla
+                #{sudo_env('gem')} sources --add https://rubygems.org/
             else
               if [ ! $(which ruby) ]; then
                 #{update_packages_debian_cmd}
@@ -167,7 +167,7 @@ module Kitchen
                     PACKAGES="ruby ruby-dev ruby2.1 ruby2.1-dev"
                   fi
                 fi
-                #{sudo('apt-get')} -y install $PACKAGES
+                #{sudo_env('apt-get')} -y install $PACKAGES
               fi
            fi
            INSTALL
@@ -178,8 +178,9 @@ module Kitchen
             if [ ! -d "/opt/chef" ]
             then
               echo "-----> Installing Chef Omnibus to install busser to run tests"
+              #{export_http_proxy}
               do_download #{chef_url} /tmp/install.sh
-              #{sudo('sh')} /tmp/install.sh
+              #{sudo_env('sh')} /tmp/install.sh
             fi
             INSTALL
         end
@@ -190,7 +191,7 @@ module Kitchen
       def init_command
         dirs = %w{modules roles group_vars host_vars}.
           map { |dir| File.join(config[:root_path], dir) }.join(" ")
-        cmd = "#{sudo('rm')} -rf #{dirs};"
+        cmd = "#{sudo_env('rm')} -rf #{dirs};"
         cmd = cmd+" mkdir -p #{config[:root_path]}"
         debug(cmd)
         cmd
@@ -229,19 +230,19 @@ module Kitchen
 
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
-            sudo("bash -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+            sudo_env("bash -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
         ]
 
         commands << [
-            sudo('cp'),File.join(config[:root_path], 'ansible.cfg'),'/etc/ansible',
+            sudo_env('cp'),File.join(config[:root_path], 'ansible.cfg'),'/etc/ansible',
         ].join(' ')
 
         commands << [
-            sudo('cp -r'), File.join(config[:root_path],'group_vars'), '/etc/ansible/.',
+            sudo_env('cp -r'), File.join(config[:root_path],'group_vars'), '/etc/ansible/.',
         ].join(' ')
 
         commands << [
-            sudo('cp -r'), File.join(config[:root_path],'host_vars'), '/etc/ansible/.',
+            sudo_env('cp -r'), File.join(config[:root_path],'host_vars'), '/etc/ansible/.',
         ].join(' ')
 
         if galaxy_requirements
@@ -267,6 +268,12 @@ module Kitchen
         else
           cmd = ansible_command("ansible-playbook")
         end
+        if https_proxy
+          cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}"
+        end
+        if http_proxy
+          cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
+        end
         [
           cmd,
           ansible_inventory_flag,
@@ -283,7 +290,7 @@ module Kitchen
       end
 
       def ansible_command(script)
-        config[:ansible_sudo].nil? || config[:ansible_sudo] == true ? sudo(script) : script
+        config[:ansible_sudo].nil? || config[:ansible_sudo] == true ? sudo_env(script) : script
       end
 
       protected
@@ -299,22 +306,24 @@ module Kitchen
         <<-INSTALL
         if [ ! -d #{config[:root_path]}/ansible ]; then
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            #{install_epel_repo}
             #{update_packages_redhat_cmd}
-            #{sudo('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
+            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
           else
-	    if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
-              #{sudo('zypper')} ar #{python_sles_repo}
+            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+              #{sudo_env('zypper')} ar #{python_sles_repo}
               #{update_packages_suse_cmd}
-              #{sudo('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel
+              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel
             else
               #{update_packages_debian_cmd}
-              #{sudo('apt-get')} -y install git python python-setuptools build-essential python-dev
+              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev
             fi
           fi
 
+          #{export_http_proxy}
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
-          #{sudo('easy_install')} pip
-          #{sudo('pip')} install paramiko PyYAML Jinja2 httplib2
+          #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
       end
@@ -326,13 +335,16 @@ module Kitchen
         else
           ""
         end
+
         <<-INSTALL
         #{Util.shell_helpers}
 
         if [ ! -d "#{config[:ansible_omnibus_remote_path]}" ]; then
           echo "-----> Installing Ansible Omnibus"
+          #{export_http_proxy}
+          #{install_epel_repo}
           do_download #{config[:ansible_omnibus_url]} /tmp/ansible_install.sh
-          #{sudo('sh')} /tmp/ansible_install.sh #{version}
+          #{sudo_env('sh')} /tmp/ansible_install.sh #{version}
         fi
         INSTALL
       end
@@ -343,24 +355,24 @@ module Kitchen
           #{update_packages_debian_cmd}
 
           ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
-          #{sudo('apt-get')} -y install apt-utils git
+          #{sudo_env('apt-get')} -y install apt-utils git
 
           ## Fix debconf tty warning messages
           export DEBIAN_FRONTEND=noninteractive
 
           ## 13.10, 14.04 include add-apt-repository in software-properties-common
-          #{sudo('apt-get')} -y install software-properties-common
+          #{sudo_env('apt-get')} -y install software-properties-common
 
           ## 10.04, 12.04 include add-apt-repository in
-          #{sudo('apt-get')} -y install python-software-properties
+          #{sudo_env('apt-get')} -y install python-software-properties
 
           ## 10.04 version of add-apt-repository doesn't accept --yes
           ## later versions require interaction from user, so we must specify --yes
           ## First try with -y flag, else if it fails, try without.
           ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
-          #{sudo('add-apt-repository')} -y #{ansible_apt_repo} || #{sudo('add-apt-repository')} #{ansible_apt_repo}
-          #{sudo('apt-get')} update
-          #{sudo('apt-get')} -y install ansible
+          #{sudo_env('add-apt-repository')} -y #{ansible_apt_repo} || #{sudo_env('add-apt-repository')} #{ansible_apt_repo}
+          #{sudo_env('apt-get')} update
+          #{sudo_env('apt-get')} -y install ansible
         fi
         INSTALL
       end
@@ -368,10 +380,10 @@ module Kitchen
       def install_suse_command
         <<-INSTALL
         if [ ! $(which ansible) ]; then
-          #{sudo('zypper')} ar #{python_sles_repo}
-          #{sudo('zypper')} ar #{ansible_sles_repo}
+          #{sudo_env('zypper')} ar #{python_sles_repo}
+          #{sudo_env('zypper')} ar #{ansible_sles_repo}
           #{update_packages_suse_cmd}
-          #{sudo('zypper')} --non-interactive install ansible
+          #{sudo_env('zypper')} --non-interactive install ansible
         fi
         INSTALL
       end
@@ -379,9 +391,10 @@ module Kitchen
       def install_redhat_command
         <<-INSTALL
         if [ ! $(which ansible) ]; then
-          #{sudo('rpm')} -ivh #{ansible_yum_repo}
+          #{install_epel_repo}
+          #{sudo_env('rpm')} -ivh #{ansible_yum_repo}
           #{update_packages_redhat_cmd}
-          #{sudo('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
+          #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
         fi
         INSTALL
       end
@@ -389,11 +402,12 @@ module Kitchen
       def install_amazon_linux_command
         <<-INSTALL
         if [ ! $(which ansible) ]; then
-          #{sudo('yum-config-manager')} --enable epel/x86_64
-          #{sudo('yum')} -y install ansible#{ansible_redhat_version} git
-          #{sudo('alternatives')} --set python /usr/bin/python2.6
-          #{sudo('yum')} clean all
-          #{sudo('yum')} install yum-python26 -y
+          #{install_epel_repo}
+          #{sudo_env('yum-config-manager')} --enable epel/x86_64
+          #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} git
+          #{sudo_env('alternatives')} --set python /usr/bin/python2.6
+          #{sudo_env('yum')} clean all
+          #{sudo_env('yum')} install yum-python26 -y
         fi
         INSTALL
       end
@@ -524,15 +538,15 @@ module Kitchen
       end
 
       def update_packages_debian_cmd
-        config[:update_package_repos] ? "#{sudo('apt-get')} update" : nil
+        config[:update_package_repos] ? "#{sudo_env('apt-get')} update" : nil
       end
 
       def update_packages_suse_cmd
-        config[:update_package_repos] ? "#{sudo('zypper')} --gpg-auto-import-keys ref" : nil
+        config[:update_package_repos] ? "#{sudo_env('zypper')} --gpg-auto-import-keys ref" : nil
       end
 
       def update_packages_redhat_cmd
-        config[:update_package_repos] ? "#{sudo('yum')} makecache" : nil
+        config[:update_package_repos] ? "#{sudo_env('yum')} makecache" : nil
       end
 
       def extra_vars
@@ -571,7 +585,7 @@ module Kitchen
       end
 
       def ansible_sles_repo
-	config[:ansible_sles_repo]
+        config[:ansible_sles_repo]
       end
 
       def python_sles_repo
@@ -588,6 +602,32 @@ module Kitchen
 
       def require_chef_for_busser
         config[:require_chef_for_busser]
+      end
+      
+      def install_epel_repo
+        config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil 
+       end      
+
+      def http_proxy
+        config[:http_proxy]
+      end
+
+       def https_proxy
+         config[:https_proxy]
+      end
+
+      def sudo_env(pm)
+        s = https_proxy ? "https_proxy=#{https_proxy}" : nil
+        p = http_proxy ? "http_proxy=#{http_proxy}" : nil
+        p || s ? "#{sudo('env')} #{p} #{s} #{pm}" : "#{sudo(pm)}"
+      end
+
+      def export_http_proxy
+        cmd = ""
+        cmd = " HTTP_PROXY=#{http_proxy}" if http_proxy
+        cmd = "#{cmd} HTTPS_PROXY=#{https_proxy}" if https_proxy
+        cmd = "export #{cmd}" if cmd != ""
+        cmd
       end
 
       def prepare_roles

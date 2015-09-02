@@ -46,7 +46,9 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_diff, false],
       [:ansible_platform, ''],
       [:ansible_connection, 'local'],
-      [:update_package_repos, true]
+      [:update_package_repos, true],
+      [:http_proxy, nil],
+      [:https_proxy, nil]
     ].each do |item|
       it "should contain the correct default value for '#{item[0]}'" do
       c = Kitchen::Provisioner::Ansible::Config.new({})

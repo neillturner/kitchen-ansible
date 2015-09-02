@@ -39,6 +39,7 @@ module Kitchen
         default_config :ansible_omnibus_remote_path, '/opt/ansible'
         default_config :ansible_version, nil
         default_config :require_ansible_repo, true
+        default_config :enable_yum_epel, false
         default_config :extra_vars, {}
         default_config :tags, []
         default_config :ansible_apt_repo, "ppa:ansible/ansible"
@@ -59,6 +60,8 @@ module Kitchen
         default_config :ansible_connection, 'local'
         default_config :update_package_repos, true
         default_config :require_ansible_source, false
+        default_config :http_proxy, nil
+        default_config :https_proxy, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) or
