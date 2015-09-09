@@ -37,6 +37,7 @@ requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
 ansible_connection | local | Connection for Hosts and Groups
 ansible_inventory_file | hosts | Custom inventory file
+ansible_extra_flags | '' | Additional options to pass to `ansible-playbook` -- e.g.: `'--skip-tags=redis'`
 require_ruby_for_busser|false|install ruby to run busser for tests
 require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required.
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install

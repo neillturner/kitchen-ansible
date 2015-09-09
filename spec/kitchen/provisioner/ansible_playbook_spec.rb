@@ -37,7 +37,8 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       :log_level => :info,
       :playbook => "playbook.yml",
       :ansible_vault_password_file => 'spec/fixtures/vault_password_file',
-      :ansible_inventory_file => 'spec/fixtures/hosts'
+      :ansible_inventory_file => 'spec/fixtures/hosts',
+      :ansible_extra_flags => '--skip-tags=skipme'
     }
   end
 
@@ -63,7 +64,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
   describe "#run_command" do
     it "should give a sane run_command" do
-      expect(provisioner.run_command).to match(/ansible-playbook/)
+      expect(provisioner.run_command).to match(/ansible-playbook.*--skip-tags=skipme.*/)
     end
   end
 
