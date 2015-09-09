@@ -603,29 +603,35 @@ module Kitchen
       def require_chef_for_busser
         config[:require_chef_for_busser]
       end
-      
+
       def install_epel_repo
-        config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil 
-       end      
+        config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil
+       end
 
       def http_proxy
         config[:http_proxy]
       end
 
-       def https_proxy
-         config[:https_proxy]
+      def https_proxy
+        config[:https_proxy]
+      end
+
+      def no_proxy
+        config[:no_proxy]
       end
 
       def sudo_env(pm)
         s = https_proxy ? "https_proxy=#{https_proxy}" : nil
         p = http_proxy ? "http_proxy=#{http_proxy}" : nil
-        p || s ? "#{sudo('env')} #{p} #{s} #{pm}" : "#{sudo(pm)}"
+        n = no_proxy ? "no_proxy=#{no_proxy}" : nil
+        p || s ? "#{sudo('env')} #{p} #{s} #{n} #{pm}" : "#{sudo(pm)}"
       end
 
       def export_http_proxy
         cmd = ""
         cmd = " HTTP_PROXY=#{http_proxy}" if http_proxy
         cmd = "#{cmd} HTTPS_PROXY=#{https_proxy}" if https_proxy
+        cmd = "#{cmd} NO_PROXY=#{no_proxy}" if no_proxy
         cmd = "export #{cmd}" if cmd != ""
         cmd
       end

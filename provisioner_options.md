@@ -17,6 +17,7 @@ ansible_omnibus_url | https://raw.githubusercontent.com /neillturner/omnibus-ans
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
 http_proxy | nil | use http proxy when installing puppet, packages and running puppet
 https_proxy | nil | use https proxy when installing puppet, packages and running puppet
+no_proxy | nil | list of URLs or IPs that should be excluded from proxying
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
 host_vars_path | host_vars | ansible repo hosts directory
