@@ -6,17 +6,17 @@
 
 A Test Kitchen Provisioner for Ansible
 
-The provisioner works by passing the ansible repository based on attributes in .kitchen.yml & calling ansible-playbook.
+The provisioner works by passing the ansible repository based on attributes in `.kitchen.yml` & calling `ansible-playbook`.
 
-It installs Ansible on the server and runs ansible-playbook using host localhost.
+It installs Ansible on the server and runs `ansible-playbook` using host localhost.
 
-Has been tested against the Ubuntu 1204 and Centos 6.5 boxes running in vagrant/virtualbox.
+Has been tested against the Ubuntu 12.04 and Centos 6.5 boxes running in vagrant/virtualbox.
 
 ## Requirements
 You'll need a driver box without a chef installation so ansible can be installed.
 
 ## Installation & Setup
-You'll need the test-kitchen & kitchen-ansible gem's installed in your system, along with kitchen-vagrant or some other suitable driver for test-kitchen.
+You'll need the test-kitchen & kitchen-ansible gems installed in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or some other suitable driver for test-kitchen.
 
 Please see the Provisioner Options (https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md).
 
@@ -52,13 +52,13 @@ platforms:
 verifier:
   ruby_bindir: '/usr/bin'      
 ```
-**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
+**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the `.kitchen.yml` file
 
 ```yaml
   verifier:
     ruby_bindir: '/usr/bin'
 ```
-where /usr/bin is the location of the ruby command. 
+where `/usr/bin` is the location of the ruby command. 
 
 
 ## Test-Kitchen/Ansible/Serverspec
