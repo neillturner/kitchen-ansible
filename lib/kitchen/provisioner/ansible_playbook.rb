@@ -285,6 +285,7 @@ module Kitchen
           ansible_vault_flag,
           extra_vars,
           tags,
+          ansible_extra_flags,
           "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
         ].join(" ")
       end
@@ -531,6 +532,10 @@ module Kitchen
 
       def ansible_inventory_flag
           config[:ansible_inventory_file] ? "--inventory-file=#{File.join(config[:root_path], File.basename(config[:ansible_inventory_file]))}" : "--inventory-file=#{File.join(config[:root_path], 'hosts')}"
+      end
+
+      def ansible_extra_flags
+        config[:ansible_extra_flags] || ''
       end
 
       def ansible_platform
