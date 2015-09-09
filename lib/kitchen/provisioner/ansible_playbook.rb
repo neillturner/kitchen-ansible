@@ -274,7 +274,7 @@ module Kitchen
         if http_proxy
           cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
         end
-        [
+        result = [
           cmd,
           ansible_inventory_flag,
           "-c #{config[:ansible_connection]}",
@@ -287,6 +287,8 @@ module Kitchen
           tags,
           "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
         ].join(" ")
+        info("Going to invoke ansible-playbook with: #{result}")
+        result
       end
 
       def ansible_command(script)
