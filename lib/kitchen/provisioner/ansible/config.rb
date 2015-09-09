@@ -44,8 +44,8 @@ module Kitchen
         default_config :tags, []
         default_config :ansible_apt_repo, "ppa:ansible/ansible"
         default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
-	default_config :ansible_sles_repo, "http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo"
-	default_config :python_sles_repo, "http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo"
+    	default_config :ansible_sles_repo, "http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo"
+    	default_config :python_sles_repo, "http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo"
         default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
         # Until we can truly make busser work without /opt/chef/embedded/bin/gem being installed, we still need Chef Omnibus
         # (Reference: https://github.com/neillturner/kitchen-ansible/issues/66 )
@@ -62,6 +62,7 @@ module Kitchen
         default_config :require_ansible_source, false
         default_config :http_proxy, nil
         default_config :https_proxy, nil
+        default_config :no_proxy, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) or
