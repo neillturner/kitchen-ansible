@@ -168,6 +168,12 @@ module Kitchen
                   fi
                 fi
                 #{sudo_env('apt-get')} -y install $PACKAGES
+                if [ $debvers -eq 6 ]; then
+                    # in squeeze we need to update alternatives
+                    # for enable ruby1.9.1
+                    ALTERNATIVES_STRING="--install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 10 --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz --slave /usr/bin/erb erb /usr/bin/erb1.9.1 --slave /usr/bin/gem gem /usr/bin/gem1.9.1 --slave /usr/bin/irb irb /usr/bin/irb1.9.1 --slave /usr/bin/rake rake /usr/bin/rake1.9.1 --slave /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1 --slave /usr/bin/testrb testrb /usr/bin/testrb1.9.1 --slave /usr/share/man/man1/erb.1.gz erb.1.gz /usr/share/man/man1/erb1.9.1.1.gz --slave /usr/share/man/man1/gem.1.gz gem.1.gz /usr/share/man/man1/gem1.9.1.1.gz --slave /usr/share/man/man1/irb.1.gz irb.1.gz /usr/share/man/man1/irb1.9.1.1.gz --slave /usr/share/man/man1/rake.1.gz rake.1.gz /usr/share/man/man1/rake1.9.1.1.gz --slave /usr/share/man/man1/rdoc.1.gz rdoc.1.gz /usr/share/man/man1/rdoc1.9.1.1.gz --slave /usr/share/man/man1/testrb.1.gz testrb.1.gz /usr/share/man/man1/testrb1.9.1.1.gz"
+                    #{sudo_env('update-alternatives')} $ALTERNATIVES_STRING
+                fi
               fi
            fi
            INSTALL
