@@ -9,6 +9,8 @@ ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /~ansible/+archive/ubuntu/ansible or rquillo/ansible
 ansible_yum_repo | https://download.fedoraproject.org /pub/epel/6/i386/epel-release-6-8.noarch.rpm | yum repo
+Change to ||
+for RH/Centos7 | http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm | 
 enable_yum_epel  | false | enable yum EPEL repo  
 ansible_sles_repo | http://download.opensuse.org /repositories/systemsmanagement/SLE_12/systemsmanagement.repo | zypper suse ansible repo
 python_sles_repo | http://download.opensuse.org /repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo | zypper suse python repo
