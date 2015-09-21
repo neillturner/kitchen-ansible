@@ -11,8 +11,8 @@ ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /
 ansible_yum_repo | https://download.fedoraproject.org /pub/epel/6/i386/epel-release-6-8.noarch.rpm | yum repo
 _for RH/Centos7 change to_ | http://dl.fedoraproject.org /pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm | 
 enable_yum_epel  | false | enable yum EPEL repo  
-ansible_sles_repo | http://download.opensuse.org /repositories/systemsmanagement/SLE_12/systemsmanagement.repo | zypper suse ansible repo
-python_sles_repo | http://download.opensuse.org /repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo | zypper suse python repo
+ansible_sles_repo | http://download.opensuse.org/repositories /systemsmanagement/SLE_12/systemsmanagement.repo | zypper suse ansible repo
+python_sles_repo | http://download.opensuse.org/repositories /devel:/languages:/python/SLE_12/devel:languages:python.repo | zypper suse python repo
 require_ansible_omnibus | false | Set if using omnibus ansible pip install
 ansible_omnibus_url | https://raw.githubusercontent.com /neillturner/omnibus-ansible/master/ansible_install.sh | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
