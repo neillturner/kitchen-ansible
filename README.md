@@ -163,7 +163,6 @@ To test different playbooks in different suites you can easily overwrite the pro
         playbook: web_app.yml
         hosts: web_application
 ```
-
 ### Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
 ```yaml
