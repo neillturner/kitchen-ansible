@@ -55,8 +55,14 @@ verifier:
 **NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the `.kitchen.yml` file
 
 ```yaml
-  verifier:
-    ruby_bindir: '/usr/bin'
+provisioner:
+  name: ansible_playbook
+  hosts: test-kitchen
+  require_chef_for_busser: false
+  require_ruby_for_busser: true
+
+verifier:
+  ruby_bindir: '/usr/bin'
 ```
 where `/usr/bin` is the location of the ruby command. 
 
