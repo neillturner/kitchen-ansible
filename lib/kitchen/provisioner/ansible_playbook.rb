@@ -337,7 +337,7 @@ module Kitchen
           #{export_http_proxy}
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
           #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install paramiko PyYAML Jinja2 httplib2
+          #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
       end
