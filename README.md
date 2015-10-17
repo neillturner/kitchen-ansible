@@ -69,6 +69,10 @@ where `/usr/bin` is the location of the ruby command.
 
 ## Test-Kitchen/Ansible/Serverspec
 
+To run the verify step with the test-kitchen serverspec setup your ansible repository as follows:
+
+NOTE: See https://github.com/delphix/ansible-package-caching-proxy for an example.
+
 In the root directory for your Ansible role:
 
 Create a `.kitchen.yml`, much like one the described above:
