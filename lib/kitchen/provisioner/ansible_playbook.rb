@@ -279,6 +279,9 @@ module Kitchen
         else
           cmd = ansible_command("ansible-playbook")
         end
+        if config[:ansible_binary_path]
+          cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
+        end
         if https_proxy
           cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}"
         end
