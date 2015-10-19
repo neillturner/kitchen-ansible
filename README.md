@@ -48,9 +48,9 @@ platforms:
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
-      
+
 verifier:
-  ruby_bindir: '/usr/bin'      
+  ruby_bindir: '/usr/bin'
 ```
 **NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the `.kitchen.yml` file
 
@@ -64,7 +64,7 @@ provisioner:
 verifier:
   ruby_bindir: '/usr/bin'
 ```
-where `/usr/bin` is the location of the ruby command. 
+where `/usr/bin` is the location of the ruby command.
 
 
 ## Test-Kitchen/Ansible/Serverspec
@@ -76,7 +76,7 @@ NOTE: See https://github.com/delphix/ansible-package-caching-proxy for an exampl
 In the root directory for your Ansible role:
 
 Create a `.kitchen.yml`, much like one the described above:
-    
+
 ```yaml
   ---
   driver:
@@ -99,14 +99,14 @@ Create a `.kitchen.yml`, much like one the described above:
          box: chef/centos-7.0
 
   verifier:
-    ruby_bindir: '/usr/bin'    
+    ruby_bindir: '/usr/bin'
 
   suites:
     - name: default
 ```
 
 Then for serverspec:
-    
+
 ```bash
   mkdir -p test/integration/default/serverspec/localhost
   echo "require 'serverspec'" >> test/integration/default/serverspec/spec_helper.rb
@@ -114,7 +114,7 @@ Then for serverspec:
 ```
 
 Create a basic playbook `test/integration/default.yml` so that kitchen can use your role (this should include any dependencies for your role):
-    
+
 ```yaml
   ---
   - name: wrapper playbook for kitchen testing "my_role"
@@ -124,7 +124,7 @@ Create a basic playbook `test/integration/default.yml` so that kitchen can use y
 ```
 
 Create your serverspec tests in `test/integration/default/serverspec/localhost/my_roles_spec.rb`:
-    
+
 ```ruby
   require 'spec_helper'
 
@@ -202,24 +202,24 @@ platforms:
 [packer]: https://packer.io
 [bento]: https://github.com/chef/bento
 
-## Custom ServerSpec or AnsibleSpec Invocation 
+## Custom ServerSpec or AnsibleSpec Invocation
 
- Instead of using the busser use a custom serverspec invocation using [shell verifier](https://github.com/higanworks/kitchen-verifier-shell) to call it. 
+ Instead of using the busser use a custom serverspec invocation using [shell verifier](https://github.com/higanworks/kitchen-verifier-shell) to call it.
 With such setup there is no dependency on busser and any other chef library.
 
-Also you can specify you tests in a different directory structure or even call [ansible spec](https://github.com/volanja/ansible_spec) instead of server spec and have tests in ansible_spec structure 
+Also you can specify you tests in a different directory structure or even call [ansible spec](https://github.com/volanja/ansible_spec) instead of server spec and have tests in ansible_spec structure
 
 Using a structure like
 ```yaml
-verifier:                                                                       
-  name: shell                                                                   
-  remote_exec: true                                                             
-  command: |                                                                    
-    sudo -s <<SERVERSPEC                                                        
-    cd /opt/gdc/serverspec-core                                                 
-    export SERVERSPEC_ENV=$EC2DATA_ENVIRONMENT                                  
-    export SERVERSPEC_BACKEND=exec                                              
-    serverspec junit=true tag=~skip_in_kitchen check:role:$EC2DATA_TYPE               
+verifier:
+  name: shell
+  remote_exec: true
+  command: |
+    sudo -s <<SERVERSPEC
+    cd /opt/gdc/serverspec-core
+    export SERVERSPEC_ENV=$EC2DATA_ENVIRONMENT
+    export SERVERSPEC_BACKEND=exec
+    serverspec junit=true tag=~skip_in_kitchen check:role:$EC2DATA_TYPE
     SERVERSPEC
 ```
 
@@ -229,3 +229,20 @@ Use a `Rakefile` similar to one in https://github.com/vincentbernat/serverspec-e
 With such approach we can achieve flexibility of running same test suite both in test kitchen and actual, even production, instances.
 
 Beware: kitchen-shell-verifier is not yet merged into test-kitchen upstream so using separate gem is unavoidable so far
+
+## Tips
+
+You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing
+an environment variable. Add folloing to your .kitchen.yml
+
+```yaml
+provisioner:
+  name: ansible_playbook
+  ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+```
+
+run:
+
+`ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge`
+
+You save a LOT of time not running working instructions.
