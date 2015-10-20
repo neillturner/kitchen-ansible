@@ -223,6 +223,7 @@ module Kitchen
         prepare_additional_copy_path
         prepare_host_vars
         prepare_hosts
+        prepare_spec
         prepare_filter_plugins
         prepare_lookup_plugins
         prepare_ansible_vault_password_file
@@ -449,6 +450,10 @@ module Kitchen
         File.join(sandbox_path, 'roles')
       end
 
+      def tmp_spec_dir
+        File.join(sandbox_path, 'spec')
+      end
+
       def tmp_filter_plugins_dir
         File.join(sandbox_path, 'filter_plugins')
       end
@@ -491,6 +496,10 @@ module Kitchen
 
       def modules
         config[:modules_path]
+      end
+
+      def spec
+        'spec'
       end
 
       def group_vars
@@ -789,6 +798,19 @@ module Kitchen
           FileUtils.cp_r(Dir.glob("#{modules}/*"), tmp_modules_dir, remove_destination: true)
         else
           info 'nothing to do for modules'
+        end
+      end
+
+      def prepare_spec
+        info('Preparing spec')
+
+        FileUtils.mkdir_p(tmp_spec_dir)
+
+        if spec && File.directory?(spec)
+          debug("Using spec from #{spec}")
+          FileUtils.cp_r(Dir.glob("#{spec}/*"), tmp_spec_dir, remove_destination: true)
+        else
+          info 'nothing to do for spec'
         end
       end
 

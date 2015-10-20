@@ -67,7 +67,7 @@ verifier:
 where `/usr/bin` is the location of the ruby command.
 
 
-## Test-Kitchen/Ansible/Serverspec
+## Test-Kitchen Serverspec
 
 To run the verify step with the test-kitchen serverspec setup your ansible repository as follows:
 
@@ -145,7 +145,62 @@ Create your serverspec tests in `test/integration/default/serverspec/localhost/m
   end
 ```
 
-### Testing multiple playbooks
+## Test-Kitchen Ansiblespec
+
+test-kitchen normally uses tests setup in test/integration/.... directory. Ansiblespec format puts the test with the
+roles in the ansible repository. Also the spec helper is specified in the ansible repository under the spec directory.
+
+To implement this will test-kitchen setup the ansible repository with:
+
+the spec files with the roles.
+
+the spec_helper in the spec folder and a dummy test/integration folder.
+
+a dummy test/integration/<suite>/ansiblespec/localhost/<suite>_spec.rb containing just a dummy comment.
+
+See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+
+```
+.
++-- roles
+¦   +-- mariadb
+¦   ¦   +-- spec
+¦   ¦   ¦   +-- mariadb_spec.rb
+¦   ¦   +-- tasks
+¦   ¦   ¦   +-- main.yml
+¦   ¦   +-- templates
+¦   ¦       +-- mariadb.repo
+¦   +-- nginx
+¦       +-- handlers
+¦       ¦   +-- main.yml
+¦       +-- spec
+¦       ¦   +-- nginx_spec.rb
+¦       +-- tasks
+¦       ¦   +-- main.yml
+¦       +-- templates
+¦       ¦   +-- nginx.repo
+¦       +-- vars
+¦           +-- main.yml
++-- spec
+    +-- spec_helper.rb
++-- test
+    +-- integration
+        +-- default      # name of test-kitchen suite
+            +-- ansiblespec
+                +-- localhost
+                    +-- default_spec.rb   # <suite>_spec.rb
+```
+
+In the root directory for your Ansible role create a `.kitchen.yml`, the same as for test-kitchen serverspec as above.
+
+When test-kitchen runs the verify step it will detect the dummy /test/integration/<suite>/ansiblespec directory and install the
+busser-ansiblespec plugin instead of the normal busser-serverspec plugin and serverspec will be called using the ansiblespec conventions.
+This will run tests against all the roles in the playbook.
+
+See [busser-ansiblespec](https://github.com/neillturner/busser-ansiblespec)
+
+
+## Testing multiple playbooks
 To test different playbooks in different suites you can easily overwrite the provisioner settings in each suite seperately.
 ```yaml
 ---
@@ -173,7 +228,7 @@ To test different playbooks in different suites you can easily overwrite the pro
         playbook: web_app.yml
         hosts: web_application
 ```
-### Alternative Virtualization/Cloud providers for Vagrant
+## Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
 ```yaml
 platforms:
@@ -202,33 +257,6 @@ platforms:
 [packer]: https://packer.io
 [bento]: https://github.com/chef/bento
 
-## Custom ServerSpec or AnsibleSpec Invocation
-
- Instead of using the busser use a custom serverspec invocation using [shell verifier](https://github.com/higanworks/kitchen-verifier-shell) to call it.
-With such setup there is no dependency on busser and any other chef library.
-
-Also you can specify you tests in a different directory structure or even call [ansible spec](https://github.com/volanja/ansible_spec) instead of server spec and have tests in ansible_spec structure
-
-Using a structure like
-```yaml
-verifier:
-  name: shell
-  remote_exec: true
-  command: |
-    sudo -s <<SERVERSPEC
-    cd /opt/gdc/serverspec-core
-    export SERVERSPEC_ENV=$EC2DATA_ENVIRONMENT
-    export SERVERSPEC_BACKEND=exec
-    serverspec junit=true tag=~skip_in_kitchen check:role:$EC2DATA_TYPE
-    SERVERSPEC
-```
-
-where `serverspec` is a wrapper around `rake` invocation.
-Use a `Rakefile` similar to one in https://github.com/vincentbernat/serverspec-example.
-
-With such approach we can achieve flexibility of running same test suite both in test kitchen and actual, even production, instances.
-
-Beware: kitchen-shell-verifier is not yet merged into test-kitchen upstream so using separate gem is unavoidable so far
 
 ## Tips
 
