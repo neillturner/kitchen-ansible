@@ -150,13 +150,13 @@ Create your serverspec tests in `test/integration/default/serverspec/localhost/m
 test-kitchen normally uses tests setup in test/integration/.... directory. Ansiblespec format puts the test with the
 roles in the ansible repository. Also the spec helper is specified in the ansible repository under the spec directory.
 
-To implement this will test-kitchen setup the ansible repository with:
+To implement this with test-kitchen setup the ansible repository with:
 
-the spec files with the roles.
+* the spec files with the roles.
 
-the spec_helper in the spec folder and a dummy test/integration folder.
+* the spec_helper in the spec folder.
 
-a dummy test/integration/<suite>/ansiblespec/localhost/<suite>_spec.rb containing just a dummy comment.
+* a dummy test/integration/<suite>/ansiblespec/localhost/<suite>_spec.rb containing just a dummy comment.
 
 See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
 
@@ -191,11 +191,13 @@ See example [https://github.com/neillturner/ansible_repo](https://github.com/nei
                     +-- default_spec.rb   # <suite>_spec.rb
 ```
 
-In the root directory for your Ansible role create a `.kitchen.yml`, the same as for test-kitchen serverspec as above.
+In the root directory for your Ansible role create a `.kitchen.yml`, the same as for test-kitchen serverspec above.
 
-When test-kitchen runs the verify step it will detect the dummy /test/integration/<suite>/ansiblespec directory and install the
-busser-ansiblespec plugin instead of the normal busser-serverspec plugin and serverspec will be called using the ansiblespec conventions.
-This will run tests against all the roles in the playbook.
+When test-kitchen runs the verify step it will
+* detect the dummy `/test/integration/<suite>/ansiblespec` directory
+* install the busser-ansiblespec plugin instead of the normal busser-serverspec plugin
+* serverspec will be called using the ansiblespec conventions.
+* run tests against all the roles in the playbook.
 
 See [busser-ansiblespec](https://github.com/neillturner/busser-ansiblespec)
 
