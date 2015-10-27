@@ -289,6 +289,10 @@ module Kitchen
         if http_proxy
           cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
         end
+        if ansible_roles_path
+          cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}"
+        end
+
         result = [
           cmd,
           ansible_inventory_flag,
@@ -666,6 +670,21 @@ module Kitchen
         cmd
       end
 
+      def ansible_roles_path
+        roles_paths = []
+        roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
+        additional_files.each do |additional_file|
+          roles_paths << File.join(config[:root_path], File.basename(additional_file))
+        end
+        if roles_paths.empty?
+          info('No roles have been set.')
+          nil
+        else
+          debug("Setting roles_path inside VM to #{ roles_paths.join(':') }")
+          roles_paths.join(':')
+        end
+      end
+
       def prepare_roles
         info('Preparing roles')
         debug("Using roles from #{roles}")
@@ -683,27 +702,17 @@ module Kitchen
         FileUtils.cp_r(Dir.glob("#{roles}/*"), File.join(tmp_roles_dir, role_name))
       end
 
-      # /etc/ansible/ansible.cfg should contain
-      # roles_path = /tmp/kitchen/roles
+      # copy ansible.cfg if found in root of repo
       def prepare_ansible_cfg
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-
-        roles_paths = []
-        roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
-        additional_files.each do |additional_file|
-          roles_paths << File.join(config[:root_path], File.basename(additional_file))
-        end
-
-        if roles_paths.empty?
-          info('No roles have been set. empty ansible.cfg generated')
-          File.open(ansible_config_file, "wb") do |file|
-             file.write("#no roles path specified\n")
-          end
+        if File.exist?('ansible.cfg')
+           info("Found existing ansible.cfg")
+           FileUtils.cp_r('ansible.cfg', ansible_config_file)
         else
-          debug("Setting roles_path inside VM to #{ roles_paths.join(':') }")
-          File.open( ansible_config_file, "wb") do |file|
-             file.write("[defaults]\nroles_path = #{ roles_paths.join(':') }\n")
+          info('Empty ansible.cfg generated')
+          File.open(ansible_config_file, "wb") do |file|
+             file.write("#no config parameters\n")
           end
         end
       end
