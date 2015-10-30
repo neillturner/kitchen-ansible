@@ -224,6 +224,8 @@ module Kitchen
         prepare_host_vars
         prepare_hosts
         prepare_spec
+        prepare_library_plugins
+        prepare_callback_plugins
         prepare_filter_plugins
         prepare_lookup_plugins
         prepare_ansible_vault_password_file
@@ -458,6 +460,14 @@ module Kitchen
         File.join(sandbox_path, 'spec')
       end
 
+      def tmp_library_plugins_dir
+        File.join(sandbox_path, 'library')
+      end
+
+      def tmp_callback_plugins_dir
+        File.join(sandbox_path, 'callback_plugins')
+      end
+
       def tmp_filter_plugins_dir
         File.join(sandbox_path, 'filter_plugins')
       end
@@ -516,6 +526,14 @@ module Kitchen
 
       def host_vars
         config[:host_vars_path].to_s
+      end
+
+      def library_plugins
+        config[:library_plugins_path].to_s
+      end
+
+      def callback_plugins
+        config[:callback_plugins_path].to_s
       end
 
       def filter_plugins
@@ -820,6 +838,30 @@ module Kitchen
           FileUtils.cp_r(Dir.glob("#{spec}/*"), tmp_spec_dir, remove_destination: true)
         else
           info 'nothing to do for spec'
+        end
+      end
+
+      def prepare_library_plugins
+        info('Preparing library plugins')
+        FileUtils.mkdir_p(tmp_library_plugins_dir)
+
+        if library_plugins && File.directory?(library_plugins)
+          debug("Using library plugins from #{library_plugins}")
+          FileUtils.cp_r(Dir.glob("#{library_plugins}/{*,!*.pyc}"), tmp_library_plugins_dir, remove_destination: true)
+        else
+          info 'nothing to do for library plugins'
+        end
+      end
+
+      def prepare_callback_plugins
+        info('Preparing callback plugins')
+        FileUtils.mkdir_p(tmp_callback_plugins_dir)
+
+        if callback_plugins && File.directory?(callback_plugins)
+          debug("Using callback plugins from #{callback_plugins}")
+          FileUtils.cp_r(Dir.glob("#{callback_plugins}/{*,!*.pyc}"), tmp_callback_plugins_dir, remove_destination: true)
+        else
+          info 'nothing to do for callback plugins'
         end
       end
 
