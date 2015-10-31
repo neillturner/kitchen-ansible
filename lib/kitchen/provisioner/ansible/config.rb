@@ -94,6 +94,14 @@ module Kitchen
           provisioner.calculate_path('Ansiblefile', :file)
         end
 
+        default_config :library_plugins_path do |provisioner|
+          provisioner.calculate_path('library', :directory)
+        end
+
+        default_config :callback_plugins_path do |provisioner|
+          provisioner.calculate_path('callback_plugins', :directory)
+        end
+
         default_config :filter_plugins_path do |provisioner|
           provisioner.calculate_path('filter_plugins', :directory)
         end
