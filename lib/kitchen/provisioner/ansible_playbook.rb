@@ -345,7 +345,7 @@ module Kitchen
           fi
 
           #{export_http_proxy}
-          git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible
+          git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible #{install_source_rev}
           #{sudo_env('easy_install')} pip
           #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
         fi
@@ -658,7 +658,11 @@ module Kitchen
 
       def install_epel_repo
         config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil
-       end
+      end
+
+      def install_source_rev
+        config[:ansible_source_rev] ? "--branch #{config[:ansible_source_rev]}" : nil
+      end
 
       def http_proxy
         config[:http_proxy]
