@@ -13,7 +13,7 @@ _for RH/Centos7 change to_ | http://dl.fedoraproject.org /pub/epel/7/x86_64/e/ e
 ansible_binary_path | NULL | If specified this will override the location where kitchen tries to run ansible-playbook from. ie: (ansible_binary_path: /usr/local/bin )
 enable_yum_epel  | false | enable yum EPEL repo
 ansible_sles_repo | http://download.opensuse.org/repositories /systemsmanagement/SLE_12 /systemsmanagement.repo | zypper suse ansible repo
-python_sles_repo | http://download.opensuse.org/repositories/devel: /languages:/python/SLE_12 /devel:languages:python.repo | zypper suse python repo
+python_sles_repo | http://download.opensuse.org/repositories /devel:/languages:/python/SLE_12 /devel:languages:python.repo | zypper suse python repo
 require_ansible_omnibus | false | Set if using omnibus ansible pip install
 ansible_omnibus_url | https://raw.githubusercontent.com /neillturner/omnibus-ansible /master/ansible_install.sh | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
