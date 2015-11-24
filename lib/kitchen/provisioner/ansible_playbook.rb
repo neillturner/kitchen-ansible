@@ -477,7 +477,7 @@ module Kitchen
       end
 
       def tmp_ansible_vault_password_file_path
-        File.join(sandbox_path, File.basename(ansible_vault_password_file))
+        File.join(sandbox_path, File.basename(ansible_vault_password_file).reverse.chomp('.').reverse)
       end
 
       def tmp_inventory_file_path
@@ -574,7 +574,7 @@ module Kitchen
 
       def ansible_vault_flag
         debug(config[:ansible_vault_password_file])
-        config[:ansible_vault_password_file] ? "--vault-password-file=#{File.join(config[:root_path], File.basename(config[:ansible_vault_password_file]))}" : nil
+        config[:ansible_vault_password_file] ? "--vault-password-file=#{File.join(config[:root_path], File.basename(config[:ansible_vault_password_file]).reverse.chomp('.').reverse)}" : nil
       end
 
       def ansible_inventory_flag
