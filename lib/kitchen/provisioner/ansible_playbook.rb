@@ -752,6 +752,7 @@ module Kitchen
       # [example_servers]
       # localhost
       def prepare_hosts
+        return if ansible_inventory_file
         info('Preparing hosts file')
 
         if config[:hosts].nil?
