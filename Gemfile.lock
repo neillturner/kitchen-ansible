@@ -3,16 +3,17 @@ PATH
   specs:
     kitchen-ansible (0.0.33)
       librarian-ansible
-      test-kitchen
+      test-kitchen (~> 1.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.0)
     diff-lcs (1.2.5)
-    faraday (0.9.1)
+    faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
-    highline (1.7.2)
+    ffi (1.9.10-x86-mingw32)
+    highline (1.7.8)
     librarian (0.1.2)
       highline
       thor (~> 0.15)
@@ -20,41 +21,46 @@ GEM
       faraday
       librarian (~> 0.1.0)
     method_source (0.8.2)
-    mixlib-shellout (2.1.0)
+    mixlib-shellout (2.2.5-universal-mingw32)
+      win32-process (~> 0.8.2)
+      wmi-lite (~> 1.0)
     multipart-post (2.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
-    pry (0.10.1)
+    pry (0.10.3)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
     rake (10.4.2)
-    rspec (3.2.0)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rspec (3.4.0)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+    rspec-core (3.4.1)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-mocks (3.2.1)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     safe_yaml (1.0.4)
     slop (3.6.0)
-    test-kitchen (1.4.0)
+    test-kitchen (1.4.2)
       mixlib-shellout (>= 1.2, < 3.0)
       net-scp (~> 1.1)
-      net-ssh (~> 2.7)
+      net-ssh (~> 2.7, < 2.10)
       safe_yaml (~> 1.0)
       thor (~> 0.18)
     thor (0.19.1)
+    win32-process (0.8.2)
+      ffi (>= 1.0.0)
+    wmi-lite (1.0.0)
 
 PLATFORMS
-  ruby
+  x86-mingw32
 
 DEPENDENCIES
   kitchen-ansible!
@@ -63,4 +69,4 @@ DEPENDENCIES
   rspec
 
 BUNDLED WITH
-   1.10.3
+   1.10.6
