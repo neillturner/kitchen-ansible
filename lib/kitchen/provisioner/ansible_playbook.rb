@@ -276,41 +276,45 @@ module Kitchen
       end
 
       def run_command
-        if config[:require_ansible_source]
-          # this is an ugly hack to get around the fact that extra vars uses ' and "
-          cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
+        if !config[:ansible_playbook_command].nil?
+          return config[:ansible_playbook_command]
         else
-          cmd = ansible_command("ansible-playbook")
-        end
-        if config[:ansible_binary_path]
-          cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
-        end
-        if https_proxy
-          cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}"
-        end
-        if http_proxy
-          cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
-        end
-        if ansible_roles_path
-          cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}"
-        end
+          if config[:require_ansible_source]
+            # this is an ugly hack to get around the fact that extra vars uses ' and "
+            cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
+          else
+            cmd = ansible_command("ansible-playbook")
+          end
+          if config[:ansible_binary_path]
+            cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
+          end
+          if https_proxy
+            cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}"
+          end
+          if http_proxy
+            cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
+          end
+          if ansible_roles_path
+            cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}"
+          end
 
-        result = [
-          cmd,
-          ansible_inventory_flag,
-          "-c #{config[:ansible_connection]}",
-          "-M #{File.join(config[:root_path], 'modules')}",
-          ansible_verbose_flag,
-          ansible_check_flag,
-          ansible_diff_flag,
-          ansible_vault_flag,
-          extra_vars,
-          tags,
-          ansible_extra_flags,
-          "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
-        ].join(" ")
-        info("Going to invoke ansible-playbook with: #{result}")
-        result
+          result = [
+            cmd,
+            ansible_inventory_flag,
+            "-c #{config[:ansible_connection]}",
+            "-M #{File.join(config[:root_path], 'modules')}",
+            ansible_verbose_flag,
+            ansible_check_flag,
+            ansible_diff_flag,
+            ansible_vault_flag,
+            extra_vars,
+            tags,
+            ansible_extra_flags,
+            "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
+          ].join(" ")
+          info("Going to invoke ansible-playbook with: #{result}")
+          result
+        end
       end
 
       def ansible_command(script)

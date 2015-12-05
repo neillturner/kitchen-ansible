@@ -64,6 +64,7 @@ module Kitchen
         default_config :http_proxy, nil
         default_config :https_proxy, nil
         default_config :no_proxy, nil
+        default_config :ansible_playbook_command, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) or
