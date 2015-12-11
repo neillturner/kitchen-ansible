@@ -23,6 +23,7 @@
 require 'json'
 require 'kitchen/provisioner/base'
 require 'kitchen/provisioner/ansible/config'
+require 'kitchen/provisioner/ansible/os'
 require 'kitchen/provisioner/ansible/librarian'
 
 module Kitchen
@@ -44,6 +45,8 @@ module Kitchen
       def initialize(provisioner_config)
         config = Kitchen::Provisioner::Ansible::Config.new(provisioner_config)
         super(config)
+
+        @os = Kitchen::Provisioner::Ansible::Os.make(ansible_platform, config)
       end
 
       def finalize_config!(instance)
@@ -72,33 +75,23 @@ module Kitchen
           info("Installing ansible from source")
           cmd = install_ansible_from_source_command
         elsif config[:require_ansible_repo]
-          case ansible_platform
-          when "debian", "ubuntu"
-            info("Installing ansible on #{ansible_platform}")
-            cmd = install_debian_command
-          when "redhat", "centos", "fedora"
-            info("Installing ansible on #{ansible_platform}")
-            cmd = install_redhat_command
-          when "amazon"
-            info("Installing ansible on #{ansible_platform}")
-            cmd = install_amazon_linux_command
-          when "suse", "opensuse", "sles"
-            info("Installing ansible on #{ansible_platform}")
-            cmd = install_suse_command
+          if not @os.nil?
+            info("Installing ansible on #{@os.name}")
+            cmd =  @os.install_command
           else
             info("Installing ansible, will try to determine platform os")
             cmd = <<-INSTALL
             if [ ! $(which ansible) ]; then
               if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                 if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then
-                  #{install_redhat_command}
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new("redhat", config).install_command}
                 else
-                  #{install_amazon_linux_command}
+                #{Kitchen::Provisioner::Ansible::Os::Amazon.new("amazon", config).install_command}
                 fi
               elif [ -f /etc/SuSE-release ] || [ -f /etc/SUSE-brand ]; then
-                #{install_suse_command}
+                #{Kitchen::Provisioner::Ansible::Os::Suse.new("suse", config).install_command}
               else
-                #{install_debian_command}
+                #{Kitchen::Provisioner::Ansible::Os::Debian.new("debian", config).install_command}
               fi
             fi
             INSTALL
@@ -377,69 +370,6 @@ module Kitchen
         INSTALL
       end
 
-      def install_debian_command
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          #{update_packages_debian_cmd}
-
-          ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
-          #{sudo_env('apt-get')} -y install apt-utils git
-
-          ## Fix debconf tty warning messages
-          export DEBIAN_FRONTEND=noninteractive
-
-          ## 13.10, 14.04 include add-apt-repository in software-properties-common
-          #{sudo_env('apt-get')} -y install software-properties-common
-
-          ## 10.04, 12.04 include add-apt-repository in
-          #{sudo_env('apt-get')} -y install python-software-properties
-
-          ## 10.04 version of add-apt-repository doesn't accept --yes
-          ## later versions require interaction from user, so we must specify --yes
-          ## First try with -y flag, else if it fails, try without.
-          ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
-          #{sudo_env('add-apt-repository')} -y #{ansible_apt_repo} || #{sudo_env('add-apt-repository')} #{ansible_apt_repo}
-          #{sudo_env('apt-get')} update
-          #{sudo_env('apt-get')} -y install ansible
-        fi
-        INSTALL
-      end
-
-      def install_suse_command
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          #{sudo_env('zypper')} ar #{python_sles_repo}
-          #{sudo_env('zypper')} ar #{ansible_sles_repo}
-          #{update_packages_suse_cmd}
-          #{sudo_env('zypper')} --non-interactive install ansible
-        fi
-        INSTALL
-      end
-
-      def install_redhat_command
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          #{install_epel_repo}
-          #{sudo_env('rpm')} -ivh #{ansible_yum_repo}
-          #{update_packages_redhat_cmd}
-          #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
-        fi
-        INSTALL
-      end
-
-      def install_amazon_linux_command
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          #{install_epel_repo}
-          #{sudo_env('yum-config-manager')} --enable epel/x86_64
-          #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} git
-          #{sudo_env('alternatives')} --set python /usr/bin/python2.6
-          #{sudo_env('yum')} clean all
-          #{sudo_env('yum')} install yum-python26 -y
-        fi
-        INSTALL
-      end
-
       def setup_ansible_env_from_source
         "cd #{config[:root_path]}/ansible && source hacking/env-setup && cd ../"
       end
@@ -560,10 +490,6 @@ module Kitchen
         config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
       end
 
-      def ansible_redhat_version
-        config[:ansible_version] ? "-#{config[:ansible_version]}" : nil
-      end
-
       def ansible_verbose_flag
         config[:ansible_verbose] ? '-' << ('v' * verbosity_level(config[:ansible_verbosity])) : nil
       end
@@ -594,15 +520,15 @@ module Kitchen
       end
 
       def update_packages_debian_cmd
-        config[:update_package_repos] ? "#{sudo_env('apt-get')} update" : nil
+        Kitchen::Provisioner::Ansible::Os::Debian.new("debian", config).update_packages_command
       end
 
       def update_packages_suse_cmd
-        config[:update_package_repos] ? "#{sudo_env('zypper')} --gpg-auto-import-keys ref" : nil
+        Kitchen::Provisioner::Ansible::Os::Suse.new("suse", config).update_packages_command
       end
 
       def update_packages_redhat_cmd
-        config[:update_package_repos] ? "#{sudo_env('yum')} makecache" : nil
+        Kitchen::Provisioner::Ansible::Os::Redhat.new("redhat", config).update_packages_command
       end
 
       def extra_vars
@@ -628,26 +554,6 @@ module Kitchen
         bash_tags
       end
 
-      def ansible_apt_repo
-        config[:ansible_apt_repo]
-      end
-
-      def ansible_apt_repo_file
-        config[:ansible_apt_repo].split('/').last
-      end
-
-      def ansible_yum_repo
-        config[:ansible_yum_repo]
-      end
-
-      def ansible_sles_repo
-        config[:ansible_sles_repo]
-      end
-
-      def python_sles_repo
-        config[:python_sles_repo]
-      end
-
       def chef_url
         config[:chef_bootstrap_url]
       end
@@ -658,10 +564,6 @@ module Kitchen
 
       def require_chef_for_busser
         config[:require_chef_for_busser]
-      end
-
-      def install_epel_repo
-        config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil
       end
 
       def install_source_rev
