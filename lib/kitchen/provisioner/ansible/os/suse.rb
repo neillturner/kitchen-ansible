@@ -18,13 +18,10 @@
 #
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       class Os
         class Suse < Os
-
           def install_command
             <<-INSTALL
             if [ ! $(which ansible) ]; then
@@ -39,11 +36,8 @@ module Kitchen
           def update_packages_command
             @config[:update_package_repos] ? "#{sudo_env('zypper')} --gpg-auto-import-keys ref" : nil
           end
-
         end
       end
     end
   end
 end
-
-

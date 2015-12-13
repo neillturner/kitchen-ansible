@@ -12,7 +12,6 @@ GEM
     diff-lcs (1.2.5)
     faraday (0.9.2)
       multipart-post (>= 1.2, < 3)
-    ffi (1.9.10-x86-mingw32)
     highline (1.7.8)
     librarian (0.1.2)
       highline
@@ -21,9 +20,7 @@ GEM
       faraday
       librarian (~> 0.1.0)
     method_source (0.8.2)
-    mixlib-shellout (2.2.5-universal-mingw32)
-      win32-process (~> 0.8.2)
-      wmi-lite (~> 1.0)
+    mixlib-shellout (2.2.5)
     multipart-post (2.0.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -55,11 +52,9 @@ GEM
       safe_yaml (~> 1.0)
       thor (~> 0.18)
     thor (0.19.1)
-    win32-process (0.8.2)
-      ffi (>= 1.0.0)
-    wmi-lite (1.0.0)
 
 PLATFORMS
+  ruby
   x86-mingw32
 
 DEPENDENCIES
@@ -69,4 +64,4 @@ DEPENDENCIES
   rspec (~> 3.3.0)
 
 BUNDLED WITH
-   1.10.6
+   1.11.0

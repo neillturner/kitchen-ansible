@@ -1,4 +1,5 @@
-source "https://rubygems.org"
+# -*- encoding: utf-8 -*-
+source 'https://rubygems.org'
 
 gemspec
 

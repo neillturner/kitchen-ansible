@@ -20,9 +20,7 @@
 require 'json'
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       #
       # Ansible Playbook provisioner.
@@ -30,6 +28,7 @@ module Kitchen
       class Config
         include Kitchen::Configurable
 
+        attr_writer :instance
         attr_reader :instance
 
         default_config :ansible_sudo, true
@@ -42,11 +41,11 @@ module Kitchen
         default_config :enable_yum_epel, false
         default_config :extra_vars, {}
         default_config :tags, []
-        default_config :ansible_apt_repo, "ppa:ansible/ansible"
-        default_config :ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
-        default_config :ansible_sles_repo, "http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo"
-        default_config :python_sles_repo, "http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo"
-        default_config :chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"
+        default_config :ansible_apt_repo, 'ppa:ansible/ansible'
+        default_config :ansible_yum_repo, 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+        default_config :ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo'
+        default_config :python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo'
+        default_config :chef_bootstrap_url, 'https://www.getchef.com/chef/install.sh'
         # Until we can truly make busser work without /opt/chef/embedded/bin/gem being installed, we still need Chef Omnibus
         # (Reference: https://github.com/neillturner/kitchen-ansible/issues/66 )
         default_config :require_chef_for_busser, true
@@ -67,13 +66,13 @@ module Kitchen
         default_config :ansible_playbook_command, nil
 
         default_config :playbook do |provisioner|
-          provisioner.calculate_path('default.yml', :file) or
-            raise "No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default wrapper playbook for your role in test/integration/playbooks/default.yml or test/integration/default.yml"
+          provisioner.calculate_path('default.yml', :file) ||
+            fail('No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default wrapper playbook for your role in test/integration/playbooks/default.yml or test/integration/default.yml')
         end
 
         default_config :roles_path do |provisioner|
-          provisioner.calculate_path('roles') or
-            raise 'No roles_path detected. Please specify one in .kitchen.yml'
+          provisioner.calculate_path('roles') ||
+            fail('No roles_path detected. Please specify one in .kitchen.yml')
         end
 
         default_config :group_vars_path do |provisioner|
@@ -124,10 +123,6 @@ module Kitchen
           init_config(config)
         end
 
-        def set_instance(instance)
-          @instance = instance
-        end
-
         def []=(attr, val)
           config[attr] = val
         end
@@ -137,7 +132,7 @@ module Kitchen
         end
 
         def key?(k)
-          return config.key?(k)
+          config.key?(k)
         end
 
         def keys
@@ -145,9 +140,8 @@ module Kitchen
         end
 
         def calculate_path(path, type = :directory)
-
-          if not instance
-            raise "Please ensure that an instance is provided before calling calculate_path"
+          unless instance
+            fail 'Please ensure that an instance is provided before calling calculate_path'
           end
 
           base = config[:test_base_path]
@@ -162,11 +156,7 @@ module Kitchen
             type == :directory ? File.directory?(c) : File.file?(c)
           end
         end
-
-
       end
-
     end
   end
-
 end

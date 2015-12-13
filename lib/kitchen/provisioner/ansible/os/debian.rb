@@ -18,13 +18,10 @@
 #
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       class Os
         class Debian < Os
-
           def update_packages_command
             @config[:update_package_repos] ? "#{sudo_env('apt-get')} update" : nil
           end
@@ -56,7 +53,6 @@ module Kitchen
             fi
             INSTALL
           end
-
         end
       end
     end

@@ -27,11 +27,9 @@ require 'kitchen/provisioner/ansible/os'
 require 'kitchen/provisioner/ansible/librarian'
 
 module Kitchen
-
   class Busser
-
     def non_suite_dirs
-      %w{data}
+      %w(data)
     end
   end
 
@@ -50,21 +48,21 @@ module Kitchen
       end
 
       def finalize_config!(instance)
-        config.set_instance(instance)
+        config.instance = instance
         super(instance)
       end
 
       def verbosity_level(level = 1)
         level = level.to_sym if level.is_a? String
-        log_levels = { :info => 1, :warn => 2, :debug => 3, :trace => 4 }
-        if level.is_a? Symbol and log_levels.include? level
+        log_levels = { info: 1, warn: 2, debug: 3, trace: 4 }
+        if level.is_a?(Symbol) && log_levels.include?(level)
           # puts "Log Level is: #{log_levels[level]}"
           log_levels[level]
-        elsif level.is_a? Integer and level > 0
+        elsif level.is_a?(Integer) && level > 0
           # puts "Log Level is: #{level}"
           level
         else
-          raise 'Invalid ansible_verbosity setting.  Valid values are: 1, 2, 3, 4 OR :info, :warn, :debug, :trace'
+          fail 'Invalid ansible_verbosity setting.  Valid values are: 1, 2, 3, 4 OR :info, :warn, :debug, :trace'
         end
       end
 
@@ -72,26 +70,26 @@ module Kitchen
         if config[:require_ansible_omnibus]
           cmd = install_omnibus_command
         elsif config[:require_ansible_source]
-          info("Installing ansible from source")
+          info('Installing ansible from source')
           cmd = install_ansible_from_source_command
         elsif config[:require_ansible_repo]
-          if not @os.nil?
+          if !@os.nil?
             info("Installing ansible on #{@os.name}")
             cmd =  @os.install_command
           else
-            info("Installing ansible, will try to determine platform os")
+            info('Installing ansible, will try to determine platform os')
             cmd = <<-INSTALL
             if [ ! $(which ansible) ]; then
               if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                 if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then
-                #{Kitchen::Provisioner::Ansible::Os::Redhat.new("redhat", config).install_command}
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
                 else
-                #{Kitchen::Provisioner::Ansible::Os::Amazon.new("amazon", config).install_command}
+                #{Kitchen::Provisioner::Ansible::Os::Amazon.new('amazon', config).install_command}
                 fi
               elif [ -f /etc/SuSE-release ] || [ -f /etc/SUSE-brand ]; then
-                #{Kitchen::Provisioner::Ansible::Os::Suse.new("suse", config).install_command}
+                #{Kitchen::Provisioner::Ansible::Os::Suse.new('suse', config).install_command}
               else
-                #{Kitchen::Provisioner::Ansible::Os::Debian.new("debian", config).install_command}
+                #{Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).install_command}
               fi
             fi
             INSTALL
@@ -176,7 +174,7 @@ module Kitchen
            fi
            INSTALL
 
-        elsif require_chef_for_busser && chef_url then
+        elsif require_chef_for_busser && chef_url
           install << <<-INSTALL
             # install chef omnibus so that busser works as this is needed to run tests :(
             if [ ! -d "/opt/chef" ]
@@ -193,10 +191,10 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w{modules roles group_vars host_vars}.
-          map { |dir| File.join(config[:root_path], dir) }.join(" ")
+        dirs = %w(modules roles group_vars host_vars)
+               .map { |dir| File.join(config[:root_path], dir) }.join(' ')
         cmd = "#{sudo_env('rm')} -rf #{dirs};"
-        cmd = cmd+" mkdir -p #{config[:root_path]}"
+        cmd += " mkdir -p #{config[:root_path]}"
         debug(cmd)
         cmd
       end
@@ -223,7 +221,6 @@ module Kitchen
         prepare_lookup_plugins
         prepare_ansible_vault_password_file
         info('Finished Preparing files for transfer')
-
       end
 
       def cleanup_sandbox
@@ -237,19 +234,19 @@ module Kitchen
 
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
-            sudo_env("bash -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          sudo_env("bash -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
         ]
 
         commands << [
-            sudo_env('cp'),File.join(config[:root_path], 'ansible.cfg'),'/etc/ansible',
+          sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), '/etc/ansible'
         ].join(' ')
 
         commands << [
-            sudo_env('cp -r'), File.join(config[:root_path],'group_vars'), '/etc/ansible/.',
+          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '/etc/ansible/.'
         ].join(' ')
 
         commands << [
-            sudo_env('cp -r'), File.join(config[:root_path],'host_vars'), '/etc/ansible/.',
+          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '/etc/ansible/.'
         ].join(' ')
 
         if galaxy_requirements
@@ -257,9 +254,9 @@ module Kitchen
             commands << setup_ansible_env_from_source
           end
           commands << [
-             'ansible-galaxy', 'install', '--force',
-             '-p', File.join(config[:root_path], 'roles'),
-             '-r', File.join(config[:root_path], galaxy_requirements),
+            'ansible-galaxy', 'install', '--force',
+            '-p', File.join(config[:root_path], 'roles'),
+            '-r', File.join(config[:root_path], galaxy_requirements)
           ].join(' ')
         end
 
@@ -272,24 +269,20 @@ module Kitchen
         if !config[:ansible_playbook_command].nil?
           return config[:ansible_playbook_command]
         else
+
+          cmd = ansible_command('ansible-playbook')
           if config[:require_ansible_source]
             # this is an ugly hack to get around the fact that extra vars uses ' and "
             cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
-          else
-            cmd = ansible_command("ansible-playbook")
           end
+
           if config[:ansible_binary_path]
             cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
           end
-          if https_proxy
-            cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}"
-          end
-          if http_proxy
-            cmd = "HTTP_PROXY=#{http_proxy} #{cmd}"
-          end
-          if ansible_roles_path
-            cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}"
-          end
+
+          cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
+          cmd = "HTTP_PROXY=#{http_proxy} #{cmd}" if http_proxy
+          cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}" if ansible_roles_path
 
           result = [
             cmd,
@@ -303,8 +296,8 @@ module Kitchen
             extra_vars,
             tags,
             ansible_extra_flags,
-            "#{File.join(config[:root_path], File.basename(config[:playbook]))}",
-          ].join(" ")
+            "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
+          ].join(' ')
           info("Going to invoke ansible-playbook with: #{result}")
           result
         end
@@ -317,10 +310,10 @@ module Kitchen
       protected
 
       def load_needed_dependencies!
-        if File.exists?(ansiblefile)
-          debug("Ansiblefile found at #{ansiblefile}, loading Librarian-Ansible")
-          Ansible::Librarian.load!(logger)
-        end
+        return unless File.exist?(ansiblefile)
+
+        debug("Ansiblefile found at #{ansiblefile}, loading Librarian-Ansible")
+        Ansible::Librarian.load!(logger)
       end
 
       def install_ansible_from_source_command
@@ -350,12 +343,10 @@ module Kitchen
       end
 
       def install_omnibus_command
-        info("Installing ansible using ansible omnibus")
-        version = if !config[:ansible_version].nil?
-          "-v #{config[:ansible_version]}"
-        else
-          ""
-        end
+        info('Installing ansible using ansible omnibus')
+
+        version = ''
+        version = "-v #{config[:ansible_version]}" unless config[:ansible_version].nil?
 
         <<-INSTALL
         #{Util.shell_helpers}
@@ -508,7 +499,7 @@ module Kitchen
       end
 
       def ansible_inventory_flag
-          config[:ansible_inventory_file] ? "--inventory-file=#{File.join(config[:root_path], File.basename(config[:ansible_inventory_file]))}" : "--inventory-file=#{File.join(config[:root_path], 'hosts')}"
+        config[:ansible_inventory_file] ? "--inventory-file=#{File.join(config[:root_path], File.basename(config[:ansible_inventory_file]))}" : "--inventory-file=#{File.join(config[:root_path], 'hosts')}"
       end
 
       def ansible_extra_flags
@@ -520,15 +511,15 @@ module Kitchen
       end
 
       def update_packages_debian_cmd
-        Kitchen::Provisioner::Ansible::Os::Debian.new("debian", config).update_packages_command
+        Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).update_packages_command
       end
 
       def update_packages_suse_cmd
-        Kitchen::Provisioner::Ansible::Os::Suse.new("suse", config).update_packages_command
+        Kitchen::Provisioner::Ansible::Os::Suse.new('suse', config).update_packages_command
       end
 
       def update_packages_redhat_cmd
-        Kitchen::Provisioner::Ansible::Os::Redhat.new("redhat", config).update_packages_command
+        Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).update_packages_command
       end
 
       def extra_vars
@@ -548,7 +539,7 @@ module Kitchen
         bash_tags = config.key?(:attributes) && config[:attributes].key?(:tags) && config[:attributes][:tags].is_a?(Array) ? config[:attributes][:tags] : config[:tags]
         return nil if bash_tags.empty?
 
-        bash_tags = bash_tags.join(",")
+        bash_tags = bash_tags.join(',')
         bash_tags = "-t '#{bash_tags}'"
         debug(bash_tags)
         bash_tags
@@ -590,11 +581,11 @@ module Kitchen
       end
 
       def export_http_proxy
-        cmd = ""
+        cmd = ''
         cmd = " HTTP_PROXY=#{http_proxy}" if http_proxy
         cmd = "#{cmd} HTTPS_PROXY=#{https_proxy}" if https_proxy
         cmd = "#{cmd} NO_PROXY=#{no_proxy}" if no_proxy
-        cmd = "export #{cmd}" if cmd != ""
+        cmd = "export #{cmd}" if cmd != ''
         cmd
       end
 
@@ -617,7 +608,7 @@ module Kitchen
         info('Preparing roles')
         debug("Using roles from #{roles}")
 
-        resolve_with_librarian if File.exists?(ansiblefile)
+        resolve_with_librarian if File.exist?(ansiblefile)
 
         if galaxy_requirements
           FileUtils.cp(galaxy_requirements, File.join(sandbox_path, galaxy_requirements))
@@ -635,12 +626,12 @@ module Kitchen
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
         if File.exist?('ansible.cfg')
-           info("Found existing ansible.cfg")
-           FileUtils.cp_r('ansible.cfg', ansible_config_file)
+          info('Found existing ansible.cfg')
+          FileUtils.cp_r('ansible.cfg', ansible_config_file)
         else
           info('Empty ansible.cfg generated')
-          File.open(ansible_config_file, "wb") do |file|
-             file.write("#no config parameters\n")
+          File.open(ansible_config_file, 'wb') do |file|
+            file.write("#no config parameters\n")
           end
         end
       end
@@ -648,10 +639,9 @@ module Kitchen
       def prepare_inventory_file
         info('Preparing inventory file')
 
-        if ansible_inventory_file
-            debug("Copying inventory file from #{ansible_inventory_file} to #{tmp_inventory_file_path}")
-            FileUtils.cp_r(ansible_inventory_file, tmp_inventory_file_path)
-        end
+        return unless ansible_inventory_file
+        debug("Copying inventory file from #{ansible_inventory_file} to #{tmp_inventory_file_path}")
+        FileUtils.cp_r(ansible_inventory_file, tmp_inventory_file_path)
       end
 
       # localhost ansible_connection=local
@@ -662,11 +652,11 @@ module Kitchen
         info('Preparing hosts file')
 
         if config[:hosts].nil?
-          raise 'No hosts have been set. Please specify one in .kitchen.yml'
+          fail 'No hosts have been set. Please specify one in .kitchen.yml'
         else
           debug("Using host from #{hosts}")
-          File.open(File.join(sandbox_path, "hosts"), "wb") do |file|
-             file.write("localhost ansible_connection=local\n[#{hosts}]\nlocalhost\n")
+          File.open(File.join(sandbox_path, 'hosts'), 'wb') do |file|
+            file.write("localhost ansible_connection=local\n[#{hosts}]\nlocalhost\n")
           end
         end
       end
@@ -707,10 +697,10 @@ module Kitchen
 
       def additional_files
         additional_files = []
-        if ( additional_copy )
-          additional_files = additional_copy.kind_of?(Array) ? additional_copy : [additional_copy]
+        if  additional_copy
+          additional_files = additional_copy.is_a?(Array) ? additional_copy : [additional_copy]
         end
-        additional_files.map { |additional_dir | additional_dir.to_s }
+        additional_files.map(&:to_s)
       end
 
       def prepare_host_vars
@@ -801,12 +791,12 @@ module Kitchen
       end
 
       def prepare_ansible_vault_password_file
-        if ansible_vault_password_file
-          info('Preparing ansible vault password')
-          debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
+        return unless ansible_vault_password_file
 
-          FileUtils.cp(ansible_vault_password_file, tmp_ansible_vault_password_file_path)
-        end
+        info('Preparing ansible vault password')
+        debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
+
+        FileUtils.cp(ansible_vault_password_file, tmp_ansible_vault_password_file_path)
       end
 
       def resolve_with_librarian

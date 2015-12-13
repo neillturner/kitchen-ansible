@@ -24,12 +24,9 @@ require 'kitchen/provisioner/ansible/os/amazon'
 require 'kitchen/provisioner/ansible/os/suse'
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       class Os
-
         attr_accessor :name
 
         def initialize(name, config)
@@ -38,21 +35,20 @@ module Kitchen
         end
 
         def self.make(platform, config)
-          puts platform
           return nil if platform == ''
 
           case platform
-          when "debian", "ubuntu"
-            Debian.new(platform, config)
-          when "redhat", "centos", "fedora"
-            Redhat.new(platform, config)
-          when "amazon"
-            Amazon.new(platform, config)
-          when "suse", "opensuse", "sles"
-            Suse.new(platform, config)
-          else
-            nil
+          when 'debian', 'ubuntu'
+            return Debian.new(platform, config)
+          when 'redhat', 'centos', 'fedora'
+            return Redhat.new(platform, config)
+          when 'amazon'
+            return Amazon.new(platform, config)
+          when 'suse', 'opensuse', 'sles'
+            return Suse.new(platform, config)
           end
+
+          nil
         end
 
         # Helpers
@@ -67,9 +63,7 @@ module Kitchen
         def sudo(script)
           @config[:sudo] ? "#{@config[:sudo_command]} #{script}" : script
         end
-
       end
     end
   end
 end
-
