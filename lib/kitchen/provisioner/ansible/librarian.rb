@@ -20,18 +20,13 @@ require 'kitchen/errors'
 require 'kitchen/logging'
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
-
       # Ansible module resolver that uses Librarian-Ansible and a Ansiblefile to
       # calculate # dependencies.
       #
-       class Librarian
-
+      class Librarian
         include Logging
-
 
         def initialize(ansiblefile, path, logger = Kitchen.logger)
           @ansiblefile   = ansiblefile
@@ -49,8 +44,8 @@ module Kitchen
           debug("Using Ansiblefile from #{ansiblefile}")
 
           env = ::Librarian::Ansible::Environment.new(
-            :project_path => File.dirname(ansiblefile))
-          env.config_db.local["path"] = path
+            project_path: File.dirname(ansiblefile))
+          env.config_db.local['path'] = path
           ::Librarian::Action::Resolve.new(env).run
           ::Librarian::Action::Install.new(env).run
         end
@@ -70,12 +65,12 @@ module Kitchen
             logger.debug("Librarian-Ansible #{version} previously loaded")
           end
         rescue LoadError => e
-          logger.fatal("The `librarian-ansible' gem is missing and must be installed" +
-            " or cannot be properly activated. Run" +
-            " `gem install librarian-ansible` or add the following to your" +
+          logger.fatal("The `librarian-ansible' gem is missing and must be installed" \
+            ' or cannot be properly activated. Run' \
+            ' `gem install librarian-ansible` or add the following to your' \
             " Gemfile if you are using Bundler: `gem 'librarian-ansible'`.")
           raise UserError,
-            "Could not load or activate Librarian-Ansible (#{e.message})"
+                "Could not load or activate Librarian-Ansible (#{e.message})"
         end
       end
     end

@@ -18,13 +18,10 @@
 #
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       class Os
         class Redhat < Os
-
           def install_command
             <<-INSTALL
             if [ ! $(which ansible) ]; then
@@ -47,11 +44,8 @@ module Kitchen
           def ansible_redhat_version
             @config[:ansible_version] ? "-#{@config[:ansible_version]}" : nil
           end
-
-
         end
       end
     end
   end
 end
-

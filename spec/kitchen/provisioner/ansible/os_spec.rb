@@ -21,72 +21,67 @@ require 'kitchen/provisioner/ansible/os'
 
 # Work around for lazy loading
 describe Kitchen::Provisioner::Ansible::Os do
-
-  describe "make new instance" do
-
-    it "returns nil for an unknown os" do
-      c = Kitchen::Provisioner::Ansible::Os.make("dinosaurs", [])
+  describe 'make new instance' do
+    it 'returns nil for an unknown os' do
+      c = Kitchen::Provisioner::Ansible::Os.make('dinosaurs', [])
       expect(c).to equal nil
     end
 
     [
-      ["debian", Kitchen::Provisioner::Ansible::Os::Debian],
-      ["ubuntu", Kitchen::Provisioner::Ansible::Os::Debian],
-      ["redhat", Kitchen::Provisioner::Ansible::Os::Redhat],
-      ["centos", Kitchen::Provisioner::Ansible::Os::Redhat],
-      ["fedora", Kitchen::Provisioner::Ansible::Os::Redhat],
-      ["amazon", Kitchen::Provisioner::Ansible::Os::Amazon],
-      ["suse", Kitchen::Provisioner::Ansible::Os::Suse],
+      ['debian', Kitchen::Provisioner::Ansible::Os::Debian],
+      ['ubuntu', Kitchen::Provisioner::Ansible::Os::Debian],
+      ['redhat', Kitchen::Provisioner::Ansible::Os::Redhat],
+      ['centos', Kitchen::Provisioner::Ansible::Os::Redhat],
+      ['fedora', Kitchen::Provisioner::Ansible::Os::Redhat],
+      ['amazon', Kitchen::Provisioner::Ansible::Os::Amazon],
+      ['suse', Kitchen::Provisioner::Ansible::Os::Suse]
     ].each do |item|
       it "return the correct class for '#{item[0]}'" do
         c = Kitchen::Provisioner::Ansible::Os.make(item[0], [])
-        expect(c).to be_an_instance_of (item[1])
+        expect(c).to be_an_instance_of item[1]
       end
     end
   end
 
-  describe "sudo_env" do
-
-    it "returns just sudo with no additional config" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config)
-      expect(c.sudo_env("ls")).to eq("sudo ls")
+  describe 'sudo_env' do
+    it 'returns just sudo with no additional config' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config)
+      expect(c.sudo_env('ls')).to eq('sudo ls')
     end
 
-    it "can be provided with a https_proxy" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config({:https_proxy => 'https://localhost:1234'}))
-      expect(c.sudo_env("ls")).to eq("sudo env  https_proxy=https://localhost:1234  ls")
+    it 'can be provided with a https_proxy' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config(https_proxy: 'https://localhost:1234'))
+      expect(c.sudo_env('ls')).to eq('sudo env  https_proxy=https://localhost:1234  ls')
     end
 
-    it "can be provided with a http_proxy" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config({:http_proxy => 'http://localhost:5678'}))
-      expect(c.sudo_env("ls")).to eq("sudo env http_proxy=http://localhost:5678   ls")
+    it 'can be provided with a http_proxy' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config(http_proxy: 'http://localhost:5678'))
+      expect(c.sudo_env('ls')).to eq('sudo env http_proxy=http://localhost:5678   ls')
     end
 
-    it "can be provided with no_proxy only and does not populate" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config({:no_proxy => 'http://localhost:9999'}))
-      expect(c.sudo_env("ls")).to eq("sudo ls")
+    it 'can be provided with no_proxy only and does not populate' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config(no_proxy: 'http://localhost:9999'))
+      expect(c.sudo_env('ls')).to eq('sudo ls')
     end
 
-    it "can be provided with no_proxy and http_proxy and does populate both" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config({:http_proxy => 'http://localhost:5678',
-                                                                   :no_proxy => 'http://localhost:9999'}))
-      expect(c.sudo_env("ls")).to eq("sudo env http_proxy=http://localhost:5678  no_proxy=http://localhost:9999 ls")
+    it 'can be provided with no_proxy and http_proxy and does populate both' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config(http_proxy: 'http://localhost:5678',
+                                                                  no_proxy: 'http://localhost:9999'))
+      expect(c.sudo_env('ls')).to eq('sudo env http_proxy=http://localhost:5678  no_proxy=http://localhost:9999 ls')
     end
 
-    it "can be provided with all proxy options" do
-      c = Kitchen::Provisioner::Ansible::Os.new("testing", config({:https_proxy => 'https://localhost:1234',
-                                                                   :http_proxy => 'http://localhost:5678',
-                                                                   :no_proxy => 'http://localhost:9999'}))
-      expect(c.sudo_env("ls")).to eq("sudo env http_proxy=http://localhost:5678 https_proxy=https://localhost:1234 no_proxy=http://localhost:9999 ls")
+    it 'can be provided with all proxy options' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', config(https_proxy: 'https://localhost:1234',
+                                                                  http_proxy: 'http://localhost:5678',
+                                                                  no_proxy: 'http://localhost:9999'))
+      expect(c.sudo_env('ls')).to eq('sudo env http_proxy=http://localhost:5678 https_proxy=https://localhost:1234 no_proxy=http://localhost:9999 ls')
     end
-
   end
-
 end
 
 def config(values = {})
   Kitchen::Provisioner::Ansible::Config.new({
-    :sudo => true,
-    :sudo_command => "sudo"
+    sudo: true,
+    sudo_command: 'sudo'
   }.merge!(values))
 end

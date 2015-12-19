@@ -18,13 +18,10 @@
 #
 
 module Kitchen
-
   module Provisioner
-
     module Ansible
       class Os
         class Amazon < Redhat
-
           def install_command
             <<-INSTALL
             if [ ! $(which ansible) ]; then
@@ -37,11 +34,8 @@ module Kitchen
             fi
             INSTALL
           end
-
         end
       end
     end
   end
 end
-
-

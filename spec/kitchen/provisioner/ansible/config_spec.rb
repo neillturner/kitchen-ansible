@@ -21,9 +21,7 @@ require 'kitchen/provisioner/ansible/config'
 
 # Work around for lazy loading
 describe Kitchen::Provisioner::Ansible::Config do
-
-  describe "default values" do
-
+  describe 'default values' do
     [
       [:ansible_sudo, true],
       [:ansible_verbose, false],
@@ -34,11 +32,11 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:require_ansible_repo, true],
       [:extra_vars, {}],
       [:tags, []],
-      [:ansible_apt_repo, "ppa:ansible/ansible"],
-      [:ansible_yum_repo, "https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"],
-      [:ansible_sles_repo, "http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo"],
-      [:python_sles_repo, "http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo"],
-      [:chef_bootstrap_url, "https://www.getchef.com/chef/install.sh"],
+      [:ansible_apt_repo, 'ppa:ansible/ansible'],
+      [:ansible_yum_repo, 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'],
+      [:ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo'],
+      [:python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo'],
+      [:chef_bootstrap_url, 'https://www.getchef.com/chef/install.sh'],
       [:requirements_path, false],
       [:ansible_verbose, false],
       [:ansible_verbosity, 1],
@@ -52,14 +50,13 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:no_proxy, nil]
     ].each do |item|
       it "should contain the correct default value for '#{item[0]}'" do
-      c = Kitchen::Provisioner::Ansible::Config.new({})
+        c = Kitchen::Provisioner::Ansible::Config.new({})
         expect(c[item[0]]).to eq item[1]
       end
     end
   end
 
-  describe "set values" do
-
+  describe 'set values' do
     [
       [:ansible_sudo, false],
       [:ansible_verbose, 4],
@@ -68,14 +65,14 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_omnibus_remote_path, '/tmp/foo'],
       [:ansible_version, '1.9.2'],
       [:require_ansible_repo, false],
-      [:extra_vars, {:foo => "bar"}],
-      [:tags, ["one", "two"]],
-      [:ansible_apt_repo, "ppa:demo/ansible"],
-      [:ansible_yum_repo, "https://example.com/ansible.rpm"],
-      [:ansible_sles_repo, "http://example.com/ansible.repo"],
-      [:python_sles_repo, "http://example.com/python.repo"],
-      [:chef_bootstrap_url, "https://www.example.com/install_chef.sh"],
-      [:requirements_path, "/path/to/req"],
+      [:extra_vars, { foo: 'bar' }],
+      [:tags, %w(one two)],
+      [:ansible_apt_repo, 'ppa:demo/ansible'],
+      [:ansible_yum_repo, 'https://example.com/ansible.rpm'],
+      [:ansible_sles_repo, 'http://example.com/ansible.repo'],
+      [:python_sles_repo, 'http://example.com/python.repo'],
+      [:chef_bootstrap_url, 'https://www.example.com/install_chef.sh'],
+      [:requirements_path, '/path/to/req'],
       [:ansible_verbose, true],
       [:ansible_verbosity, 8],
       [:ansible_check, true],
@@ -85,7 +82,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:update_package_repos, false]
     ].each do |item|
       it "should contain the correct set value for '#{item[0]}'" do
-      c = Kitchen::Provisioner::Ansible::Config.new({item[0] => item[1]})
+        c = Kitchen::Provisioner::Ansible::Config.new(item[0] => item[1])
         expect(c[item[0]]).to eq item[1]
       end
     end
