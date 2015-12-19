@@ -66,99 +66,67 @@ verifier:
 ```
 where `/usr/bin` is the location of the ruby command.
 
-
-## Test-Kitchen Serverspec
-
-To run the verify step with the test-kitchen serverspec setup your ansible repository as follows:
-
-NOTE: See https://github.com/delphix/ansible-package-caching-proxy for an example.
-
-In the root directory for your Ansible role:
-
-Create a `.kitchen.yml`, much like one the described above:
-
-```yaml
-  ---
-  driver:
-    name: vagrant
-
-  provisioner:
-    name: ansible_playbook
-    playbook: default.yml
-    ansible_yum_repo: "https://download.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm"
-    ansible_verbose: true
-    ansible_verbosity: 3
-    hosts: all
-
-  platforms:
-    - name: ubuntu-12.04
-      driver_config:
-        box: ubuntu/precise32
-    - name: centos-7
-      driver_config:
-         box: chef/centos-7.0
-
-  verifier:
-    ruby_bindir: '/usr/bin'
-
-  suites:
-    - name: default
-```
-
-Then for serverspec:
-
-```bash
-  mkdir -p test/integration/default/serverspec/localhost
-  echo "require 'serverspec'" >> test/integration/default/serverspec/spec_helper.rb
-  echo "set :backend, :exec" >> test/integration/default/serverspec/spec_helper.rb
-```
-
-Create a basic playbook `test/integration/default.yml` so that kitchen can use your role (this should include any dependencies for your role):
-
-```yaml
-  ---
-  - name: wrapper playbook for kitchen testing "my_role"
-    hosts: localhost
-    roles:
-      - my_role
-```
-
-Create your serverspec tests in `test/integration/default/serverspec/localhost/my_roles_spec.rb`:
-
-```ruby
-  require 'spec_helper'
-
-  if os[:family] == 'ubuntu'
-        describe '/etc/lsb-release' do
-          it "exists" do
-              expect(file('/etc/lsb-release')).to be_file
-          end
-        end
-  end
-
-  if os[:family] == 'redhat'
-    describe '/etc/redhat-release' do
-      it "exists" do
-          expect(file('/etc/redhat-release')).to be_file
-      end
-    end
-  end
-```
-
 ## Test-Kitchen Ansiblespec
 
-test-kitchen normally uses tests setup in `test/integration/....` directory. Ansiblespec format puts the tests with the
-roles in the ansible repository and the spec helper is specified in the ansible repository under the spec directory.
+This can run tests against multiple servers with multiple roles in any of three formats:
+  * ansiblespec - tests are specified with the roles in the ansible repository. (default)
+  * serverspec - tests are in test-kitchen serverspec format
+  * spec - tests are stored in the spec directory with a directory for each role.
 
-To implement this with test-kitchen setup the ansible repository with:
+Serverspec using ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
-* the spec files with the roles.
+Set pattern: 'serverspec' in the config.yml file (see below) to perform tests in test-kitchen serverspec format.
+( See https://github.com/delphix/ansible-package-caching-proxy for an example of using test-kitchen serverspec).
 
-* the spec_helper in the spec folder.
+Set pattern: 'spec' in the config.yml file (see below) to perform tests in for roles specified in the spec directory.
 
-* a dummy `test/integration/<suite>/ansiblespec/localhost/<suite>_spec.rb` containing just a dummy comment.
+By default pattern: ansiblespec is set. See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
 
-See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+
+### Example usage to create tomcat servers:
+
+```
+                                                                     TOMCAT SERVERS
+     TEST KITCHEN              ANSIBLE AND SERVERSPEC
+     WORKSTATION               SERVER                             +------------------------+
+                             +-----------------------+            |   +---------+          |
+                             |                       |            |   |Tomcat   |          |
++-------------------+        |                   +---------------->   |         |          |
+|                   |        |                   |   |            |   +---------+          |
+|    Workstation    |        |                   |   |    +------->                        |
+|    test-kitchen   |        |                   |   |    |       |                        |
+|    kitchen-ansible|        |                   |   |    |       |                        |
+|                   |  create|                   |   |    |       +------------------------+
+|     CREATE +--------------->      install      |   |    |
+|                   |  server|      and run      |   |    |
+|     CONVERGE+-------------------->ANSIBLE  +---+   |    |       +------------------------+
+|                   |        |               +-------------------->  +----------+          |
+|                   |        | install and run       |    |       |  |Tomcat    |          |
+|    VERIFY+------------------>Busser-ansiblespec +-------+       |  |          |          |
++-------------------+        |  +                 |  |            |  +----------+          |
+                             |  +--->ServerSpec   +--------------->                        |
+                             |                       |            |                        |
+                             +-----------------------+            |                        |
+                                                                  +------------------------+
+
+
+                   * All connections over SSH
+
+```
+
+See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd)
+
+### <a name="usage"></a> Usage
+
+### Directory
+
+In the ansible repository specify:
+
+  * spec files with the roles.
+
+  * spec_helper in the spec folder (with code as below).
+
+  * test/integration/<suite>/ansiblespec containing config.yml and ssh private keys to access the servers.
 
 ```
 .
@@ -183,53 +151,54 @@ See example [https://github.com/neillturner/ansible_repo](https://github.com/nei
 ¦           +-- main.yml
 +-- spec
     +-- spec_helper.rb
+    +-- my_private_key.pem
 +-- test
     +-- integration
         +-- default      # name of test-kitchen suite
             +-- ansiblespec
-                +-- localhost
-                    +-- default_spec.rb   # <suite>_spec.rb
+                +-- config.yml
+
 ```
 
-In the root directory for your Ansible role create a `.kitchen.yml`, the same as for test-kitchen serverspec above.
 
-When test-kitchen runs the verify step will
-* detect the dummy `/test/integration/<suite>/ansiblespec` directory
-* install the busser-ansiblespec plugin instead of the normal busser-serverspec plugin
-* serverspec will be called using the ansiblespec conventions.
-* tests will run against all the roles in the playbook.
+## <a name="spec_helper"></a> spec_helper
+
+```
+require 'rubygems'
+require 'bundler/setup'
+
+require 'serverspec'
+require 'pathname'
+require 'net/ssh'
+
+RSpec.configure do |config|
+  set :host,  ENV['TARGET_HOST']
+  # ssh via password
+  set :ssh_options, :user => 'root', :password => ENV['LOGIN_PASSWORD'] if ENV['LOGIN_PASSWORD']
+  # ssh via ssh key
+  set :ssh_options, :user => 'root', :host_key => 'ssh-rsa', :keys => [ ENV['SSH_KEY'] ] if ENV['SSH_KEY']
+  set :backend, :ssh
+  set :request_pty, true
+end
+```
+
+## <a name="config.yml"></a> config.yml
+
+This goes in directory test/integration/default/ansiblespec  where default is the name of test-kitchen suite
+
+```
+---
+-
+  playbook: default.yml
+  inventory: hosts
+  kitchen_path: '/tmp/kitchen'
+  pattern: 'ansiblespec'    # or spec or serverspec
+  ssh_key: 'spec/my_private_key.pem'
+  login_password: 'myrootpassword'
+```
 
 See [busser-ansiblespec](https://github.com/neillturner/busser-ansiblespec)
 
-
-## Testing multiple playbooks
-To test different playbooks in different suites you can easily overwrite the provisioner settings in each suite seperately.
-```yaml
----
-  driver:
-    name: vagrant
-
-  provisioner:
-    name: ansible_playbook
-
-  platforms:
-    - name: ubuntu-12.04
-      driver_config:
-        box: ubuntu/precise32
-    - name: centos-7
-      driver_config:
-         box: chef/centos-7.0
-
-  suites:
-    - name: database
-      provisioner:
-        playbook: postgres.yml
-        hosts: database
-    - name: application
-      provisioner:
-        playbook: web_app.yml
-        hosts: web_application
-```
 ## Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
 ```yaml
