@@ -52,11 +52,8 @@ platforms:
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
-
-verifier:
-  ruby_bindir: '/usr/bin'
 ```
-**NOTE:** With Test-Kitchen 1.4 you no longer need chef installed to run the tests. You just need ruby version 1.9 or higher installed and the following added to the `.kitchen.yml` file:
+**NOTE:** With Test-Kitchen 1.4 you no longer need chef installed to run the tests although we still do this by default. You just need ruby version 2.0 or higher installed and the following added to the `.kitchen.yml` file:
 
 ```yaml
 provisioner:
@@ -64,11 +61,7 @@ provisioner:
   hosts: test-kitchen
   require_chef_for_busser: false
   require_ruby_for_busser: true
-
-verifier:
-  ruby_bindir: '/usr/bin'
 ```
-where `/usr/bin` is the location of the ruby command.
 
 Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.
 
