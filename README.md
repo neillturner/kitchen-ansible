@@ -4,25 +4,29 @@
 [![Gem Downloads](http://ruby-gem-downloads-badge.herokuapp.com/kitchen-ansible?type=total&color=brightgreen)](https://rubygems.org/gems/kitchen-ansible)
 [![Build Status](https://travis-ci.org/neillturner/kitchen-ansible.png)](https://travis-ci.org/neillturner/kitchen-ansible)
 
-A Test Kitchen Provisioner for Ansible
+A Test Kitchen Provisioner for Ansible.
 
 The provisioner works by passing the ansible repository based on attributes in `.kitchen.yml` & calling `ansible-playbook`.
 
 It installs Ansible on the server and runs `ansible-playbook` using host localhost.
 
-Has been tested against the Ubuntu 12.04 and Centos 6.5 boxes running in vagrant/virtualbox.
+It has been tested against the Ubuntu 12.04, Ubuntu 14.04, Centos 6.5 and Debian 6/7/8  boxes running in vagrant/virtualbox.
 
 ## Requirements
-You'll need a driver box without a chef installation so ansible can be installed.
+- [test-kitchen](https://github.com/test-kitchen/test-kitchen)
+- a driver box without a chef installation so ansible can be installed.
 
 ## Installation & Setup
-You'll need the test-kitchen & kitchen-ansible gems installed in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or some other suitable driver for test-kitchen.
+Install the kitchen-ansible gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or some other suitable driver for test-kitchen:
 
-Please see the Provisioner Options (https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md).
+```
+gem install kitchen-ansible
+gem install kitchen-vagrant
+```
 
 ## Example kitchen.yml file
 
-based on the example ansible setup for tomcat at  https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone
+Based on the example ansible setup for tomcat at https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone
 
 ```yaml
 ---
@@ -35,7 +39,7 @@ provisioner:
   hosts: tomcat-servers
   require_ansible_repo: true
   ansible_verbose: true
-  ansible_version:   1.6.2-1.el6
+  ansible_version: latest
   extra_vars:
     a: b
 
@@ -52,7 +56,7 @@ platforms:
 verifier:
   ruby_bindir: '/usr/bin'
 ```
-**NOTE:** With Test-Kitchen 1.4 you no longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the `.kitchen.yml` file
+**NOTE:** With Test-Kitchen 1.4 you no longer need chef installed to run the tests. You just need ruby version 1.9 or higher installed and the following added to the `.kitchen.yml` file:
 
 ```yaml
 provisioner:
@@ -66,21 +70,23 @@ verifier:
 ```
 where `/usr/bin` is the location of the ruby command.
 
+Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.
+
+
 ## Test-Kitchen Ansiblespec
 
 This can run tests against multiple servers with multiple roles in any of three formats:
+
   * ansiblespec - tests are specified with the roles in the ansible repository. (default)
   * serverspec - tests are in test-kitchen serverspec format
   * spec - tests are stored in the spec directory with a directory for each role.
 
-Serverspec using ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
+Serverspec uses ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
-Set pattern: 'serverspec' in the config.yml file (see below) to perform tests in test-kitchen serverspec format.
-( See https://github.com/delphix/ansible-package-caching-proxy for an example of using test-kitchen serverspec).
-
-Set pattern: 'spec' in the config.yml file (see below) to perform tests in for roles specified in the spec directory.
-
-By default pattern: ansiblespec is set. See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+- Set pattern: 'serverspec' in the config.yml file (see below) to perform tests in test-kitchen serverspec format.
+(See https://github.com/delphix/ansible-package-caching-proxy for an example of using test-kitchen serverspec).
+- Set pattern: 'spec' in the config.yml file (see below) to perform tests in for roles specified in the spec directory.
+- By default pattern: ansiblespec is set. See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
 
 
 ### Example usage to create tomcat servers:
@@ -116,39 +122,37 @@ By default pattern: ansiblespec is set. See example [https://github.com/neilltur
 
 See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd)
 
-### <a name="usage"></a> Usage
+### Usage
 
-### Directory
+#### Directory
 
 In the ansible repository specify:
 
-  * spec files with the roles.
-
-  * spec_helper in the spec folder (with code as below).
-
-  * test/integration/<suite>/ansiblespec containing config.yml and ssh private keys to access the servers.
+* spec files with the roles.
+* spec_helper in the spec folder (with code as below).
+* test/integration/<suite>/ansiblespec containing config.yml and ssh private keys to access the servers.
 
 ```
 .
 +-- roles
-¦   +-- mariadb
-¦   ¦   +-- spec
-¦   ¦   ¦   +-- mariadb_spec.rb
-¦   ¦   +-- tasks
-¦   ¦   ¦   +-- main.yml
-¦   ¦   +-- templates
-¦   ¦       +-- mariadb.repo
-¦   +-- nginx
-¦       +-- handlers
-¦       ¦   +-- main.yml
-¦       +-- spec
-¦       ¦   +-- nginx_spec.rb
-¦       +-- tasks
-¦       ¦   +-- main.yml
-¦       +-- templates
-¦       ¦   +-- nginx.repo
-¦       +-- vars
-¦           +-- main.yml
+Â¦Â Â  +-- mariadb
+Â¦Â Â  Â¦Â Â  +-- spec
+Â¦Â Â  Â¦Â Â  Â¦Â Â  +-- mariadb_spec.rb
+Â¦Â Â  Â¦Â Â  +-- tasks
+Â¦Â Â  Â¦Â Â  Â¦Â Â  +-- main.yml
+Â¦Â Â  Â¦Â Â  +-- templates
+Â¦Â Â  Â¦Â Â      +-- mariadb.repo
+Â¦Â Â  +-- nginx
+Â¦Â Â      +-- handlers
+Â¦Â Â      Â¦Â Â  +-- main.yml
+Â¦Â Â      +-- spec
+Â¦Â Â      Â¦Â Â  +-- nginx_spec.rb
+Â¦Â Â      +-- tasks
+Â¦Â Â      Â¦Â Â  +-- main.yml
+Â¦Â Â      +-- templates
+Â¦Â Â      Â¦Â Â  +-- nginx.repo
+Â¦Â Â      +-- vars
+Â¦Â Â          +-- main.yml
 +-- spec
     +-- spec_helper.rb
     +-- my_private_key.pem
@@ -161,7 +165,7 @@ In the ansible repository specify:
 ```
 
 
-## <a name="spec_helper"></a> spec_helper
+#### spec_helper
 
 ```
 require 'rubygems'
@@ -182,9 +186,9 @@ RSpec.configure do |config|
 end
 ```
 
-## <a name="config.yml"></a> config.yml
+#### config.yml
 
-This goes in directory test/integration/default/ansiblespec  where default is the name of test-kitchen suite
+This goes in directory test/integration/default/ansiblespec  where default is the name of test-kitchen suite.
 
 ```
 ---
@@ -218,9 +222,9 @@ platforms:
           #security-groups: []
 ```
 
-*Notes*
+## Notes
 
-* The `default` in all of the above is the name of the test suite defined in the 'suites' section of your `.kitchen.yml`, so if you have more than suite of tests or change the name, you'll need to adapt my example accordingly.
+* The `default` in all of the above is the name of the test suite defined in the 'suites' section of your `.kitchen.yml`, so if you have more than suite of tests or change the name, you'll need to adapt the example accordingly.
 * serverspec test files *must* be named `_spec.rb`
 * Since I'm using Vagrant, my `box` definitions refer to Vagrant boxes, either standard, published boxes available from <http://atlas.hashicorp.com/boxes> or custom-created boxes (perhaps using [Packer][packer] and [bento][bento]), in which case you'll need to provide the url in `box_url`.
 
@@ -232,7 +236,7 @@ platforms:
 ## Tips
 
 You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing
-an environment variable. Add folloing to your .kitchen.yml
+an environment variable. Add the following to your `.kitchen.yml`:
 
 ```yaml
 provisioner:
@@ -240,8 +244,8 @@ provisioner:
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
 ```
 
-run:
+Then run:
 
 `ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge`
 
-You save a LOT of time not running working instructions.
+You save a lot of time not running working instructions.
