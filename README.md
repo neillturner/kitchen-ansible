@@ -65,7 +65,7 @@ require_ruby_for_busser: false
 And set the verifier section:
 ```
 verifier:
-  name: Busser
+  name: busser
   plugin:
   - Ansiblespec
   ruby_bindir: '/usr/bin'
