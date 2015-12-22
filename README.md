@@ -53,13 +53,6 @@ platforms:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - [ 'private_network', { ip: '192.168.33.11' } ]
 ```
-**NOTE:** With Test-Kitchen 1.4 you no longer need chef installed to run the tests although we still do this by default. You just need ruby version 2.0 or higher installed and the following added to the `.kitchen.yml` file:
-
-```yaml
-provisioner:
-  name: ansible_playbook
-  hosts: test-kitchen
-```
 
 ## Ruby install to run serverspec verify
 

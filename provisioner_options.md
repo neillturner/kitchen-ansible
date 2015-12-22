@@ -48,7 +48,6 @@ require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
 require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/ intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 ansible_source_rev | | Branch or Tag to install ansible source
-<<<<<<< HEAD
 ansible_host_key_checking | true | strict host key checking in ssh
 private_key | | ssh private key file for ssh connection
 set_private_key_permissions | false | set ssh private key file read only permissions
@@ -83,14 +82,28 @@ The provisioner can be configured globally or per suite, global settings act as 
      - name: default
 ```
 
-**NOTE:** With Test-Kitchen 1.4 you not longer need chef install to run the tests. You just need ruby installed version 1.9 or higher and also add to the .kitchen.yml file
+## Ruby install to run serverspec verify
 
-```yaml
-  verifier:
-    ruby_bindir: '/usr/bin'
+By default test-kitchen installs chef to get a ruby version sutable for run serverspec in the Verify step.
+
+Instead ruby can just be installed by specifing the provisioner option:
 ```
-where /usr/bin is the location of the ruby command.
+require_ruby_for_busser false
+```
+And set the verifer section:
+```
+verifier:
+  name: Busser
+  plugin:
+  - Ansiblespec
+  ruby_bindir: '/usr/bin'
+```
+and create a Gemfile to add additionl ruby gems in directory test/integration/default/ansiblespec
+```
+source 'https://rubygems.org'
 
+gem 'rake'
+```
 
 in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the default manifest site.yml
 
