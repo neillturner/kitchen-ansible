@@ -116,20 +116,21 @@ module Kitchen
           install << <<-INSTALL
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then
-            rhelversion=$(cat /etc/redhat-release | grep 'release 6')
-            # For CentOS6/RHEL6 install ruby from SCL
-            if [ -n "$rhelversion" ]; then
-            if [ ! -d "/opt/rh/ruby193" ]; then
-              echo "-----> Installing ruby SCL in CentOS6/RHEL6 to install busser to run tests"
-              #{sudo_env('yum')} install -y centos-release-SCL
-              #{sudo_env('yum')} install -y ruby193
-              #{sudo_env('yum')} install -y ruby193-ruby-devel
-              echo "-----> Enabling ruby193"
-              source /opt/rh/ruby193/enable
-              echo "/opt/rh/ruby193/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
+            rhelversion6=$(cat /etc/redhat-release | grep 'release 6')
+            rhelversion7=$(cat /etc/redhat-release | grep 'release 7')
+            # For CentOS6/CentOS7/RHEL6/RHEL7 install ruby from SCL
+            if [ -n "$rhelversion6" ] || [ -n "$rhelversion7" ]; then
+            if [ ! -d "/opt/rh/ruby200" ]; then
+              echo "-----> Installing ruby200 SCL in CentOS6/CentOS7/RHEL6/RHEL7 to install busser to run tests"
+              #{sudo_env('yum')} install -y centos-release-scl
+              #{sudo_env('yum')} install -y ruby200
+              #{sudo_env('yum')} install -y ruby200-ruby-devel
+              echo "-----> Enabling ruby200"
+              source /opt/rh/ruby200/enable
+              echo "/opt/rh/ruby200/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
               #{sudo_env('ldconfig')}
-              #{sudo_env('ln')} -s /opt/rh/ruby193/root/usr/bin/ruby /usr/bin/ruby
-              #{sudo_env('ln')} -s /opt/rh/ruby193/root/usr/bin/gem /usr/bin/gem
+              #{sudo_env('ln')} -sf /opt/rh/ruby200/root/usr/bin/ruby /usr/bin/ruby
+              #{sudo_env('ln')} -sf /opt/rh/ruby200/root/usr/bin/gem /usr/bin/gem
             fi
             else
               if [ ! $(which ruby) ]; then
@@ -282,7 +283,12 @@ module Kitchen
 
           cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
           cmd = "HTTP_PROXY=#{http_proxy} #{cmd}" if http_proxy
+          cmd = "NO_PROXY=#{no_proxy} #{cmd}" if no_proxy
           cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}" if ansible_roles_path
+          cmd = "ANSIBLE_HOST_KEY_CHECKING=false #{cmd}" if !ansible_host_key_checking
+
+          cmd = "#{cd_ansible} #{cmd}" if !config[:ansible_sudo].nil? && !config[:ansible_sudo]
+          cmd = "chmod 400 #{private_key_file}; #{cmd}" if config[:private_key] && config[:set_private_key_permissions]
 
           result = [
             cmd,
@@ -293,6 +299,7 @@ module Kitchen
             ansible_check_flag,
             ansible_diff_flag,
             ansible_vault_flag,
+            private_key,
             extra_vars,
             tags,
             ansible_extra_flags,
@@ -304,7 +311,20 @@ module Kitchen
       end
 
       def ansible_command(script)
-        config[:ansible_sudo].nil? || config[:ansible_sudo] == true ? sudo_env(script) : script
+        if config[:ansible_sudo].nil? || config[:ansible_sudo] == true
+          s = https_proxy ? "https_proxy=#{https_proxy}" : nil
+          p = http_proxy ? "http_proxy=#{http_proxy}" : nil
+          n = no_proxy ? "no_proxy=#{no_proxy}" : nil
+          p || s || n ? " #{p} #{s} #{n} sudo -Es #{cd_ansible} #{script}" : "sudo -Es #{cd_ansible} #{script}"
+        else
+          return script
+        end
+      end
+
+      def cd_ansible
+       # this is not working so just return nil for now
+       # File.exist?('ansible.cfg') ? "cd #{config[:root_path]};" : nil
+       nil
       end
 
       protected
@@ -510,6 +530,24 @@ module Kitchen
         config[:ansible_platform].to_s.downcase
       end
 
+      def ansible_host_key_checking
+        config[:ansible_host_key_checking]
+      end
+
+      def private_key
+        if config[:private_key]
+          "--private-key #{private_key_file}"
+        end
+      end
+
+      def private_key_file
+        if config[:private_key].start_with?('/') || config[:private_key].start_with?('~')
+          "#{config[:private_key]}"
+        elsif config[:private_key]
+          "#{File.join(config[:root_path], config[:private_key])}"
+        end
+      end
+
       def update_packages_debian_cmd
         Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).update_packages_command
       end
@@ -577,7 +615,7 @@ module Kitchen
         s = https_proxy ? "https_proxy=#{https_proxy}" : nil
         p = http_proxy ? "http_proxy=#{http_proxy}" : nil
         n = no_proxy ? "no_proxy=#{no_proxy}" : nil
-        p || s ? "#{sudo('env')} #{p} #{s} #{n} #{pm}" : "#{sudo(pm)}"
+        p || s || n ? "#{sudo('env')} #{p} #{s} #{n} #{pm}" : "#{sudo(pm)}"
       end
 
       def export_http_proxy

@@ -9,7 +9,7 @@ ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /~ansible/+archive/ubuntu/ansible or rquillo/ansible
 ansible_yum_repo | https://download.fedoraproject.org /pub/epel/6/i386/ epel-release-6-8.noarch.rpm | yum repo RH/Centos6
-_for RH/Centos7 change to_ | http://dl.fedoraproject.org /pub/epel/7/x86_64/e/ epel-release-7-5.noarch.rpm |
+_for RH/Centos7 is | http://dl.fedoraproject.org /pub/epel/7/x86_64/e/ epel-release-7-5.noarch.rpm |
 ansible_binary_path | NULL | If specified this will override the location where kitchen tries to run ansible-playbook from. ie: (ansible_binary_path: /usr/local/bin )
 enable_yum_epel  | false | enable yum EPEL repo
 ansible_sles_repo | http://download.opensuse.org/repositories /systemsmanagement/SLE_12 /systemsmanagement.repo | zypper suse ansible repo
@@ -39,15 +39,18 @@ update_package_repos| true| update OS repository metadata
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
-ansible_connection | local | Connection for Hosts and Groups
+ansible_connection | local | use 'ssh' if host not localhost
 ansible_inventory_file | hosts | Custom inventory file
 ansible_extra_flags | '' | Additional options to pass to `ansible-playbook` -- e.g.: `'--skip-tags=redis'`
 ansible_playbook_command | | Override the ansible playbook command
 require_ruby_for_busser|false|install ruby to run busser for tests
 require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required.
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
-require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
+require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/ intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 ansible_source_rev | | Branch or Tag to install ansible source
+ansible_host_key_checking | true | strict host key checking in ssh
+private_key | | ssh private key file for ssh connection
+set_private_key_permissions | false | set ssh private key file read only permissions
 
 ## Configuring Provisioner Options
 

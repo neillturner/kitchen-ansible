@@ -59,8 +59,29 @@ platforms:
 provisioner:
   name: ansible_playbook
   hosts: test-kitchen
-  require_chef_for_busser: false
-  require_ruby_for_busser: true
+```
+
+## Ruby install to run serverspec verify
+
+By default test-kitchen installs chef to get a ruby version sutable for run serverspec in the Verify step.
+
+Instead ruby can just be installed by specifing the provisioner option:
+```
+require_ruby_for_busser false
+```
+And set the verifer section:
+```
+verifier:
+  name: Busser
+  plugin:
+  - Ansiblespec
+  ruby_bindir: '/usr/bin'
+```
+and create a Gemfile to add additionl ruby gems in directory test/integration/default/ansiblespec
+```
+source 'https://rubygems.org'
+
+gem 'rake'
 ```
 
 Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.

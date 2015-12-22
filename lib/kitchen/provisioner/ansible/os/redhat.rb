@@ -26,7 +26,7 @@ module Kitchen
             <<-INSTALL
             if [ ! $(which ansible) ]; then
             #{install_epel_repo}
-            #{sudo_env('rpm')} -ivh #{@config[:ansible_yum_repo]}
+            #{redhat_yum_repo}
             #{update_packages_command}
             #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
             fi
@@ -43,6 +43,23 @@ module Kitchen
 
           def ansible_redhat_version
             @config[:ansible_version] ? "-#{@config[:ansible_version]}" : nil
+          end
+
+          def redhat_yum_repo
+            if @config[:ansible_yum_repo] == 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+              <<-INSTALL
+              rhelversion6=$(cat /etc/redhat-release | grep 'release 6')
+              if [[ -n "$rhelversion6" ]; then
+                #{sudo_env('rpm')} -ivh 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+              else
+                #{sudo_env('rpm')} -ivh 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
+              fi
+              INSTALL
+            else
+              <<-INSTALL
+              #{sudo_env('rpm')} -ivh #{@config[:ansible_yum_repo]}
+              INSTALL
+            end
           end
         end
       end
