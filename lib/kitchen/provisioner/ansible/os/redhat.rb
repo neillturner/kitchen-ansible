@@ -49,7 +49,7 @@ module Kitchen
             if @config[:ansible_yum_repo] == 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
               <<-INSTALL
               rhelversion6=$(cat /etc/redhat-release | grep 'release 6')
-              if [[ -n "$rhelversion6" ]; then
+              if [ -n "$rhelversion6" ]; then
                 #{sudo_env('rpm')} -ivh 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
               else
                 #{sudo_env('rpm')} -ivh 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
