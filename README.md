@@ -56,13 +56,13 @@ platforms:
 
 ## Ruby install to run serverspec verify
 
-By default test-kitchen installs chef to get a ruby version sutable for run serverspec in the Verify step.
+By default test-kitchen installs chef to get a ruby version suitable to run serverspec in the `verify` step.
+Instead ruby can just be installed by specifying the provisioner option:
 
-Instead ruby can just be installed by specifing the provisioner option:
 ```
-require_ruby_for_busser false
+require_ruby_for_busser: false
 ```
-And set the verifer section:
+And set the verifier section:
 ```
 verifier:
   name: Busser
@@ -70,7 +70,7 @@ verifier:
   - Ansiblespec
   ruby_bindir: '/usr/bin'
 ```
-and create a Gemfile to add additionl ruby gems in directory test/integration/default/ansiblespec
+Then create a Gemfile in directory `test/integration/default/ansiblespec` to add additional ruby gems:
 ```
 source 'https://rubygems.org'
 
