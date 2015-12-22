@@ -66,6 +66,7 @@ module Kitchen
         default_config :ansible_playbook_command, nil
         default_config :ansible_host_key_checking, false
         default_config :set_private_key_permissions, false
+        default_config :idempotency_test, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||

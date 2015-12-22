@@ -48,9 +48,11 @@ require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
 require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/ intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 ansible_source_rev | | Branch or Tag to install ansible source
+<<<<<<< HEAD
 ansible_host_key_checking | true | strict host key checking in ssh
 private_key | | ssh private key file for ssh connection
 set_private_key_permissions | false | set ssh private key file read only permissions
+idempotency_test | false | Enable to test ansible playbook idempotency
 
 ## Configuring Provisioner Options
 
