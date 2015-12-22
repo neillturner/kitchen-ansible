@@ -48,6 +48,7 @@ require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen
 chef_bootstrap_url |https://www.getchef.com /chef/install.sh| the chef install
 require_ansible_source | false | Install Ansible from source using method described here: http://docs.ansible.com/intro_installation.html#running-from-source. Only works on Debian/Ubuntu at present.
 ansible_source_rev | | Branch or Tag to install ansible source
+idempotency_test | false | Enable to test ansible playbook idempotency
 
 ## Configuring Provisioner Options
 
