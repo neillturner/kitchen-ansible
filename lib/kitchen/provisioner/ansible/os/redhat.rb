@@ -46,18 +46,15 @@ module Kitchen
           end
 
           def redhat_yum_repo
-            if @config[:ansible_yum_repo] == 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
+            if @config[:ansible_yum_repo]
               <<-INSTALL
-              rhelversion6=$(cat /etc/redhat-release | grep 'release 6')
-              if [ -n "$rhelversion6" ]; then
-                #{sudo_env('rpm')} -ivh 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'
-              else
-                #{sudo_env('rpm')} -ivh 'http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm'
-              fi
+              #{sudo_env('rpm')} -ivh #{@config[:ansible_yum_repo]}
               INSTALL
             else
               <<-INSTALL
-              #{sudo_env('rpm')} -ivh #{@config[:ansible_yum_repo]}
+              if ! yum repolist epel | grep -q epel; then
+                #{sudo_env('rpm')} -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-`rpm -E %dist | sed -n 's/.*el\\([0-9]\\).*/\\1/p'`.noarch.rpm
+              fi
               INSTALL
             end
           end
