@@ -99,29 +99,26 @@ Serverspec uses ssh to communicate with the server to be tested and reads the an
 ### Example usage to create tomcat servers:
 
 ```
-                                                                     TOMCAT SERVERS
-     TEST KITCHEN              ANSIBLE AND SERVERSPEC
-     WORKSTATION               SERVER                             +------------------------+
-                             +-----------------------+            |   +---------+          |
-                             |                       |            |   |Tomcat   |          |
-+-------------------+        |                   +---------------->   |         |          |
-|                   |        |                   |   |            |   +---------+          |
-|    Workstation    |        |                   |   |    +------->                        |
-|    test-kitchen   |        |                   |   |    |       |                        |
-|    kitchen-ansible|        |                   |   |    |       |                        |
-|                   |  create|                   |   |    |       +------------------------+
-|     CREATE +--------------->      install      |   |    |
-|                   |  server|      and run      |   |    |
-|     CONVERGE+-------------------->ANSIBLE  +---+   |    |       +------------------------+
-|                   |        |               +-------------------->  +----------+          |
-|                   |        | install and run       |    |       |  |Tomcat    |          |
-|    VERIFY+------------------>Busser-ansiblespec +-------+       |  |          |          |
-+-------------------+        |  +                 |  |            |  +----------+          |
-                             |  +--->ServerSpec   +--------------->                        |
-                             |                       |            |                        |
-                             +-----------------------+            |                        |
-                                                                  +------------------------+
-
+     TEST KITCHEN              ANSIBLE AND SERVERSPEC                TOMCAT SERVER
+     WORKSTATION               SERVER (built and destroyed      (created separately
+     (or Jenkins CI)           automatically)                   could be docker container)
+                             +----------------------------+
++-------------------+        |                            |      +-----------------------+
+|   test kitchen    |        |                            |      |                       |
+|   kitchen-ansible | create |                            |      |                       |
+|                   | ser^er |                            |      |      +-----------+    |
+|     CREATE    +------------>               +----------+ |      |      | tomcat    |    |
+|                   |        |               |          | | install     |           |    |
+|                   | install and run        | ansible  +--------------->           |    |
+|     CONVERGE  +------------+--------------->          | | tomcat      +-----------+    |
+|                   |        |               +----------+ |      |                       |
+|                   | install|  +----------+  +---------+ |   test                       |
+|     VERIFY    +--------------->busser-   |-->serverspec--------+---->                  |
+|                   |and run |  |ansiblespec  |         | |      |                       |
+|                   |        |  +----------+  +---------+ |      +-----------------------+
+|     DESTROY   +------------>                            |
++-------------------+ delete +----------------------------+
+                      server
 
                    * All connections over SSH
 
