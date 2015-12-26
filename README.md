@@ -56,21 +56,21 @@ platforms:
 
 ## Ruby install to run serverspec verify
 
-By default test-kitchen installs chef to get a ruby version sutable for run serverspec in the Verify step.
+By default test-kitchen installs chef to get a ruby version suitable to run serverspec in the `verify` step.
+Instead ruby can just be installed by specifying the provisioner option:
 
-Instead ruby can just be installed by specifing the provisioner option:
 ```
-require_ruby_for_busser false
+require_ruby_for_busser: false
 ```
-And set the verifer section:
+And set the verifier section:
 ```
 verifier:
-  name: Busser
+  name: busser
   plugin:
   - Ansiblespec
   ruby_bindir: '/usr/bin'
 ```
-and create a Gemfile to add additionl ruby gems in directory test/integration/default/ansiblespec
+Then create a Gemfile in directory `test/integration/default/ansiblespec` to add additional ruby gems:
 ```
 source 'https://rubygems.org'
 
@@ -99,29 +99,26 @@ Serverspec uses ssh to communicate with the server to be tested and reads the an
 ### Example usage to create tomcat servers:
 
 ```
-                                                                     TOMCAT SERVERS
-     TEST KITCHEN              ANSIBLE AND SERVERSPEC
-     WORKSTATION               SERVER                             +------------------------+
-                             +-----------------------+            |   +---------+          |
-                             |                       |            |   |Tomcat   |          |
-+-------------------+        |                   +---------------->   |         |          |
-|                   |        |                   |   |            |   +---------+          |
-|    Workstation    |        |                   |   |    +------->                        |
-|    test-kitchen   |        |                   |   |    |       |                        |
-|    kitchen-ansible|        |                   |   |    |       |                        |
-|                   |  create|                   |   |    |       +------------------------+
-|     CREATE +--------------->      install      |   |    |
-|                   |  server|      and run      |   |    |
-|     CONVERGE+-------------------->ANSIBLE  +---+   |    |       +------------------------+
-|                   |        |               +-------------------->  +----------+          |
-|                   |        | install and run       |    |       |  |Tomcat    |          |
-|    VERIFY+------------------>Busser-ansiblespec +-------+       |  |          |          |
-+-------------------+        |  +                 |  |            |  +----------+          |
-                             |  +--->ServerSpec   +--------------->                        |
-                             |                       |            |                        |
-                             +-----------------------+            |                        |
-                                                                  +------------------------+
-
+     TEST KITCHEN              ANSIBLE AND SERVERSPEC                TOMCAT SERVER
+     WORKSTATION               SERVER (built and destroyed      (created separately
+     (or Jenkins CI)           automatically)                   could be docker container)
+                             +----------------------------+
++-------------------+        |                            |      +-----------------------+
+|   test kitchen    |        |                            |      |                       |
+|   kitchen-ansible | create |                            |      |                       |
+|                   | ser^er |                            |      |      +-----------+    |
+|     CREATE    +------------>               +----------+ |      |      | tomcat    |    |
+|                   |        |               |          | | install     |           |    |
+|                   | install and run        | ansible  +--------------->           |    |
+|     CONVERGE  +------------+--------------->          | | tomcat      +-----------+    |
+|                   |        |               +----------+ |      |                       |
+|                   | install|  +----------+  +---------+ |   test                       |
+|     VERIFY    +--------------->busser-   |-->serverspec--------+---->                  |
+|                   |and run |  |ansiblespec  |         | |      |                       |
+|                   |        |  +----------+  +---------+ |      +-----------------------+
+|     DESTROY   +------------>                            |
++-------------------+ delete +----------------------------+
+                      server
 
                    * All connections over SSH
 

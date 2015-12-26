@@ -33,7 +33,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:extra_vars, {}],
       [:tags, []],
       [:ansible_apt_repo, 'ppa:ansible/ansible'],
-      [:ansible_yum_repo, 'https://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm'],
+      [:ansible_yum_repo, nil],
       [:ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo'],
       [:python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo'],
       [:chef_bootstrap_url, 'https://www.getchef.com/chef/install.sh'],
