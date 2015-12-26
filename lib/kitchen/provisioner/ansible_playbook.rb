@@ -379,7 +379,6 @@ module Kitchen
         if [ ! -d "#{config[:ansible_omnibus_remote_path]}" ]; then
           echo "-----> Installing Ansible Omnibus"
           #{export_http_proxy}
-          #{install_epel_repo}
           do_download #{config[:ansible_omnibus_url]} /tmp/ansible_install.sh
           #{sudo_env('sh')} /tmp/ansible_install.sh #{version}
         fi
