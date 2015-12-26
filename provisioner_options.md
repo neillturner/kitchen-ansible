@@ -50,7 +50,6 @@ require_ansible_source | false | Install Ansible from source using method descri
 ansible_source_rev | | Branch or Tag to install ansible source
 ansible_host_key_checking | true | strict host key checking in ssh
 private_key | | ssh private key file for ssh connection
-set_private_key_permissions | false | set ssh private key file read only permissions
 idempotency_test | false | Enable to test ansible playbook idempotency
 
 ## Configuring Provisioner Options

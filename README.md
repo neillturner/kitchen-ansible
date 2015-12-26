@@ -184,10 +184,11 @@ require 'net/ssh'
 
 RSpec.configure do |config|
   set :host,  ENV['TARGET_HOST']
+  # ssh options at http://net-ssh.github.io/ssh/v1/chapter-2.html
   # ssh via password
-  set :ssh_options, :user => 'root', :password => ENV['LOGIN_PASSWORD'] if ENV['LOGIN_PASSWORD']
+  set :ssh_options, :user => ENV['LOGIN_USER'], :paranoid => false, :verbose => :error, :password => ENV['LOGIN_PASSWORD'] if ENV['LOGIN_PASSWORD']
   # ssh via ssh key
-  set :ssh_options, :user => 'root', :host_key => 'ssh-rsa', :keys => [ ENV['SSH_KEY'] ] if ENV['SSH_KEY']
+  set :ssh_options, :user => ENV['LOGIN_USER'], :paranoid => false, :verbose => :error, :host_key => 'ssh-rsa', :keys => [ ENV['SSH_KEY'] ] if ENV['SSH_KEY']
   set :backend, :ssh
   set :request_pty, true
 end
@@ -204,6 +205,7 @@ This goes in directory test/integration/default/ansiblespec  where default is th
   inventory: hosts
   kitchen_path: '/tmp/kitchen'
   pattern: 'ansiblespec'    # or spec or serverspec
+  user: root
   ssh_key: 'spec/my_private_key.pem'
   login_password: 'myrootpassword'
 ```

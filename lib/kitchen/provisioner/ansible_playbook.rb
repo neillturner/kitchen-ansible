@@ -288,7 +288,7 @@ module Kitchen
           cmd = "ANSIBLE_HOST_KEY_CHECKING=false #{cmd}" if !ansible_host_key_checking
 
           cmd = "#{cd_ansible} #{cmd}" if !config[:ansible_sudo].nil? && !config[:ansible_sudo]
-          cmd = "chmod 400 #{private_key_file}; #{cmd}" if config[:private_key] && config[:set_private_key_permissions]
+          cmd = "#{copy_private_key_cmd} #{cmd}" if config[:private_key]
 
           result = [
             cmd,
@@ -545,11 +545,19 @@ module Kitchen
         end
       end
 
+      def copy_private_key_cmd
+        if !config[:private_key].start_with?('/') && !config[:private_key].start_with?('~')
+          ssh_private_key = File.join('~/.ssh', File.basename(config[:private_key]))
+          tmp_private_key = File.join(config[:root_path], config[:private_key])
+          "rm -rf #{ssh_private_key}; cp #{tmp_private_key} #{ssh_private_key}; chmod 400 #{ssh_private_key};"
+        end
+      end
+
       def private_key_file
         if config[:private_key].start_with?('/') || config[:private_key].start_with?('~')
           "#{config[:private_key]}"
         elsif config[:private_key]
-          "#{File.join(config[:root_path], config[:private_key])}"
+          "#{File.join('~/.ssh', File.basename(config[:private_key]))}"
         end
       end
 
