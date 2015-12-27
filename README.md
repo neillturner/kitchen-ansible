@@ -98,31 +98,7 @@ Serverspec uses ssh to communicate with the server to be tested and reads the an
 
 ### Example usage to create tomcat servers:
 
-```
-     TEST KITCHEN              ANSIBLE AND SERVERSPEC                TOMCAT SERVER
-     WORKSTATION               SERVER (built and destroyed      (created separately
-     (or Jenkins CI)           automatically)                   could be docker container)
-                             +----------------------------+
-+-------------------+        |                            |      +-----------------------+
-|   test kitchen    |        |                            |      |                       |
-|   kitchen-ansible | create |                            |      |                       |
-|                   | ser^er |                            |      |      +-----------+    |
-|     CREATE    +------------>               +----------+ |      |      | tomcat    |    |
-|                   |        |               |          | | install     |           |    |
-|                   | install and run        | ansible  +--------------->           |    |
-|     CONVERGE  +------------+--------------->          | | tomcat      +-----------+    |
-|                   |        |               +----------+ |      |                       |
-|                   | install|  +----------+  +---------+ |   test                       |
-|     VERIFY    +--------------->busser-   |-->serverspec--------+---->                  |
-|                   |and run |  |ansiblespec  |         | |      |                       |
-|                   |        |  +----------+  +---------+ |      +-----------------------+
-|     DESTROY   +------------>                            |
-+-------------------+ delete +----------------------------+
-                      server
-
-                   * All connections over SSH
-
-```
+![test-kitchen, ansible and busser-ansiblespec](https://github.com/neillturner/ansible_repo/blob/master/kitchen-ansible.png "test-kitchen, ansible and busser-ansiblespec")
 
 See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd)
 
