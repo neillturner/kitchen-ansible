@@ -50,6 +50,7 @@ ansible_source_rev | | Branch or Tag to install ansible source
 ansible_host_key_checking | true | strict host key checking in ssh
 private_key | | ssh private key file for ssh connection
 idempotency_test | false | Enable to test ansible playbook idempotency
+ssh_known_hosts | | List of hosts that should be added to `~/.ssh/known_hosts`
 
 ## Configuring Provisioner Options
 
