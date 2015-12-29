@@ -250,6 +250,13 @@ module Kitchen
           sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '/etc/ansible/.'
         ].join(' ')
 
+        if config[:ssh_known_hosts]
+          config[:ssh_known_hosts].each do |host|
+            info("Add #{host} to ~/.ssh/known_hosts")
+            commands << "ssh-keyscan #{host} > ~/.ssh/known_hosts 2> /dev/null"
+          end
+        end
+
         if galaxy_requirements
           if config[:require_ansible_source]
             commands << setup_ansible_env_from_source
