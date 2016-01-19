@@ -28,8 +28,7 @@ module Kitchen
       class Config
         include Kitchen::Configurable
 
-        attr_writer :instance
-        attr_reader :instance
+        attr_accessor :instance
 
         default_config :ansible_sudo, true
         default_config :ansible_verbose, false
