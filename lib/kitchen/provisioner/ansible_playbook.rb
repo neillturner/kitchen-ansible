@@ -352,7 +352,7 @@ module Kitchen
         <<-INSTALL
         if [ ! -d #{config[:root_path]}/ansible ]; then
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{install_epel_repo}
+            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
             #{update_packages_redhat_cmd}
             #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
           else
@@ -577,6 +577,10 @@ module Kitchen
 
       def update_packages_redhat_cmd
         Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).update_packages_command
+      end
+
+      def python_sles_repo
+        config[:python_sles_repo]
       end
 
       def extra_vars
