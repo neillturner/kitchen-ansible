@@ -7,4 +7,4 @@ before_install:
   - gem install bundler -v 1.10.6
 install:
   - bundle install --jobs=1
-script: bundle exec rspec
+script: bundle exec rspec --require spec_helper
