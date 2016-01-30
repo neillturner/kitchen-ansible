@@ -25,6 +25,10 @@ module Kitchen
           def update_packages_command
             @config[:update_package_repos] ? "#{sudo_env('apt-get')} update" : nil
           end
+          
+          def ansible_debian_version
+            @config[:ansible_version] ? "=#{@config[:ansible_version]}" : nil
+          end
 
           def install_command
             <<-INSTALL
@@ -49,7 +53,7 @@ module Kitchen
               ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
               #{sudo_env('add-apt-repository')} -y #{@config[:ansible_apt_repo]} || #{sudo_env('add-apt-repository')} #{@config[:ansible_apt_repo]}
               #{sudo_env('apt-get')} update
-              #{sudo_env('apt-get')} -y install ansible
+              #{sudo_env('apt-get')} -y install ansible#{ansible_debian_version}
             fi
             INSTALL
           end
