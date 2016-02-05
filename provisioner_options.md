@@ -51,6 +51,8 @@ ansible_host_key_checking | true | strict host key checking in ssh
 private_key | | ssh private key file for ssh connection
 idempotency_test | false | Enable to test ansible playbook idempotency
 ssh_known_hosts | | List of hosts that should be added to `~/.ssh/known_hosts`
+kerberos_conf_file| | Path of krb5.conf file using in windows support
+require_windows_support | false | install windows support: http://docs.ansible.com/ansible/intro_windows.html 
 
 ## Configuring Provisioner Options
 

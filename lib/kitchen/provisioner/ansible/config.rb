@@ -49,6 +49,7 @@ module Kitchen
         # (Reference: https://github.com/neillturner/kitchen-ansible/issues/66 )
         default_config :require_chef_for_busser, true
         default_config :require_ruby_for_busser, false
+        default_config :require_windows_support, false
         default_config :requirements_path, false
         default_config :ssh_known_hosts, nil
         default_config :ansible_verbose, false
@@ -119,6 +120,10 @@ module Kitchen
 
         default_config :ansible_inventory_file do |provisioner|
           provisioner.calculate_path('hosts', :file)
+        end
+
+        default_config :kerberos_conf_file do |provisioner|
+          provisioner.calculate_path('kerberos_conf', :file)
         end
 
         def initialize(config = {})
