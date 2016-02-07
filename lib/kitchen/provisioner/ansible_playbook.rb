@@ -104,15 +104,19 @@ module Kitchen
         install = ''
         if require_windows_support
           install << <<-INSTALL
-            #{sudo_env('pip')} install "pywinrm>=0.1.1"
-            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-              #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation
-            elif [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
-              # TODO: SuSE support
+          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc
+          else
+            if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
+              #{sudo_env('zypper')} ar #{python_sles_repo}
+              #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
             else
-              #{sudo_env('apt-get')} install python-dev libkrb5-dev
+              #{sudo_env('apt-get')} install python-dev libkrb5-dev build-essential
             fi
-            #{sudo_env('pip')} install kerberos
+          fi
+          #{export_http_proxy}
+          #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install pywinrm kerberos
           INSTALL
         end
         install
@@ -649,6 +653,10 @@ module Kitchen
 
       def require_windows_support
         config[:require_windows_support]
+      end
+
+      def kerberos_conf_file
+        config[:kerberos_conf_file]
       end
 
       def install_source_rev
