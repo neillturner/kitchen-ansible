@@ -1,3 +1,13 @@
+# IDE specific
+.idea/
+
+# Bundler
 .bundle
 vendor
+
+# Ruby
+.ruby-version
+
+# Test-kitchen
 integration_test/.kitchen/
+
