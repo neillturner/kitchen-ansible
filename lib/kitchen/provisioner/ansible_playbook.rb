@@ -508,10 +508,6 @@ module Kitchen
         config[:ansible_inventory_file]
       end
 
-      def ansible_debian_version
-        config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
-      end
-
       def ansible_verbose_flag
         config[:ansible_verbose] ? '-' << ('v' * verbosity_level(config[:ansible_verbosity])) : nil
       end

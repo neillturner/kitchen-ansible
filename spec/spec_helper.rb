@@ -26,3 +26,15 @@ RSpec.configure do |config|
   config.tty = true
   config.color = true
 end
+
+module Kitchen module Ansible module TestHelpers
+  def config_with(values = {})
+    Kitchen::Provisioner::Ansible::Config.new({
+      sudo: true,
+      sudo_command: 'sudo'
+    }.merge!(values))
+  end
+
+  alias_method :empty_config, :config_with
+
+end end end
