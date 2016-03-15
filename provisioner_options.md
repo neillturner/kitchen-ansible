@@ -39,8 +39,10 @@ ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
 ansible_connection | local | use 'ssh' if host not localhost
-ansible_inventory_file | hosts | Custom inventory file
-ansible_extra_flags | '' | Additional options to pass to `ansible-playbook` -- e.g.: `'--skip-tags=redis'`
+hosts |  | create ansible hosts file for localhost with this server group
+ansible_inventory |  | Static or dynamic inventory file or directory. Dynamic inventory files are assumed to have extensions.
+ansible_limit |  | Further limits the selected host/group patterns.
+ansible_extra_flags |  | Additional options to pass to `ansible-playbook` -- e.g.: `'--skip-tags=redis'`
 ansible_playbook_command | | Override the ansible playbook command
 require_ruby_for_busser|false|install ruby to run busser for tests
 require_chef_for_busser|true|install chef to run busser for tests. NOTE: kitchen 1.4 only requires ruby to run busser so this is not required.

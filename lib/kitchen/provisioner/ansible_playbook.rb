@@ -207,7 +207,7 @@ module Kitchen
         yield if block_given?
 
         prepare_playbook
-        prepare_inventory_file
+        prepare_inventory
         prepare_modules
         prepare_roles
         prepare_ansible_cfg
@@ -257,6 +257,27 @@ module Kitchen
           end
         end
 
+        if ansible_inventory
+          if File.directory?(ansible_inventory)
+            Dir.foreach(ansible_inventory) do |f|
+              next if f == "." or f == ".."
+              contents = File.open("#{ansible_inventory}/#{f}", 'rb') { |g| g.read }
+              if contents.start_with?('#!')
+                commands << [
+                  sudo_env('chmod +x'), File.join("#{config[:root_path]}/#{File.basename(ansible_inventory)}", File.basename(f))
+                ].join(' ')
+              end
+            end
+          else
+            contents = File.open(ansible_inventory, 'rb') { |f| f.read }
+            if contents.start_with?('#!')
+              commands << [
+                sudo_env('chmod +x'), File.join(config[:root_path], File.basename(ansible_inventory))
+              ].join(' ')
+            end
+          end
+        end
+
         if galaxy_requirements
           if config[:require_ansible_source]
             commands << setup_ansible_env_from_source
@@ -300,6 +321,7 @@ module Kitchen
           result = [
             cmd,
             ansible_inventory_flag,
+            ansible_limit_flag,
             "-c #{config[:ansible_connection]}",
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
@@ -436,8 +458,8 @@ module Kitchen
         File.join(sandbox_path, File.basename(ansible_vault_password_file).reverse.chomp('.').reverse)
       end
 
-      def tmp_inventory_file_path
-        File.join(sandbox_path, File.basename(ansible_inventory_file))
+      def tmp_inventory_path
+        File.join(sandbox_path, File.basename(ansible_inventory))
       end
 
       def ansiblefile
@@ -504,8 +526,14 @@ module Kitchen
         config[:ansible_vault_password_file]
       end
 
-      def ansible_inventory_file
-        config[:ansible_inventory_file]
+      def ansible_inventory
+        config[:ansible_inventory] = config[:ansible_inventory_file] if config[:ansible_inventory].nil?
+        info('ansible_inventory_file parameter deprecated use ansible_inventory') if config[:ansible_inventory_file]
+        config[:ansible_inventory]
+      end
+
+      def ansible_debian_version
+        config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
       end
 
       def ansible_verbose_flag
@@ -526,7 +554,11 @@ module Kitchen
       end
 
       def ansible_inventory_flag
-        config[:ansible_inventory_file] ? "--inventory-file=#{File.join(config[:root_path], File.basename(config[:ansible_inventory_file]))}" : "--inventory-file=#{File.join(config[:root_path], 'hosts')}"
+        config[:ansible_inventory] ? "-i #{File.join(config[:root_path], File.basename(config[:ansible_inventory]))}" : "-i #{File.join(config[:root_path], 'hosts')}"
+      end
+
+      def ansible_limit_flag
+        config[:ansible_limit] ? "-l #{config[:ansible_limit]}" : ""
       end
 
       def ansible_extra_flags
@@ -693,19 +725,23 @@ module Kitchen
         end
       end
 
-      def prepare_inventory_file
-        info('Preparing inventory file')
-
-        return unless ansible_inventory_file
-        debug("Copying inventory file from #{ansible_inventory_file} to #{tmp_inventory_file_path}")
-        FileUtils.cp_r(ansible_inventory_file, tmp_inventory_file_path)
+      def prepare_inventory
+        info('Preparing inventory')
+        return unless ansible_inventory
+        if File.directory?(ansible_inventory)
+          debug("Copying inventory directory from #{ansible_inventory} to #{tmp_inventory_path}")
+          FileUtils.cp_r(ansible_inventory, sandbox_path)
+        else
+          debug("Copying inventory file from #{ansible_inventory} to #{tmp_inventory_path}")
+          FileUtils.cp_r(ansible_inventory, tmp_inventory_path)
+        end
       end
 
       # localhost ansible_connection=local
       # [example_servers]
       # localhost
       def prepare_hosts
-        return if ansible_inventory_file
+        return if ansible_inventory
         info('Preparing hosts file')
 
         if config[:hosts].nil?
