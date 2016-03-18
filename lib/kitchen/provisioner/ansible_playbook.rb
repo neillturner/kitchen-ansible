@@ -97,7 +97,9 @@ module Kitchen
         else
           return
         end
-        cmd + install_windows_support + install_busser_prereqs
+        result = cmd + install_windows_support + install_busser_prereqs
+        info("Going to install ansible with: #{result}")
+        result
       end
 
       def install_windows_support
