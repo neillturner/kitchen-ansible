@@ -54,27 +54,50 @@ platforms:
       - [ 'private_network', { ip: '192.168.33.11' } ]
 ```
 
+## Test-Kitchen Ansible Windows Support
+
+Windows is supported by created a lunix server to run ansible will software required to support winrm. Then winrm connection is used to configure the windows server.
+
+In kitchen.yml set
+
+```
+  ansible_connection: winrm
+  require_windows_support: true
+  require_chef_for_busser: false
+```
+
+See example [https://github.com/neillturner//ansible_windows_repo](https://github.com/neillturner//ansible_windows_repo)
+
+
 ## Ruby install to run serverspec verify
 
 By default test-kitchen installs chef to get a ruby version suitable to run serverspec in the `verify` step.
 Instead ruby can just be installed by specifying the provisioner option:
 
 ```
-require_ruby_for_busser: false
+require_ruby_for_busser: true
 ```
 And set the verifier section:
 ```
 verifier:
-  name: busser
-  plugin:
-  - Ansiblespec
-  ruby_bindir: '/usr/bin'
-```
-Then create a Gemfile in directory `test/integration/default/ansiblespec` to add additional ruby gems:
-```
-source 'https://rubygems.org'
+  name: serverspec
+  sudo_path: true
 
-gem 'rake'
+suites:
+  - name: ansible
+    driver_config:
+      hostname: '54.229.34.169'
+    verifier:
+      patterns:
+      - roles/tomcat/spec/tomcat_spec.rb
+      bundler_path: '/usr/local/bin'
+      rspec_path: '/usr/local/bin'
+      env_vars:
+        TARGET_HOST: 54.229.104.40
+        LOGIN_USER: centos
+        SUDO: true
+        SSH_KEY: spec/test.pem
+
 ```
 
 Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.
@@ -90,10 +113,8 @@ This can run tests against multiple servers with multiple roles in any of three 
 
 Serverspec uses ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
-- Set pattern: 'serverspec' in the config.yml file (see below) to perform tests in test-kitchen serverspec format.
-(See https://github.com/delphix/ansible-package-caching-proxy for an example of using test-kitchen serverspec).
-- Set pattern: 'spec' in the config.yml file (see below) to perform tests in for roles specified in the spec directory.
-- By default pattern: ansiblespec is set. See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+
 
 
 ### Example usage to create tomcat servers:
