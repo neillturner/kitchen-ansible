@@ -66,7 +66,7 @@ In kitchen.yml set
   require_chef_for_busser: false
 ```
 
-See example [https://github.com/neillturner//ansible_windows_repo](https://github.com/neillturner//ansible_windows_repo)
+See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo)
 
 
 ## Ruby install to run serverspec verify
