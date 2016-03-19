@@ -38,7 +38,7 @@ update_package_repos| true| update OS repository metadata
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
-ansible_connection | local | use 'ssh' if host not localhost
+ansible_connection | local | use 'ssh' if host not localhost or 'winrm' for windows
 hosts |  | create ansible hosts file for localhost with this server group
 ansible_inventory |  | Static or dynamic inventory file or directory.
 ansible_limit |  | Further limits the selected host/group patterns.
