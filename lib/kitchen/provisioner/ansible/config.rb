@@ -67,6 +67,9 @@ module Kitchen
         default_config :ansible_playbook_command, nil
         default_config :ansible_host_key_checking, true
         default_config :idempotency_test, nil
+        default_config :ansible_inventory, nil
+        default_config :ansible_inventory_file, nil
+        default_config :ansible_limit, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||
@@ -116,10 +119,6 @@ module Kitchen
 
         default_config :ansible_vault_password_file do |provisioner|
           provisioner.calculate_path('ansible-vault-password', :file)
-        end
-
-        default_config :ansible_inventory_file do |provisioner|
-          provisioner.calculate_path('hosts', :file)
         end
 
         default_config :kerberos_conf_file do |provisioner|

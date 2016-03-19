@@ -84,10 +84,10 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
     end
   end
 
-  describe '#prepare_inventory_file' do
+  describe '#prepare_inventory' do
     it 'copies the inventory file to the sandbox when present' do
       allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
-      provisioner.send(:prepare_inventory_file)
+      provisioner.send(:prepare_inventory)
     end
   end
 
