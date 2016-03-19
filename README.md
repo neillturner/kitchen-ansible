@@ -56,7 +56,7 @@ platforms:
 
 ## Test-Kitchen Ansible Windows Support
 
-Windows is supported by created a lunix server to run ansible will software required to support winrm. Then winrm connection is used to configure the windows server.
+Windows is supported by created a lunix server to run ansible with software required to support winrm. Then winrm connection is used to configure the windows server.
 
 In kitchen.yml set
 
@@ -105,11 +105,7 @@ Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansi
 
 ## Test-Kitchen Ansiblespec
 
-This can run tests against multiple servers with multiple roles in any of three formats:
-
-  * ansiblespec - tests are specified with the roles in the ansible repository. (default)
-  * serverspec - tests are in test-kitchen serverspec format
-  * spec - tests are stored in the spec directory with a directory for each role.
+By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can be against multiple servers with multiple roles in the ansiblespec format.
 
 Serverspec uses ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
@@ -119,7 +115,7 @@ See example [https://github.com/neillturner/ansible_repo](https://github.com/nei
 
 ### Example usage to create tomcat servers:
 
-![test-kitchen, ansible and busser-ansiblespec](https://github.com/neillturner/ansible_repo/blob/master/kitchen-ansible.png "test-kitchen, ansible and busser-ansiblespec")
+![test-kitchen, ansible and ansiblespec](https://github.com/neillturner/ansible_repo/blob/master/kitchen-ansible.png "test-kitchen, ansible and ansiblespec")
 
 See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd)
 
@@ -131,7 +127,6 @@ In the ansible repository specify:
 
 * spec files with the roles.
 * spec_helper in the spec folder (with code as below).
-* test/integration/<suite>/ansiblespec containing config.yml and ssh private keys to access the servers.
 
 ```
 .
@@ -157,12 +152,6 @@ In the ansible repository specify:
 +-- spec
     +-- spec_helper.rb
     +-- my_private_key.pem
-+-- test
-    +-- integration
-        +-- default      # name of test-kitchen suite
-            +-- ansiblespec
-                +-- config.yml
-
 ```
 
 
@@ -188,23 +177,7 @@ RSpec.configure do |config|
 end
 ```
 
-#### config.yml
-
-This goes in directory test/integration/default/ansiblespec  where default is the name of test-kitchen suite.
-
-```
----
--
-  playbook: default.yml
-  inventory: hosts
-  kitchen_path: '/tmp/kitchen'
-  pattern: 'ansiblespec'    # or spec or serverspec
-  user: root
-  ssh_key: 'spec/my_private_key.pem'
-  login_password: 'myrootpassword'
-```
-
-See [busser-ansiblespec](https://github.com/neillturner/busser-ansiblespec)
+See [bkitchen-verifier-serverspec](https://github.com/neillturner/kitchen-verifier-serverspec)
 
 ## Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
