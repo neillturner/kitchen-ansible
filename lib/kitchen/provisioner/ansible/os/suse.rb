@@ -24,6 +24,7 @@ module Kitchen
         class Suse < Os
           def install_command
             <<-INSTALL
+
             if [ ! $(which ansible) ]; then
               #{sudo_env('zypper')} ar #{@config[:python_sles_repo]}
               #{sudo_env('zypper')} ar #{@config[:ansible_sles_repo]}

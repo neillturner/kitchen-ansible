@@ -25,13 +25,14 @@ module Kitchen
           def update_packages_command
             @config[:update_package_repos] ? "#{sudo_env('apt-get')} update" : nil
           end
-          
+
           def ansible_debian_version
             @config[:ansible_version] ? "=#{@config[:ansible_version]}" : nil
           end
 
           def install_command
             <<-INSTALL
+
             if [ ! $(which ansible) ]; then
               #{update_packages_command}
 

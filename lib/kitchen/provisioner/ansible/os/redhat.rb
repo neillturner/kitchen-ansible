@@ -24,6 +24,7 @@ module Kitchen
         class Redhat < Os
           def install_command
             <<-INSTALL
+
             if [ ! $(which ansible) ]; then
             #{install_epel_repo}
             #{redhat_yum_repo}

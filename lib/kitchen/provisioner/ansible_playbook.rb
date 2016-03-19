@@ -79,6 +79,7 @@ module Kitchen
           else
             info('Installing ansible, will try to determine platform os')
             cmd = <<-INSTALL
+
             if [ ! $(which ansible) ]; then
               if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                 if ! [ grep -q 'Amazon Linux' /etc/system-release ]; then

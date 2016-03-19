@@ -24,6 +24,7 @@ module Kitchen
         class Amazon < Redhat
           def install_command
             <<-INSTALL
+
             if [ ! $(which ansible) ]; then
               #{install_epel_repo}
               #{sudo_env('yum-config-manager')} --enable epel/x86_64
