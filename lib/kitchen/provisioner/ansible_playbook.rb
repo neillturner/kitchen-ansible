@@ -97,7 +97,31 @@ module Kitchen
         else
           return
         end
-        cmd + install_busser_prereqs
+        result = cmd + install_windows_support + install_busser_prereqs
+        info("Going to install ansible with: #{result}")
+        result
+      end
+
+      def install_windows_support
+        install = ''
+        if require_windows_support
+          install << <<-INSTALL
+          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc
+          else
+            if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
+              #{sudo_env('zypper')} ar #{python_sles_repo}
+              #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
+            else
+              #{sudo_env('apt-get')} install python-dev libkrb5-dev build-essential
+            fi
+          fi
+          #{export_http_proxy}
+          #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install pywinrm kerberos
+          INSTALL
+        end
+        install
       end
 
       def install_busser_prereqs
@@ -221,6 +245,7 @@ module Kitchen
         prepare_filter_plugins
         prepare_lookup_plugins
         prepare_ansible_vault_password_file
+        prepare_kerberos_conf_file
         info('Finished Preparing files for transfer')
       end
 
@@ -286,6 +311,12 @@ module Kitchen
             'ansible-galaxy', 'install', '--force',
             '-p', File.join(config[:root_path], 'roles'),
             '-r', File.join(config[:root_path], galaxy_requirements)
+          ].join(' ')
+        end
+
+        if kerberos_conf_file
+          commands << [
+            sudo_env('cp -f'), File.join(config[:root_path], 'krb5.conf'), '/etc'
           ].join(' ')
         end
 
@@ -456,6 +487,10 @@ module Kitchen
 
       def tmp_ansible_vault_password_file_path
         File.join(sandbox_path, File.basename(ansible_vault_password_file).reverse.chomp('.').reverse)
+      end
+
+      def tmp_kerberos_conf_file_path
+        File.join(sandbox_path, 'krb5.conf')
       end
 
       def tmp_inventory_path
@@ -644,6 +679,14 @@ module Kitchen
 
       def require_chef_for_busser
         config[:require_chef_for_busser]
+      end
+
+      def require_windows_support
+        config[:require_windows_support]
+      end
+
+      def kerberos_conf_file
+        config[:kerberos_conf_file]
       end
 
       def install_source_rev
@@ -890,6 +933,15 @@ module Kitchen
         debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
 
         FileUtils.cp(ansible_vault_password_file, tmp_ansible_vault_password_file_path)
+      end
+
+      def prepare_kerberos_conf_file
+        return unless kerberos_conf_file
+
+        info('Preparing kerberos configuration file')
+        debug("Copying kerberos configuration file from #{kerberos_conf_file} to #{tmp_kerberos_conf_file_path}")
+
+        FileUtils.cp(kerberos_conf_file, tmp_kerberos_conf_file_path)
       end
 
       def resolve_with_librarian
