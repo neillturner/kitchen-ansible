@@ -177,7 +177,7 @@ RSpec.configure do |config|
 end
 ```
 
-See [bkitchen-verifier-serverspec](https://github.com/neillturner/kitchen-verifier-serverspec)
+See [kitchen-verifier-serverspec](https://github.com/neillturner/kitchen-verifier-serverspec)
 
 ## Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
