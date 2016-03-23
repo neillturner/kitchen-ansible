@@ -56,7 +56,7 @@ platforms:
 
 ## Test-Kitchen Ansible Windows Support
 
-Windows is supported by created a lunix server to run ansible with software required to support winrm. Then winrm connection is used to configure the windows server.
+Windows is supported by creating a linux server to run ansible with software required to support winrm. Then the winrm connection is used to configure the windows server.
 
 In kitchen.yml set
 
@@ -66,7 +66,7 @@ In kitchen.yml set
   require_chef_for_busser: false
 ```
 
-See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo)
+See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo).
 
 
 ## Ruby install to run serverspec verify
@@ -105,13 +105,11 @@ Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansi
 
 ## Test-Kitchen Ansiblespec
 
-By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can be against multiple servers with multiple roles in the ansiblespec format.
+By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can be run against multiple servers with multiple roles in the ansiblespec format.
 
 Serverspec uses ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
 See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
-
-
 
 ### Example usage to create tomcat servers:
 
