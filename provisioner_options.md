@@ -22,10 +22,10 @@ no_proxy | nil | list of URLs or IPs that should be excluded from proxying
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
 host_vars_path | host_vars | ansible repo hosts directory
-library_plugins | library | ansible repo library plugins directory
-callback_plugins | callback_plugins | ansible repo callback_plugins directory
-filter_plugins | filter_plugins | ansible repo filter_plugins directory
-lookup_plugins | lookup_plugins | ansible repo lookup_plugins directory
+library_plugins_path | library | ansible repo library plugins directory
+callback_plugins_path | callback_plugins | ansible repo callback_plugins directory
+filter_plugins_path | filter_plugins | ansible repo filter_plugins directory
+lookup_plugins_path | lookup_plugins | ansible repo lookup_plugins directory
 additional_copy_path | | arbitrary array of files and directories to copy into test environment, relative to CWD. (eg, vars or included playbooks)
 extra_vars | Hash.new | Hash to set the extra_vars passed to ansibile-playbook command
 playbook | 'default.yml' | playbook for ansible-playbook to run
