@@ -184,6 +184,13 @@ module Kitchen
                     PACKAGES="ruby ruby-dev ruby2.1 ruby2.1-dev"
                   fi
                 fi
+                if [ "$(lsb_release -si)" = "Ubuntu" ]; then
+                  ubuntuvers=$(lsb_release -sr | tr -d .)
+                  if [ $ubuntuvers -ge 1410 ]; then
+                    # Default ruby is 2.x in utopic and newer
+                    PACKAGES="ruby ruby-dev ruby2.1 ruby2.1-dev"
+                  fi
+                fi
                 #{sudo_env('apt-get')} -y install $PACKAGES
                 if [ $debvers -eq 6 ]; then
                     # in squeeze we need to update alternatives
