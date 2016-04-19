@@ -29,7 +29,7 @@ module Kitchen
             #{install_epel_repo}
             #{redhat_yum_repo}
             #{update_packages_command}
-            #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} libselinux-python git
+            #{sudo_env('yum')} -y install #{ansible_package_name} libselinux-python git
             fi
             INSTALL
           end
@@ -42,8 +42,12 @@ module Kitchen
             @config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil
           end
 
-          def ansible_redhat_version
-            @config[:ansible_version] ? "-#{@config[:ansible_version]}" : nil
+          def ansible_package_name
+            if @config[:ansible_version] == 'latest' || @config[:ansible_version] == nil
+              "ansible"
+            else
+              "ansible-#{@config[:ansible_version]}"
+            end
           end
 
           def redhat_yum_repo
