@@ -28,7 +28,7 @@ module Kitchen
             if [ ! $(which ansible) ]; then
               #{install_epel_repo}
               #{sudo_env('yum-config-manager')} --enable epel/x86_64
-              #{sudo_env('yum')} -y install ansible#{ansible_redhat_version} git
+              #{sudo_env('yum')} -y install #{ansible_package_name} git
               #{sudo_env('alternatives')} --set python /usr/bin/python2.6
               #{sudo_env('yum')} clean all
               #{sudo_env('yum')} install yum-python26 -y
