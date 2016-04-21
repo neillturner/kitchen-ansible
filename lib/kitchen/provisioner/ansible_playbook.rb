@@ -188,7 +188,7 @@ module Kitchen
                   ubuntuvers=$(lsb_release -sr | tr -d .)
                   if [ $ubuntuvers -ge 1410 ]; then
                     # Default ruby is 2.x in utopic and newer
-                    PACKAGES="ruby ruby-dev ruby2.1 ruby2.1-dev"
+                    PACKAGES="ruby ruby-dev"
                   fi
                 fi
                 #{sudo_env('apt-get')} -y install $PACKAGES
