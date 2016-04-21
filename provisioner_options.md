@@ -38,9 +38,9 @@ update_package_repos| true| update OS repository metadata
 ansiblefile_path | | Path to Ansiblefile
 requirements_path | | Path to ansible-galaxy requirements
 ansible_vault_password_file| | Path of Ansible Vault Password File
-ansible_connection | local | use 'ssh' if host not localhost or 'winrm' for windows
+ansible_connection | local | use 'ssh' if host not localhost or 'winrm' for windows or 'none' if defined in inventory.
 hosts |  | create ansible hosts file for localhost with this server group
-ansible_inventory |  | Static or dynamic inventory file or directory.
+ansible_inventory |  | Static or dynamic inventory file or directory or 'none' if defined in ansible.cfg.
 ansible_limit |  | Further limits the selected host/group patterns.
 ansible_extra_flags |  | Additional options to pass to `ansible-playbook` -- e.g.: `'--skip-tags=redis'`
 ansible_playbook_command | | Override the ansible playbook command
@@ -54,7 +54,7 @@ private_key | | ssh private key file for ssh connection
 idempotency_test | false | Enable to test ansible playbook idempotency
 ssh_known_hosts | | List of hosts that should be added to `~/.ssh/known_hosts`
 kerberos_conf_file| | Path of krb5.conf file using in windows support
-require_windows_support | false | install windows support: http://docs.ansible.com/ansible/intro_windows.html 
+require_windows_support | false | install windows support: http://docs.ansible.com/ansible/intro_windows.html
 
 ## Configuring Provisioner Options
 

@@ -361,7 +361,7 @@ module Kitchen
             cmd,
             ansible_inventory_flag,
             ansible_limit_flag,
-            "-c #{config[:ansible_connection]}",
+            ansible_connection_flag,
             "-M #{File.join(config[:root_path], 'modules')}",
             ansible_verbose_flag,
             ansible_check_flag,
@@ -570,6 +570,7 @@ module Kitchen
       end
 
       def ansible_inventory
+        return nil if config[:ansible_inventory] == 'none'
         config[:ansible_inventory] = config[:ansible_inventory_file] if config[:ansible_inventory].nil?
         info('ansible_inventory_file parameter deprecated use ansible_inventory') if config[:ansible_inventory_file]
         config[:ansible_inventory]
@@ -577,6 +578,10 @@ module Kitchen
 
       def ansible_debian_version
         config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
+      end
+
+      def ansible_connection_flag
+        "-c #{config[:ansible_connection]}" if config[:ansible_connection] != 'none'
       end
 
       def ansible_verbose_flag
@@ -597,7 +602,8 @@ module Kitchen
       end
 
       def ansible_inventory_flag
-        config[:ansible_inventory] ? "-i #{File.join(config[:root_path], File.basename(config[:ansible_inventory]))}" : "-i #{File.join(config[:root_path], 'hosts')}"
+        return nil if config[:ansible_inventory] == 'none'
+        ansible_inventory ? "-i #{File.join(config[:root_path], File.basename(ansible_inventory))}" : "-i #{File.join(config[:root_path], 'hosts')}"
       end
 
       def ansible_limit_flag
