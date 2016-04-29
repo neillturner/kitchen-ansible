@@ -315,11 +315,7 @@ module Kitchen
           if config[:require_ansible_source]
             commands << setup_ansible_env_from_source
           end
-          commands << [
-            'ansible-galaxy', 'install', '--force',
-            '-p', File.join(config[:root_path], 'roles'),
-            '-r', File.join(config[:root_path], galaxy_requirements)
-          ].join(' ')
+          commands << ansible_galaxy_command
         end
 
         if kerberos_conf_file
@@ -392,6 +388,18 @@ module Kitchen
         else
           return script
         end
+      end
+
+      def ansible_galaxy_command
+        cmd = [
+            'ansible-galaxy', 'install', '--force',
+            '-p', File.join(config[:root_path], 'roles'),
+            '-r', File.join(config[:root_path], galaxy_requirements)
+        ].join(' ')
+        cmd = "https_proxy=#{https_proxy} #{cmd}" if https_proxy
+        cmd = "http_proxy=#{http_proxy} #{cmd}" if http_proxy
+        cmd = "no_proxy=#{no_proxy} #{cmd}" if no_proxy
+        cmd
       end
 
       def cd_ansible
