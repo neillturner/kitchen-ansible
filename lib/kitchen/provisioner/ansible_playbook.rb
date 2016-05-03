@@ -82,7 +82,7 @@ module Kitchen
 
             if [ ! $(which ansible) ]; then
               if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-                if ! [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
+                if [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
                 else
                 #{Kitchen::Provisioner::Ansible::Os::Amazon.new('amazon', config).install_command}
@@ -140,7 +140,7 @@ module Kitchen
         if require_ruby_for_busser
           install << <<-INSTALL
             if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            if ! [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
+            if [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
             rhelversion6=$(cat /etc/redhat-release | grep 'release 6')
             rhelversion7=$(cat /etc/redhat-release | grep 'release 7')
             # For CentOS6/CentOS7/RHEL6/RHEL7 install ruby from SCL
