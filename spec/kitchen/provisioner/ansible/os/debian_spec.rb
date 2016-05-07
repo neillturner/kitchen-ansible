@@ -16,6 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'spec_helper'
+
 require 'kitchen/provisioner/ansible/os'
 require 'kitchen/provisioner/ansible/os/debian'
 
@@ -25,17 +27,23 @@ describe Kitchen::Provisioner::Ansible::Os::Debian do
   let (:debian) { Kitchen::Provisioner::Ansible::Os.make('debian', config) }
   describe 'install_command' do
     subject(:install_command) { debian.install_command }
-    
+
     context 'when no ansible version is specified in the config' do
       let (:config) { empty_config }
 
       it { is_expected.to match /apt-get -y install ansible\s*$/m }
     end
 
-    context 'when an ansible version is specified in the config' do
+    context 'when an ansible version (1.2.3) is specified in the config' do
       let (:config) { config_with(ansible_version: "1.2.3") }
-   
+
       it { is_expected.to match /apt-get -y install ansible=1.2.3/ }
+    end
+
+    context 'when an ansible version (latest) is specified in the config' do
+      let (:config) { config_with(ansible_version: "latest") }
+
+      it { is_expected.to match /apt-get -y install ansible/ }
     end
   end
 end

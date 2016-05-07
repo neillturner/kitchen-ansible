@@ -22,6 +22,9 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'pry'
 require 'rspec'
 
+require 'kitchen'
+require 'kitchen/provisioner/ansible/config'
+
 RSpec.configure do |config|
   config.tty = true
   config.color = true

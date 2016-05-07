@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
-require 'kitchen/provisioner/ansible/config'
+require 'spec_helper'
 
 # Work around for lazy loading
 describe Kitchen::Provisioner::Ansible::Config do
