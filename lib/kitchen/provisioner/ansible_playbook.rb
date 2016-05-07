@@ -585,7 +585,11 @@ module Kitchen
       end
 
       def ansible_debian_version
-        config[:ansible_version] ? "=#{config[:ansible_version]}" : nil
+        if @config[:ansible_version] == 'latest' || @config[:ansible_version] == nil
+          ''
+        else
+          "=#{@config[:ansible_version]}"
+        end
       end
 
       def ansible_connection_flag

@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-require 'kitchen'
+require 'spec_helper'
+
 require 'kitchen/provisioner/ansible/os'
 
 include Kitchen::Ansible::TestHelpers
