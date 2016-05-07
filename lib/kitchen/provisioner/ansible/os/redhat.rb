@@ -46,7 +46,7 @@ module Kitchen
             if @config[:ansible_version] == 'latest' || @config[:ansible_version] == nil
               "ansible"
             else
-              "ansible-#{@config[:ansible_version]}"
+              "ansible#{@config[:ansible_version][0..2]}-#{@config[:ansible_version]}"
             end
           end
 
