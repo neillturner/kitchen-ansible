@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kitchen-ansible (0.42.2)
+    kitchen-ansible (0.42.3)
       librarian-ansible
       test-kitchen (~> 1.4)
 
