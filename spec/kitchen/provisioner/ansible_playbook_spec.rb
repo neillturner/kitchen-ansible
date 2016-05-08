@@ -68,7 +68,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
   describe '#prepare_ansible_vault_password_file' do
     it 'copies the password file to the sandbox when present' do
-      allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
+      allow(provisioner).to receive(:sandbox_path).and_return(Dir.mktmpdir)
       provisioner.send(:prepare_ansible_vault_password_file)
     end
 
@@ -77,7 +77,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
         config.tap { |config| config.delete(:ansible_vault_password_file) }
       ).finalize_config!(instance)
 
-      allow(provision_without_vault_configured).to receive(:sandbox_path).and_return(Dir.tmpdir)
+      allow(provision_without_vault_configured).to receive(:sandbox_path).and_return(Dir.mktmpdir)
 
       expect { provision_without_vault_configured.send(:prepare_ansible_vault_password_file) }.not_to raise_error
     end
@@ -85,7 +85,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
   describe '#prepare_inventory' do
     it 'copies the inventory file to the sandbox when present' do
-      allow(provisioner).to receive(:sandbox_path).and_return(Dir.tmpdir)
+      allow(provisioner).to receive(:sandbox_path).and_return(Dir.mktmpdir)
       provisioner.send(:prepare_inventory)
     end
   end
@@ -140,4 +140,27 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       end
     end
   end
+
+  describe '#prepare_roles' do
+    it 'should correct cp when requirements_path not include path' do
+      config[:requirements_path] = '.gitignore'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_roles) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+    end
+
+    it 'should correct cp when requirements_path include path' do
+      config[:requirements_path] = 'spec/data/requirements.yml'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_roles) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+    end
+  end
+
 end
