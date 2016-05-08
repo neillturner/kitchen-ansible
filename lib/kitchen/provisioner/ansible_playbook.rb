@@ -769,7 +769,9 @@ module Kitchen
         resolve_with_librarian if File.exist?(ansiblefile)
 
         if galaxy_requirements
-          FileUtils.cp(galaxy_requirements, File.join(sandbox_path, galaxy_requirements))
+          dest = File.join(sandbox_path, galaxy_requirements)
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(galaxy_requirements, dest)
         end
 
         # Detect whether we are running tests on a role
