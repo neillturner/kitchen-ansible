@@ -142,15 +142,23 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   end
 
   describe '#prepare_roles' do
+    it 'should correct cp when requirements_path not include path' do
+      config[:requirements_path] = '.gitignore'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_roles) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+    end
+
     it 'should correct cp when requirements_path include path' do
       config[:requirements_path] = 'spec/data/requirements.yml'
 
       sandbox_path = Dir.mktmpdir
-
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_roles) }.to_not raise_error
-
       expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
     end
   end
