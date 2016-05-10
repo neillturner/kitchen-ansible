@@ -534,7 +534,13 @@ module Kitchen
       end
 
       def role_name
-        File.basename(roles) == 'roles' ? '' : File.basename(roles)
+        if config[:role_name]
+          config[:role_name]
+        elsif File.basename(roles) == 'roles' 
+          ''
+        else
+          File.basename(roles)
+        end
       end
 
       def modules

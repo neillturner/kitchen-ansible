@@ -141,6 +141,21 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
     end
   end
 
+  describe '#role_name' do
+    it 'should be empty if the roles_path ends with "roles"' do
+      config[:roles_path] = '/some/path/to/roles'
+      expect(provisioner.send(:role_name)).to eq '' 
+    end
+    it 'should be the basename of the roles_path does not end with "roles"' do
+      config[:roles_path] = '/some/path'
+      expect(provisioner.send(:role_name)).to eq 'path'
+    end
+    it 'should be the value from configuration if defined' do
+      config[:role_name] = 'my-role'
+      expect(provisioner.send(:role_name)).to eq 'my-role'
+    end
+  end
+
   describe '#prepare_roles' do
     it 'should correct cp when requirements_path not include path' do
       config[:requirements_path] = '.gitignore'
@@ -162,5 +177,4 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
     end
   end
-
 end
