@@ -384,7 +384,7 @@ module Kitchen
           s = https_proxy ? "https_proxy=#{https_proxy}" : nil
           p = http_proxy ? "http_proxy=#{http_proxy}" : nil
           n = no_proxy ? "no_proxy=#{no_proxy}" : nil
-          p || s || n ? " #{p} #{s} #{n} sudo -Es #{cd_ansible} #{script}" : "sudo -Es #{cd_ansible} #{script}"
+          p || s || n ? " #{p} #{s} #{n} #{config[:sudo_command]} -s #{cd_ansible} #{script}" : "#{config[:sudo_command]} -s #{cd_ansible} #{script}"
         else
           return script
         end
@@ -536,7 +536,7 @@ module Kitchen
       def role_name
         if config[:role_name]
           config[:role_name]
-        elsif File.basename(roles) == 'roles' 
+        elsif File.basename(roles) == 'roles'
           ''
         else
           File.basename(roles)
@@ -737,11 +737,15 @@ module Kitchen
         config[:no_proxy]
       end
 
-      def sudo_env(pm)
+      def sudo_env(pm,home=false)
         s = https_proxy ? "https_proxy=#{https_proxy}" : nil
         p = http_proxy ? "http_proxy=#{http_proxy}" : nil
         n = no_proxy ? "no_proxy=#{no_proxy}" : nil
-        p || s || n ? "#{sudo('env')} #{p} #{s} #{n} #{pm}" : "#{sudo(pm)}"
+        if home
+          p || s || n ? "#{sudo_home('env')} #{p} #{s} #{n} #{pm}" : "#{sudo_home(pm)}"
+        else
+          p || s || n ? "#{sudo('env')} #{p} #{s} #{n} #{pm}" : "#{sudo(pm)}"
+        end
       end
 
       def export_http_proxy

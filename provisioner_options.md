@@ -5,6 +5,7 @@ key | default value | Notes
 ----|---------------|--------
 ansible_version | "latest"| desired version, affects apt installs
 ansible_sudo | true | drives whether ansible-playbook is executed as root or as the current authenticated user
+sudo_command | sudo -E | sudo command change to 'sudo -E -H' to be consistent with ansible
 ansible_platform | naively tries to determine | OS platform of server
 require_ansible_repo | true | Set if using a ansible install from yum or apt repo
 ansible_apt_repo | "ppa:ansible/ansible" | apt repo. see https://launchpad.net /~ansible/+archive/ubuntu/ansible or rquillo/ansible
