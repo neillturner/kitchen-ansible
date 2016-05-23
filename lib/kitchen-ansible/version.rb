@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 module Kitchen
   module Ansible
-    VERSION = '0.42.4'
+    VERSION = '0.42.5'
   end
 end
