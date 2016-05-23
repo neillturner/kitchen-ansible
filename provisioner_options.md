@@ -17,8 +17,8 @@ python_sles_repo | http://download.opensuse.org/repositories /devel:/languages:/
 require_ansible_omnibus | false | Set if using omnibus ansible pip install
 ansible_omnibus_url | https://raw.githubusercontent.com /neillturner/omnibus-ansible /master/ansible_install.sh | omnibus ansible install location.
 ansible_omnibus_remote_path | "/opt/ansible" | Server Installation location of an omnibus ansible install.
-http_proxy | nil | use http proxy when installing puppet, packages and running puppet
-https_proxy | nil | use https proxy when installing puppet, packages and running puppet
+http_proxy | nil | use http proxy when installing Ansible, packages and running Ansible
+https_proxy | nil | use https proxy when installing Ansible, packages and running Ansible
 no_proxy | nil | list of URLs or IPs that should be excluded from proxying
 roles_path | roles | ansible repo roles directory
 group_vars_path | group_vars | ansible repo group_vars directory
