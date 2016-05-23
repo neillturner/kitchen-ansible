@@ -68,6 +68,14 @@ In kitchen.yml set
 
 See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo).
 
+## Using Roles from Ansible Galaxy 
+
+Roles can be used from the Ansible Galaxy using 2 methods: 
+
+1. Specify a requirements.yml file in your ansible repository. For more details see: http://docs.ansible.com/ansible/galaxy.html 
+
+2. Use librarian-ansible by creating an AnsibleFile in the top level of the repository. Fot a description of doing this see: 
+see https://werner-dijkerman.nl/2015/08/15/using-librarian-ansible-to-install-ansible-roles-from-gitlab/
 
 ## Ruby install to run serverspec verify
 
