@@ -86,43 +86,6 @@ The provisioner can be configured globally or per suite, global settings act as 
      - name: default
 ```
 
-## Ruby install to run serverspec verify
-
-By default test-kitchen installs chef to get a ruby version sutable for run serverspec in the Verify step.
-
-Instead ruby can just be installed by specifing the provisioner option:
-```
-require_ruby_for_busser false
-```
-And set the verifer section:
-```
-verifier:
-  name: Busser
-  plugin:
-  - Ansiblespec
-  ruby_bindir: '/usr/bin'
-```
-and create a Gemfile to add additionl ruby gems in directory test/integration/default/ansiblespec
-```
-source 'https://rubygems.org'
-
-gem 'rake'
-```
-
-in this example, vagrant will download a box for ubuntu 1204 with no configuration management installed, then install the latest ansible and ansible playbook against a ansible repo from the /repository/ansible_repo directory using the default manifest site.yml
-
-To override a setting at the suite-level, specify the setting name under the suite's attributes:
-
-```yaml
-    suites:
-     - name: server
-       attributes:
-         extra_vars:
-           server_installer_url: http://downloads.app.com/v1.0
-         tags:
-           - server
-```
-
 ### Per-suite Structure
 
 It can be beneficial to keep different Ansible layouts for different suites. Rather than having to specify the roles, modules, etc for each suite, you can create the following directory structure and they will automatically be found:
