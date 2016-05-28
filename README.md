@@ -6,32 +6,32 @@
 
 A Test Kitchen Provisioner for Ansible.
 
-The provisioner works by passing the ansible repository based on attributes in `.kitchen.yml` & calling `ansible-playbook`.
+The provisioner works by passing the Ansible repository based on attributes in `.kitchen.yml` & calling `ansible-playbook`.
 
 It installs Ansible on the server and runs `ansible-playbook` using host localhost.
 
 It has been tested against the Ubuntu 12.04, Ubuntu 14.04, Centos 6.5 and Debian 6/7/8  boxes running in vagrant/virtualbox.
 
 ## Requirements
-- [test-kitchen](https://github.com/test-kitchen/test-kitchen)
-- a driver box without a chef installation so ansible can be installed.
+- [Test Kitchen](https://github.com/test-kitchen/test-kitchen).
+- a driver box without a Chef installation so Ansible can be installed.
 
 ## Installation & Setup
-Install the kitchen-ansible gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or some other suitable driver for test-kitchen:
+Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver:
 
 ```
 gem install kitchen-ansible
 gem install kitchen-vagrant
 ```
 
-## Example kitchen.yml file
+## Example .kitchen.yml file
 
-Based on the example ansible setup for tomcat at https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone
+Based on the [Tomcat Standalone](https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone) example:
 
 ```yaml
 ---
 driver:
-    name: vagrant
+  name: vagrant
 
 provisioner:
   name: ansible_playbook
@@ -40,8 +40,6 @@ provisioner:
   require_ansible_repo: true
   ansible_verbose: true
   ansible_version: latest
-  extra_vars:
-    a: b
 
 platforms:
   - name: nocm_centos-6.5
@@ -51,41 +49,41 @@ platforms:
       box_url: http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box
       network:
       - ['forwarded_port', {guest: 8080, host: 8080}]
-      - [ 'private_network', { ip: '192.168.33.11' } ]
+      - ['private_network', {ip: '192.168.33.11'}]
 ```
 
 ## Test-Kitchen Ansible Windows Support
 
-Windows is supported by creating a linux server to run ansible with software required to support winrm. Then the winrm connection is used to configure the windows server.
+Windows is supported by creating a linux server to run Ansible with software required to support winrm. Then the winrm connection is used to configure the windows server.
 
-In kitchen.yml set
+In `.kitchen.yml` set:
 
-```
+```yaml
   ansible_connection: winrm
   require_windows_support: true
   require_chef_for_busser: false
 ```
 
-See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo).
+See the [Ansible Windows repo](https://github.com/neillturner/ansible_windows_repo) example.
 
 ## Using Roles from Ansible Galaxy 
 
-Roles can be used from the Ansible Galaxy using 2 methods: 
+Roles can be used from the Ansible Galaxy using two methods: 
 
-1. Specify a requirements.yml file in your ansible repository. For more details see: http://docs.ansible.com/ansible/galaxy.html 
+1. Specify a `requirements.yml` file in your Ansible repository. For more details see [here](http://docs.ansible.com/ansible/galaxy.html).
 
-2. Use librarian-ansible by creating an AnsibleFile in the top level of the repository and kitchen-puppet will automatically call librarian-ansible as part of the converge. For a description of setting up an AnsibleFile see:  https://werner-dijkerman.nl/2015/08/15/using-librarian-ansible-to-install-ansible-roles-from-gitlab/
+2. Use `librarian-ansible` by creating an `Ansiblefile` in the top level of the repository and `kitchen-ansible` will automatically call `librarian-ansible` during convergence. For a description of setting up an `Ansiblefile` see [here](https://werner-dijkerman.nl/2015/08/15/using-librarian-ansible-to-install-ansible-roles-from-gitlab/).
 
-## Ruby install to run serverspec verify
+## Ruby install to run Serverspec verify
 
-By default test-kitchen installs chef to get a ruby version suitable to run serverspec in the `verify` step.
-Instead ruby can just be installed by specifying the provisioner option:
+By default test-kitchen installs Chef to get a Ruby version suitable to run Serverspec in the `verify` step.
+Instead Ruby can just be installed by specifying the provisioner option:
 
-```
+```yaml
 require_ruby_for_busser: true
 ```
 And set the verifier section:
-```
+```yaml
 verifier:
   name: serverspec
   sudo_path: true
@@ -104,31 +102,29 @@ suites:
         LOGIN_USER: centos
         SUDO: true
         SSH_KEY: spec/test.pem
-
 ```
 
 Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.
-
 
 ## Test-Kitchen Ansiblespec
 
 By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can be run against multiple servers with multiple roles in the ansiblespec format.
 
-Serverspec uses ssh to communicate with the server to be tested and reads the ansible playbook and inventory files to determine the hosts to test and the roles for each host.
+Serverspec uses ssh to communicate with the server to be tested and reads the Ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
 See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
 
-### Example usage to create tomcat servers:
+### Example usage to create Tomcat servers:
 
-![test-kitchen, ansible and ansiblespec](https://github.com/neillturner/ansible_repo/blob/master/kitchen-ansible.png "test-kitchen, ansible and ansiblespec")
+![test-kitchen, Ansible and ansiblespec](https://github.com/neillturner/ansible_repo/blob/master/kitchen-ansible.png "test-kitchen, ansible and ansiblespec")
 
-See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd)
+See [ansible-sample-tdd](https://github.com/volanja/ansible-sample-tdd).
 
 ### Usage
 
 #### Directory
 
-In the ansible repository specify:
+In the Ansible repository specify:
 
 * spec files with the roles.
 * spec_helper in the spec folder (with code as below).
@@ -162,7 +158,7 @@ In the ansible repository specify:
 
 #### spec_helper
 
-```
+```ruby
 require 'rubygems'
 require 'bundler/setup'
 
@@ -182,42 +178,36 @@ RSpec.configure do |config|
 end
 ```
 
-See [kitchen-verifier-serverspec](https://github.com/neillturner/kitchen-verifier-serverspec)
+See [kitchen-verifier-serverspec](https://github.com/neillturner/kitchen-verifier-serverspec).
 
 ## Alternative Virtualization/Cloud providers for Vagrant
 This could be adapted to use alternative virtualization/cloud providers such as Openstack/AWS/VMware Fusion according to whatever is supported by Vagrant.
 ```yaml
 platforms:
-    - name: ubuntu-12.04
-      driver_config:
-        provider: aws
-        box: my_base_box
-        # username is based on what is configured in your box/ami
-        username: ubuntu
-        customize:
-          access_key_id: "AKKJHG659868LHGLH"
-          secret_access_key: "G8t7o+6HLG876JGF/58"
-          ami: ami-7865ab765d
-          instance_type: t2.micro
-          # more customisation can go here, based on what the vagrant provider supports
-          #security-groups: []
+  - name: ubuntu-12.04
+    driver_config:
+      provider: aws
+      box: my_base_box
+      # username is based on what is configured in your box/ami
+      username: ubuntu
+      customize:
+        access_key_id: 'AKKJHG659868LHGLH'
+        secret_access_key: 'G8t7o+6HLG876JGF/58'
+        ami: ami-7865ab765d
+        instance_type: t2.micro
+        # more customisation can go here, based on what the vagrant provider supports
+        #security-groups: []
 ```
 
 ## Notes
 
-* The `default` in all of the above is the name of the test suite defined in the 'suites' section of your `.kitchen.yml`, so if you have more than suite of tests or change the name, you'll need to adapt the example accordingly.
-* serverspec test files *must* be named `_spec.rb`
-* Since I'm using Vagrant, my `box` definitions refer to Vagrant boxes, either standard, published boxes available from <http://atlas.hashicorp.com/boxes> or custom-created boxes (perhaps using [Packer][packer] and [bento][bento]), in which case you'll need to provide the url in `box_url`.
-
-[Serverspec]: http://serverspec.org
-[packer]: https://packer.io
-[bento]: https://github.com/chef/bento
-
+* The `default` in all of the above is the name of the test suite defined in the `suites` section of your `.kitchen.yml`, so if you have more than one suite of tests or change the name, you'll need to adapt the example accordingly.
+* Serverspec test files *must* be named `_spec.rb`
+* Since I'm using Vagrant, my `box` definitions refer to Vagrant boxes, either standard, published boxes available from [Atlas](http://atlas.hashicorp.com/boxes) or custom-created boxes (perhaps using [Packer](http://packer.io) and [bento](https://github.com/chef/bento), in which case you'll need to provide the URL in `box_url`.
 
 ## Tips
 
-You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing
-an environment variable. Add the following to your `.kitchen.yml`:
+You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing an environment variable. Add the following to your `.kitchen.yml`:
 
 ```yaml
 provisioner:
@@ -227,6 +217,8 @@ provisioner:
 
 Then run:
 
-`ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge`
+```
+$ ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge
+```
 
 You save a lot of time not running working instructions.
