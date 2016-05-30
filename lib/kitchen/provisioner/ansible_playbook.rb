@@ -99,7 +99,7 @@ module Kitchen
           return
         end
         result = cmd + install_windows_support + install_busser_prereqs
-        info("Going to install ansible with: #{result}")
+        debug("Going to install ansible with: #{result}")
         result
       end
 
@@ -369,7 +369,7 @@ module Kitchen
             ansible_extra_flags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
           ].join(' ')
-          info("Going to invoke ansible-playbook with: #{result}")
+          debug("Going to invoke ansible-playbook with: #{result}")
           if config[:idempotency_test]
             result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
             debug("Full cmd with idempotency test: #{result}")
