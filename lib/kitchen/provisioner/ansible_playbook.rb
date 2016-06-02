@@ -72,6 +72,9 @@ module Kitchen
         elsif config[:require_ansible_source]
           info('Installing ansible from source')
           cmd = install_ansible_from_source_command
+        elsif config[:require_pip]
+          info('Installing ansible through pip')
+          cmd = install_ansible_from_pip_command
         elsif config[:require_ansible_repo]
           if !@os.nil?
             info("Installing ansible on #{@os.name}")
@@ -438,6 +441,34 @@ module Kitchen
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible #{install_source_rev}
           #{sudo_env('easy_install')} pip
           #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
+        fi
+        INSTALL
+      end
+
+      def install_ansible_from_pip_command
+        ansible_version = ''
+        ansible_version = "==#{config[:ansible_version]}" unless config[:ansible_version] == 'latest'
+
+        <<-INSTALL
+        if [ ! -d #{config[:root_path]}/ansible ]; then
+          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+            #{update_packages_redhat_cmd}
+            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
+          else
+            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+              #{sudo_env('zypper')} ar #{python_sles_repo}
+              #{update_packages_suse_cmd}
+              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
+            else
+              #{update_packages_debian_cmd}
+              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
+            fi
+          fi
+
+          #{export_http_proxy}
+          #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install ansible#{ansible_version}
         fi
         INSTALL
       end
