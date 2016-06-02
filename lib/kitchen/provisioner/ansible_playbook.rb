@@ -440,6 +440,7 @@ module Kitchen
           #{export_http_proxy}
           git clone git://github.com/ansible/ansible.git --recursive #{config[:root_path]}/ansible #{install_source_rev}
           #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install -U setuptools
           #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
         fi
         INSTALL
@@ -468,6 +469,7 @@ module Kitchen
 
           #{export_http_proxy}
           #{sudo_env('easy_install')} pip
+          #{sudo_env('pip')} install -U setuptools
           #{sudo_env('pip')} install ansible#{ansible_version}
         fi
         INSTALL
