@@ -15,6 +15,7 @@ enable_yum_epel | false | Enable the `yum` EPEL repo
 ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagement/SLE_12` `/systemsmanagement.repo` | Zypper SuSE Ansible repo
 python_sles_repo | `http://download.opensuse.org/repositories` `/devel:/languages:/python/SLE_12` `/devel:languages:python.repo` | Zypper SuSE python repo
 require_ansible_omnibus | false | Set to `true` if using Omnibus Ansible `pip` install
+require_pip | false | Set to `true` if Ansible is to be installed through `pip`).
 ansible_omnibus_url | `https://raw.githubusercontent.com` `/neillturner/omnibus-ansible` `/master/ansible_install.sh` | Omnibus Ansible install location
 ansible_omnibus_remote_path | /opt/ansible | Server installation location of an Omnibus Ansible install
 http_proxy | nil | Use HTTP proxy when installing Ansible, packages and running Ansible
