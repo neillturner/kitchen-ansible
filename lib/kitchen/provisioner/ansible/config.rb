@@ -74,7 +74,7 @@ module Kitchen
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||
-            fail('No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default wrapper playbook for your role in test/integration/playbooks/default.yml or test/integration/default.yml')
+            fail('No playbook found or specified!  Please either set a playbook in your .kitchen.yml config, or create a default playbook in test/integration/<suite_name>/ansible/default.yml, test/integration/<suite_name>/default.yml, test/integration/default.yml or in default.yml in the top level')
         end
 
         default_config :roles_path do |provisioner|
