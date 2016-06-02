@@ -334,14 +334,13 @@ module Kitchen
           return config[:ansible_playbook_command]
         else
 
-          cmd = ansible_command('ansible-playbook')
-          if config[:require_ansible_source]
+          if config[:require_ansible_source] && !config[:ansible_binary_path]
             # this is an ugly hack to get around the fact that extra vars uses ' and "
-            cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man #{config[:root_path]}/ansible/bin/ansible-playbook")
-          end
-
-          if config[:ansible_binary_path]
+            cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man ansible-playbook")
+          elsif config[:ansible_binary_path]
             cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
+          else
+            cmd = ansible_command('ansible-playbook')
           end
 
           cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
@@ -423,15 +422,15 @@ module Kitchen
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
             #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev
+            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
           else
             if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
               #{sudo_env('zypper')} ar #{python_sles_repo}
               #{update_packages_suse_cmd}
-              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel
+              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
             else
               #{update_packages_debian_cmd}
-              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev
+              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
             fi
           fi
 
