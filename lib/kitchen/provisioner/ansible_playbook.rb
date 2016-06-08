@@ -21,6 +21,7 @@
 #
 
 require 'json'
+require 'find'
 require 'kitchen/provisioner/base'
 require 'kitchen/provisioner/ansible/config'
 require 'kitchen/provisioner/ansible/os'
@@ -820,10 +821,16 @@ module Kitchen
         # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
 
         FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
-        if config[:copy_symlinks]
-          FileUtils.cp_r(Dir.glob("#{roles}/*"), File.join(tmp_roles_dir, role_name))
-        else
-          system("cp -LR #{roles} #{File.join(tmp_roles_dir, role_name)}")
+        Find.find(roles) do |source|
+          role_path = source.sub(roles, '')
+          target = File.join(tmp_roles_dir, role_path)
+
+          Find.prune if config[:ignore_paths_from_root].include? File.basename(source)
+          if File.directory?(source)
+            FileUtils.mkdir_p(target)
+          else
+            FileUtils.cp(source, target)
+          end
         end
       end
 
@@ -897,14 +904,11 @@ module Kitchen
           destination = File.join(sandbox_path, File.basename(file))
           if File.directory?(file)
             info("Copy dir: #{file} #{destination}")
-            if config[:copy_symlinks]
-              FileUtils.cp_r(file, destination)
-            else
-              system("cp -LR #{file} #{destination}")
-            end
+            Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
+            FileUtils.mkdir_p(destination)
           else
             info("Copy file: #{file} #{destination}")
-            FileUtils.cp file, destination
+            FileUtils.cp(file, destination)
           end
         end
       end
