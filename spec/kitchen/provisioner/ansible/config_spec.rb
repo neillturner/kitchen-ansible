@@ -46,7 +46,8 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:update_package_repos, true],
       [:http_proxy, nil],
       [:https_proxy, nil],
-      [:no_proxy, nil]
+      [:no_proxy, nil],
+      [:ignore_paths_from_root, []]
     ].each do |item|
       it "should contain the correct default value for '#{item[0]}'" do
         c = Kitchen::Provisioner::Ansible::Config.new({})
@@ -78,7 +79,8 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_diff, true],
       [:ansible_platform, 'banana'],
       [:ansible_connection, 'ssh'],
-      [:update_package_repos, false]
+      [:update_package_repos, false],
+      [:ignore_paths_from_root, ['.git']]
     ].each do |item|
       it "should contain the correct set value for '#{item[0]}'" do
         c = Kitchen::Provisioner::Ansible::Config.new(item[0] => item[1])
