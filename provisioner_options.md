@@ -57,6 +57,7 @@ idempotency_test | false | Enable to test Ansible playbook idempotency
 ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 kerberos_conf_file | | Path of krb5.conf file using in Windows support
 require_windows_support | false | Install [Windows support](http://docs.ansible.com/ansible/intro_windows.html)
+ignore_paths_from_root | [] | allow extra paths to be ignored when copying from roles and ansible cfg
 
 ## Configuring Provisioner Options
 
