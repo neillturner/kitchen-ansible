@@ -817,12 +817,15 @@ module Kitchen
           FileUtils.cp(galaxy_requirements, dest)
         end
 
-        # Detect whether we are running tests on a role
-        # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
-
         FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
         Find.find(roles) do |source|
-          role_path = source.sub(roles, '')
+          # Detect whether we are running tests on a role
+          # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
+          role_path = source.sub(/#{roles}|\/roles/, '')
+          unless roles =~ /\/roles$/
+            role_path = "#{File.basename(roles)}/#{role_path}"
+          end
+
           target = File.join(tmp_roles_dir, role_path)
 
           Find.prune if config[:ignore_paths_from_root].include? File.basename(source)
