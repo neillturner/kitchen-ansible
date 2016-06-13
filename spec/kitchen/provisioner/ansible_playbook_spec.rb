@@ -144,7 +144,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
   describe '#role_name' do
     it 'should be empty if the roles_path ends with "roles"' do
       config[:roles_path] = '/some/path/to/roles'
-      expect(provisioner.send(:role_name)).to eq '' 
+      expect(provisioner.send(:role_name)).to eq ''
     end
     it 'should be the basename of the roles_path does not end with "roles"' do
       config[:roles_path] = '/some/path'
@@ -175,6 +175,15 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
       expect { provisioner.send(:prepare_roles) }.to_not raise_error
       expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+    end
+
+    it 'should ignore .git directories when ignore_paths_from_root is set' do
+      config[:ignore_paths_from_root] = ['.git']
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_roles) }.to_not raise_error
     end
   end
 end
