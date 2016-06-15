@@ -11,7 +11,7 @@ ansible_connection | local | use `ssh` if the host is not `localhost` (Linux) or
 ansible_diff | false | Sets the `--diff` flag when running Ansible
 ansible_extra_flags |  | Additional options to pass to ansible-playbook, e.g. `'--skip-tags=redis'`
 ansible_host_key_checking | true | Strict host key checking in ssh
-ansible_inventory |  | Static or dynamic inventory file or directory or none if defined in `ansible.cfg`
+ansible_inventory |  | Static or dynamic inventory file or directory or 'none' if defined in `ansible.cfg`
 ansible_limit |  | Further limits the selected host/group patterns
 ansible_omnibus_remote_path | /opt/ansible | Server installation location of an Omnibus Ansible install
 ansible_omnibus_url | `https://raw.githubusercontent.com` `/neillturner/omnibus-ansible` `/master/ansible_install.sh` | Omnibus Ansible install location
