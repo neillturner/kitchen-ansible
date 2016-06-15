@@ -1,5 +1,6 @@
-
 # Provisioner Options
+
+kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook build options from parameters in the kitchen.yml file:  
 
 key | default value | Notes
 ----|---------------|--------
