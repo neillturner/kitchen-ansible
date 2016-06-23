@@ -51,6 +51,7 @@ module Kitchen
         default_config :require_chef_for_busser, true
         default_config :require_ruby_for_busser, false
         default_config :require_windows_support, false
+        default_config :require_pip, false
         default_config :requirements_path, false
         default_config :ssh_known_hosts, nil
         default_config :ansible_verbose, false
