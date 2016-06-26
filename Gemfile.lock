@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    kitchen-ansible (0.42.3)
+    kitchen-ansible (0.44.4)
       librarian-ansible
-      net-ssh (~> 3.0)
+      net-ssh (>= 3.0)
       test-kitchen (~> 1.4)
 
 GEM
