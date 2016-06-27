@@ -901,14 +901,15 @@ module Kitchen
       def prepare_additional_copy_path
         info('Preparing additional_copy_path')
         additional_files.each do |file|
-          destination = File.join(sandbox_path, File.basename(file))
-          if File.directory?(file)
-            info("Copy dir: #{file} #{destination}")
-            Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
-            FileUtils.mkdir_p(destination)
-          else
-            info("Copy file: #{file} #{destination}")
-            FileUtils.cp(file, destination)
+          info("Copy additional path: #{file}")
+          Find.find(file) do |files|
+            destination = File.join(sandbox_path, files)
+            Find.prune if config[:ignore_paths_from_root].include? File.basename(files)
+            if File.directory?(files)
+              FileUtils.mkdir_p(destination)
+            else
+              FileUtils.cp(files, destination)
+            end
           end
         end
       end
