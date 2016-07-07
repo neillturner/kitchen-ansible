@@ -1,6 +1,4 @@
-# Provisioner Options
-
-## Ansible Install Options
+# Ansible Install Options
 
 Kitchen-ansible is very flexible in how it installs ansible:
 
@@ -22,6 +20,7 @@ It installs it in the following order:
  
   Installs from the operation system repository with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
 
+# Provisioner Options
 
 kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook with options from parameters in the kitchen.yml file:  
 
