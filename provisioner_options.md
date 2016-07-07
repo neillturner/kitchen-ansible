@@ -1,5 +1,28 @@
 # Provisioner Options
 
+## Ansible Install Options
+
+Kitchen-ansible is very flexible in how it installs ansible:
+
+It installs it in the following order:
+
+* if require_ansible_omnibus is set to true
+
+  Installs using the omnibus_ansible script specified in the ansible_omnibus_url parameter and passes the ansible_version if specied as -v option.
+   
+* If require_ansible_source is set to true
+   
+  Install require packages and download the ansible source from github from  master or from a branch specified in the parameter install_source_rev. 
+
+* if require_pip is set to true
+
+  Install require packages and then installs ansible using the python pip command with ansible version if specified.   
+
+* if require_ansible_repo is set to true (the default)
+ 
+  Installs from the operation system repository with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
+
+
 kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook with options from parameters in the kitchen.yml file:  
 
 key | default value | Notes
