@@ -73,6 +73,7 @@ module Kitchen
         default_config :ansible_inventory_file, nil
         default_config :ansible_limit, nil
         default_config :ignore_paths_from_root, []
+        default_config :role_name, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||
