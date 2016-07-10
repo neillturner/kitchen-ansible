@@ -592,6 +592,10 @@ module Kitchen
         config[:additional_copy_path]
       end
 
+      def recursive_additional_copy
+        config[:recusive_additional_copy_path]
+      end
+
       def host_vars
         config[:host_vars_path].to_s
       end
@@ -904,7 +908,18 @@ module Kitchen
       def prepare_additional_copy_path
         info('Preparing additional_copy_path')
         additional_files.each do |file|
-          info("Copy additional path: #{file}")
+           destination = File.join(sandbox_path, File.basename(file))
+           if File.directory?(file)
+             info("Copy dir: #{file} #{destination}")
+             Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
+             FileUtils.mkdir_p(destination)
+           else
+             info("Copy file: #{file} #{destination}")
+             FileUtils.cp(file, destination)
+           end
+        end
+        recursive_additional_files.each do |file|
+          info("Copy recursive additional path: #{file}")
           Find.find(file) do |files|
             destination = File.join(sandbox_path, files)
             Find.prune if config[:ignore_paths_from_root].include? File.basename(files)
@@ -923,6 +938,14 @@ module Kitchen
           additional_files = additional_copy.is_a?(Array) ? additional_copy : [additional_copy]
         end
         additional_files.map(&:to_s)
+      end
+
+      def recursive_additional_files
+        recursive_additional_files = []
+        if  recursive_additional_copy
+          recursive_additional_files = recursive_additional_copy.is_a?(Array) ? recursive_additional_copy : [recursive_additional_copy]
+        end
+        recursive_additional_files.map(&:to_s)
       end
 
       def prepare_host_vars

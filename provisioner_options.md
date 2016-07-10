@@ -7,22 +7,22 @@ It installs it in the following order:
 * if require_ansible_omnibus is set to true
 
   Installs using the omnibus_ansible script specified in the ansible_omnibus_url parameter and passes the ansible_version if specied as -v option.
-   
+
 * If require_ansible_source is set to true
-   
-  Install require packages and download the ansible source from github from  master or from a branch specified in the parameter install_source_rev. 
+
+  Install require packages and download the ansible source from github from  master or from a branch specified in the parameter install_source_rev.
 
 * if require_pip is set to true
 
-  Install require packages and then installs ansible using the python pip command with ansible version if specified.   
+  Install require packages and then installs ansible using the python pip command with ansible version if specified.
 
 * if require_ansible_repo is set to true (the default)
- 
+
   Installs from the operation system repository with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
 
 # Provisioner Options
 
-kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook with options from parameters in the kitchen.yml file:  
+kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook with options from parameters in the kitchen.yml file:
 
 key | default value | Notes
 ----|---------------|--------
@@ -69,6 +69,7 @@ no_proxy | nil | List of URLs or IPs that should be excluded from proxying
 playbook | default.yml | Playbook for `ansible-playbook` to run
 private_key | | ssh private key file for ssh connection
 python_sles_repo | `http://download.opensuse.org/repositories` `/devel:/languages:/python/SLE_12` `/devel:languages:python.repo` | Zypper SuSE python repo
+recursive_additional_copy_path | | Arbitrary array of files and directories to copy into test environment, relative to the current dir, e.g. vars or included playbooks
 require_ansible_omnibus | false | Set to `true` if using Omnibus Ansible `pip` install
 require_ansible_repo | true | Set if installing Ansible from a `yum` or `apt` repo
 require_ansible_source | false | Install Ansible from source using method described [here](http://docs.ansible.com/intro_installation.html#running-from-source). Only works on Debian/Ubuntu at present

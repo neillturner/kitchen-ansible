@@ -93,6 +93,10 @@ module Kitchen
           provisioner.calculate_path('additional_copy', :directory)
         end
 
+        default_config :recursive_additional_copy_path do |provisioner|
+          provisioner.calculate_path('recursive_additional_copy', :directory)
+        end
+
         default_config :host_vars_path do |provisioner|
           provisioner.calculate_path('host_vars', :directory)
         end
