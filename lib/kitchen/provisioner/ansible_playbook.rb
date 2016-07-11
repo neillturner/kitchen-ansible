@@ -593,7 +593,7 @@ module Kitchen
       end
 
       def recursive_additional_copy
-        config[:recusive_additional_copy_path]
+        config[:recursive_additional_copy_path]
       end
 
       def host_vars
