@@ -85,7 +85,9 @@ module Kitchen
             cmd = <<-INSTALL
 
             if [ ! $(which ansible) ]; then
-              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+              if [ -f /etc/fedora-release ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Fedora.new('fedora', config).install_command}
+              elif [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                 if [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
                 else
