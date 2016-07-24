@@ -347,6 +347,7 @@ module Kitchen
             cmd = ansible_command('ansible-playbook')
           end
 
+          cmd = "#{env_vars} #{cmd}" if !config[:env_vars].none?
           cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
           cmd = "HTTP_PROXY=#{http_proxy} #{cmd}" if http_proxy
           cmd = "NO_PROXY=#{no_proxy} #{cmd}" if no_proxy
@@ -552,6 +553,11 @@ module Kitchen
 
       def galaxy_requirements
         config[:requirements_path] || nil
+      end
+
+      def env_vars
+        return nil if config[:env_vars].none?
+        config[:env_vars].map { |k, v| "#{k}=#{v}" }.join(' ')
       end
 
       def playbook
