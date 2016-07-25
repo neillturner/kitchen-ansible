@@ -35,7 +35,7 @@ describe Kitchen::Provisioner::Ansible::Os do
       ['ubuntu', Kitchen::Provisioner::Ansible::Os::Debian],
       ['redhat', Kitchen::Provisioner::Ansible::Os::Redhat],
       ['centos', Kitchen::Provisioner::Ansible::Os::Redhat],
-      ['fedora', Kitchen::Provisioner::Ansible::Os::Redhat],
+      ['fedora', Kitchen::Provisioner::Ansible::Os::Fedora],
       ['amazon', Kitchen::Provisioner::Ansible::Os::Amazon],
       ['suse', Kitchen::Provisioner::Ansible::Os::Suse]
     ].each do |item|

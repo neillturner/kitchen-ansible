@@ -20,6 +20,7 @@
 require 'json'
 require 'kitchen/provisioner/ansible/os/debian'
 require 'kitchen/provisioner/ansible/os/redhat'
+require 'kitchen/provisioner/ansible/os/fedora'
 require 'kitchen/provisioner/ansible/os/amazon'
 require 'kitchen/provisioner/ansible/os/suse'
 
@@ -40,8 +41,10 @@ module Kitchen
           case platform
           when 'debian', 'ubuntu'
             return Debian.new(platform, config)
-          when 'redhat', 'centos', 'fedora'
+          when 'redhat', 'centos'
             return Redhat.new(platform, config)
+          when 'fedora'
+            return Fedora.new(platform, config)
           when 'amazon'
             return Amazon.new(platform, config)
           when 'suse', 'opensuse', 'sles'
