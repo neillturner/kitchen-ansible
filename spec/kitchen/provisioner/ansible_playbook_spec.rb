@@ -185,5 +185,15 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
 
       expect { provisioner.send(:prepare_roles) }.to_not raise_error
     end
+
+    it 'should correct cp when role_name is set' do
+      config[:role_name] = 'my-role'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_roles) }.to_not raise_error
+      expect(Dir.entries(File.join(sandbox_path, 'roles', config[:role_name])).size).to be > 2
+    end
   end
 end

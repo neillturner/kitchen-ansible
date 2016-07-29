@@ -835,7 +835,7 @@ module Kitchen
           # If so, make sure to copy into VM so dir structure is like: /tmp/kitchen/roles/role_name
           role_path = source.sub(/#{roles}|\/roles/, '')
           unless roles =~ /\/roles$/
-            role_path = "#{File.basename(roles)}/#{role_path}"
+            role_path = "#{role_name}/#{role_path}"
           end
 
           target = File.join(tmp_roles_dir, role_path)
