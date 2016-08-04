@@ -131,6 +131,11 @@ suites:
 
 Please see the [Provisioner Options](https://github.com/neillturner/kitchen-ansible/blob/master/provisioner_options.md) for a complete listing.
 
+## Windows Support
+
+kitchen-ansible can also provision windows servers 
+See example [https://github.com/neillturner/ansible_windows_repo](https://github.com/neillturner/ansible_windows_repo)
+
 ## Test-Kitchen Ansiblespec
 
 By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can be run against multiple servers with multiple roles in the ansiblespec format.
