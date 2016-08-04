@@ -74,6 +74,31 @@ Roles can be used from the Ansible Galaxy using two methods:
 
 2. Use `librarian-ansible` by creating an `Ansiblefile` in the top level of the repository and `kitchen-ansible` will automatically call `librarian-ansible` during convergence. For a description of setting up an `Ansiblefile` see [here](https://werner-dijkerman.nl/2015/08/15/using-librarian-ansible-to-install-ansible-roles-from-gitlab/).
 
+## Tips
+
+To  use a single ~/.kitchen/config.yml file with multiple reposities by setting the WORKSPACE environment variable:
+
+```yaml
+role_path: <%= ENV['WORKSPACE'] %>/roles 
+```
+
+You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing an environment variable. Add the following to your `.kitchen.yml`:
+
+```yaml
+provisioner:
+  name: ansible_playbook
+  ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
+```
+
+Then run:
+
+```
+$ ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge
+```
+
+You save a lot of time not running working instructions.
+
+
 ## Ruby install to run Serverspec verify
 
 By default test-kitchen installs Chef to get a Ruby version suitable to run Serverspec in the `verify` step.
@@ -205,20 +230,3 @@ platforms:
 * Serverspec test files *must* be named `_spec.rb`
 * Since I'm using Vagrant, my `box` definitions refer to Vagrant boxes, either standard, published boxes available from [Atlas](http://atlas.hashicorp.com/boxes) or custom-created boxes (perhaps using [Packer](http://packer.io) and [bento](https://github.com/chef/bento), in which case you'll need to provide the URL in `box_url`.
 
-## Tips
-
-You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing an environment variable. Add the following to your `.kitchen.yml`:
-
-```yaml
-provisioner:
-  name: ansible_playbook
-  ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
-```
-
-Then run:
-
-```
-$ ANSIBLE_EXTRA_FLAGS='--start-at-task="myrole | name of last working instruction"' kitchen converge
-```
-
-You save a lot of time not running working instructions.
