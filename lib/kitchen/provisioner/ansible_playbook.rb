@@ -120,7 +120,7 @@ module Kitchen
               #{sudo_env('zypper')} ar #{python_sles_repo}
               #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
             else
-              #{sudo_env('apt-get')} install python-dev libkrb5-dev build-essential
+              #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential
             fi
           fi
           #{export_http_proxy}
