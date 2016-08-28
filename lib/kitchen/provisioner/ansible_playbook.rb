@@ -459,7 +459,7 @@ module Kitchen
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
             #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
+            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc
           else
             if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
               #{sudo_env('zypper')} ar #{python_sles_repo}
