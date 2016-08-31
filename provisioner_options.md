@@ -14,11 +14,11 @@ It installs it in the following order:
 
 * if require_pip is set to true
 
-  Install require packages and then installs ansible using the python pip command with ansible version if specified.
+  Install require packages and then installs ansible using the python pip command and ansible version must be specified. This allows a specific version of ansible to be installed.
 
 * if require_ansible_repo is set to true (the default)
 
-  Installs from the operation system repository with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
+  Installs from the operation system repository only with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
 
 # Provisioner Options
 
