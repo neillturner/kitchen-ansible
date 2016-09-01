@@ -805,8 +805,10 @@ module Kitchen
       def ansible_roles_path
         roles_paths = []
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
-        additional_files.each do |additional_file|
-          roles_paths << File.join(config[:root_path], File.basename(additional_file))
+        if config[:additional_copy_role_path]
+          additional_files.each do |additional_file|
+            roles_paths << File.join(config[:root_path], File.basename(additional_file))
+          end
         end
         if roles_paths.empty?
           info('No roles have been set.')

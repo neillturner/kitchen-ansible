@@ -27,6 +27,7 @@ kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ans
 key | default value | Notes
 ----|---------------|--------
 additional_copy_path | | Arbitrary array of files and directories to copy into test environment, relative to the current dir, e.g. vars or included playbooks
+additional_copy_role_path | false | additional_copy_path directories are appended to the ANSIBLE_ROLES_PATH env var when running ansible
 ansible_apt_repo | ppa:ansible/ansible | `apt` repo; see `https://launchpad.net` `/~ansible/+archive/ubuntu/ansible` or `rquillo/ansible`
 ansible_binary_path | NULL | If specified this will override the location where `kitchen` tries to run `ansible-playbook` from, i.e. `ansible_binary_path: /usr/local/bin`
 ansible_check | false | Sets the `--check` flag when running Ansible
