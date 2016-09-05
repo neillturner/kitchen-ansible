@@ -10,7 +10,7 @@ The provisioner works by passing the Ansible repository based on attributes in `
 
 It installs Ansible on the server and runs `ansible-playbook` using host localhost.
 
-It has been tested against the Ubuntu 12.04, Ubuntu 14.04, Centos 6.5 and Debian 6/7/8  boxes running in vagrant/virtualbox.
+It has been tested against the Ubuntu 12.04/14.04/16.04, Centos 6/7 and Debian 6/7/8  boxes running in vagrant/virtualbox.
 
 ## Requirements
 - [Test Kitchen](https://github.com/test-kitchen/test-kitchen).
