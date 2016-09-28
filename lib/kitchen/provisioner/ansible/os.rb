@@ -23,6 +23,7 @@ require 'kitchen/provisioner/ansible/os/redhat'
 require 'kitchen/provisioner/ansible/os/fedora'
 require 'kitchen/provisioner/ansible/os/amazon'
 require 'kitchen/provisioner/ansible/os/suse'
+require 'kitchen/provisioner/ansible/os/alpine'
 
 module Kitchen
   module Provisioner
@@ -49,6 +50,8 @@ module Kitchen
             return Amazon.new(platform, config)
           when 'suse', 'opensuse', 'sles'
             return Suse.new(platform, config)
+          when 'alpine'
+            return Alpine.new(platform, config)
           end
 
           nil

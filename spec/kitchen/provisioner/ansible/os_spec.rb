@@ -37,7 +37,8 @@ describe Kitchen::Provisioner::Ansible::Os do
       ['centos', Kitchen::Provisioner::Ansible::Os::Redhat],
       ['fedora', Kitchen::Provisioner::Ansible::Os::Fedora],
       ['amazon', Kitchen::Provisioner::Ansible::Os::Amazon],
-      ['suse', Kitchen::Provisioner::Ansible::Os::Suse]
+      ['suse', Kitchen::Provisioner::Ansible::Os::Suse],
+      ['alpine', Kitchen::Provisioner::Ansible::Os::Alpine]
     ].each do |item|
       it "return the correct class for '#{item[0]}'" do
         c = Kitchen::Provisioner::Ansible::Os.make(item[0], [])
