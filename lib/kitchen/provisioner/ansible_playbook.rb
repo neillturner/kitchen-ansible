@@ -95,6 +95,8 @@ module Kitchen
                 fi
               elif [ -f /etc/SuSE-release ] || [ -f /etc/SUSE-brand ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Suse.new('suse', config).install_command}
+              elif [[ "$OSTYPE" == "darwin"* ]]; then
+                #{Kitchen::Provisioner::Ansible::Os::Darwin.new('darwin', config).install_command}
               else
                 #{Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).install_command}
               fi
