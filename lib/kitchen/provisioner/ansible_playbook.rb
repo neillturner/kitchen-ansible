@@ -853,13 +853,13 @@ module Kitchen
         end
       end
 
-      # copy ansible.cfg if found in root of repo
+      # copy ansible.cfg if found
       def prepare_ansible_cfg
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-        if File.exist?('ansible.cfg')
+        if File.exist?(config[:ansible_cfg_path])
           info('Found existing ansible.cfg')
-          FileUtils.cp_r('ansible.cfg', ansible_config_file)
+          FileUtils.cp_r(config[:ansible_cfg_path], ansible_config_file)
         else
           info('Empty ansible.cfg generated')
           File.open(ansible_config_file, 'wb') do |file|

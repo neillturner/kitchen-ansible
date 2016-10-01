@@ -32,6 +32,7 @@ ansible_apt_repo | ppa:ansible/ansible | `apt` repo; see `https://launchpad.net`
 ansible_binary_path | NULL | If specified this will override the location where `kitchen` tries to run `ansible-playbook` from, i.e. `ansible_binary_path: /usr/local/bin`
 ansible_check | false | Sets the `--check` flag when running Ansible
 ansible_connection | local | use `ssh` if the host is not `localhost` (Linux) or `winrm` (Windows) or `none` if defined in inventory
+ansible_cfg_path | ansible.cfg | location of custom ansible.cfg to get copied into test environment
 ansible_diff | false | Sets the `--diff` flag when running Ansible
 ansible_extra_flags |  | Additional options to pass to ansible-playbook, e.g. `'--skip-tags=redis'`
 ansible_host_key_checking | true | Strict host key checking in ssh
