@@ -602,6 +602,10 @@ module Kitchen
         config[:additional_copy_path]
       end
 
+      def ansible_cfg_path
+        config[:ansible_cfg_path]
+      end
+
       def recursive_additional_copy
         config[:recursive_additional_copy_path]
       end
@@ -857,9 +861,9 @@ module Kitchen
       def prepare_ansible_cfg
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-        if File.exist?(config[:ansible_cfg_path])
+        if !ansible_cfg_path.nil? && File.exist?(ansible_cfg_path)
           info('Found existing ansible.cfg')
-          FileUtils.cp_r(config[:ansible_cfg_path], ansible_config_file)
+          FileUtils.cp_r(ansible_cfg_path, ansible_config_file)
         else
           info('Empty ansible.cfg generated')
           File.open(ansible_config_file, 'wb') do |file|
