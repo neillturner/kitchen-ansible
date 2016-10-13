@@ -281,7 +281,7 @@ module Kitchen
 
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
-          sudo_env("sh -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          sudo_env("#{shell_command} -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
         ]
 
         commands << [
@@ -562,6 +562,14 @@ module Kitchen
 
       def galaxy_requirements
         config[:requirements_path] || nil
+      end
+
+      def shell_command
+        if [ -f /etc/alpine-release ] || [ -d /etc/apk ]; then
+          'sh'
+        else
+          'bash'
+        fi
       end
 
       def env_vars
