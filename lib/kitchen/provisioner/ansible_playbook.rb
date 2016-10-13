@@ -564,14 +564,6 @@ module Kitchen
         config[:requirements_path] || nil
       end
 
-      def shell_command
-        if [ -f /etc/alpine-release ] || [ -d /etc/apk ]; then
-          'sh'
-        else
-          'bash'
-        fi
-      end
-
       def env_vars
         return nil if config[:env_vars].none?
         config[:env_vars].map { |k, v| "#{k}=#{v}" }.join(' ')
