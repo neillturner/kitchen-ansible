@@ -858,6 +858,7 @@ module Kitchen
           target = File.join(tmp_roles_dir, role_path)
 
           Find.prune if config[:ignore_paths_from_root].include? File.basename(source)
+          Find.prune if config[:ignore_extensions_from_root].include? File.extname(source)
           if File.directory?(source)
             FileUtils.mkdir_p(target)
           else
@@ -934,9 +935,10 @@ module Kitchen
         info('Preparing additional_copy_path')
         additional_files.each do |file|
            destination = File.join(sandbox_path, File.basename(file))
+           Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
+           Find.prune if config[:ignore_extensions_from_root].include? File.extname(file)
            if File.directory?(file)
              info("Copy dir: #{file} #{destination}")
-             Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
              FileUtils.mkdir_p(destination)
            else
              info("Copy file: #{file} #{destination}")
@@ -948,6 +950,7 @@ module Kitchen
           Find.find(file) do |files|
             destination = File.join(sandbox_path, files)
             Find.prune if config[:ignore_paths_from_root].include? File.basename(files)
+            Find.prune if config[:ignore_extensions_from_root].include? File.extname(files)
             if File.directory?(files)
               FileUtils.mkdir_p(destination)
             else
