@@ -281,7 +281,7 @@ module Kitchen
 
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
-          sudo_env("#{shell_command} -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          sudo_env("#{config[:shell_command]} -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
         ]
 
         commands << [
@@ -499,7 +499,7 @@ module Kitchen
           echo "-----> Installing Ansible Omnibus"
           #{export_http_proxy}
           do_download #{config[:ansible_omnibus_url]} /tmp/ansible_install.sh
-          #{sudo_env('sh')} /tmp/ansible_install.sh #{version}
+          #{sudo_env(config[:shell_command])} /tmp/ansible_install.sh #{version}
         fi
         INSTALL
       end
@@ -935,8 +935,8 @@ module Kitchen
         info('Preparing additional_copy_path')
         additional_files.each do |file|
            destination = File.join(sandbox_path, File.basename(file))
-           Find.prune if config[:ignore_paths_from_root].include? File.basename(file)
-           Find.prune if config[:ignore_extensions_from_root].include? File.extname(file)
+           next if config[:ignore_paths_from_root].include? File.basename(file)
+           next if config[:ignore_extensions_from_root].include? File.extname(file)
            if File.directory?(file)
              info("Copy dir: #{file} #{destination}")
              FileUtils.mkdir_p(destination)

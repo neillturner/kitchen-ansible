@@ -77,6 +77,7 @@ module Kitchen
         default_config :ignore_paths_from_root, []
         default_config :role_name, nil
         default_config :additional_copy_role_path, false
+        default_config :shell_command, 'sh'
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||

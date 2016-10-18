@@ -84,6 +84,7 @@ require_windows_support | false | Install [Windows support](http://docs.ansible.
 requirements_path | | Path to Ansible Galaxy requirements
 role_name | | use when the repo name does not match the name the role is published as.
 roles_path | roles | Ansible repo roles directory
+shell_command | 'sh' | Shell command to use, usually an alias for bash. may need to set to bash.
 ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent with Ansible
 update_package_repos | true | Update OS repository metadata
