@@ -73,6 +73,7 @@ module Kitchen
         default_config :ansible_inventory, nil
         default_config :ansible_inventory_file, nil
         default_config :ansible_limit, nil
+        default_config :ignore_extensions_from_root, ['.pyc']
         default_config :ignore_paths_from_root, []
         default_config :role_name, nil
         default_config :additional_copy_role_path, false
