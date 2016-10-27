@@ -821,8 +821,8 @@ module Kitchen
         roles_paths = []
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
         if config[:additional_copy_role_path]
-          additional_files.each do |additional_file|
-            roles_paths << File.join(config[:root_path], File.basename(additional_file))
+          config[:additional_copy_role_path].each do |additional_role_path|
+            roles_paths << File.join(config[:root_path], File.basename(additional_role_path))
           end
         end
         if roles_paths.empty?
@@ -939,7 +939,7 @@ module Kitchen
            next if config[:ignore_extensions_from_root].include? File.extname(file)
            if File.directory?(file)
              info("Copy dir: #{file} #{destination}")
-             FileUtils.mkdir_p(destination)
+             FileUtils.cp_r(file, destination)
            else
              info("Copy file: #{file} #{destination}")
              FileUtils.cp(file, destination)
