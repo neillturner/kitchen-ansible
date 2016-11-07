@@ -934,14 +934,13 @@ module Kitchen
       def prepare_additional_copy_path
         info('Preparing additional_copy_path')
         additional_files.each do |file|
+           info("Copy additional path: #{file}")
            destination = File.join(sandbox_path, File.basename(file))
-           next if config[:ignore_paths_from_root].include? File.basename(file)
-           next if config[:ignore_extensions_from_root].include? File.extname(file)
            if File.directory?(file)
-             info("Copy dir: #{file} #{destination}")
+             debug("Copy dir: #{file} #{destination}")
              FileUtils.cp_r(file, destination)
            else
-             info("Copy file: #{file} #{destination}")
+             debug("Copy file: #{file} #{destination}")
              FileUtils.cp(file, destination)
            end
         end
