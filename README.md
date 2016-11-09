@@ -24,6 +24,16 @@ gem install kitchen-ansible
 gem install kitchen-vagrant
 ```
 
+## Resources
+* https://blog.superk.org/home/ansible-role-development
+* http://razorconsulting.com.au/integration-testing-using-ansible-and-test-kitchen.html
+* https://readme.fr/continuous-integration-for-ansible/
+* https://dantehranian.wordpress.com/2015/06/18/testing-ansible-roles-with-test-kitchen
+* http://www.slideshare.net/MartinEtmajer/testing-ansible-roles-with-test-kitchen-serverspec-and-rspec-48185017
+* http://blog.el-chavez.me/2016/02/16/ansible-galaxy-test-kitchen
+* https://werner-dijkerman.nl/2015/08/20/using-test-kitchen-with-docker-and-serverspec-to-test-ansible-roles
+* https://books.google.co.uk/books?id=D-wmDQAAQBAJ&pg=PA129&lpg
+
 ## Example .kitchen.yml file
 
 Based on the [Tomcat Standalone](https://github.com/ansible/ansible-examples/tree/master/tomcat-standalone) example:
@@ -66,9 +76,9 @@ In `.kitchen.yml` set:
 
 See the [Ansible Windows repo](https://github.com/neillturner/ansible_windows_repo) example.
 
-## Using Roles from Ansible Galaxy 
+## Using Roles from Ansible Galaxy
 
-Roles can be used from the Ansible Galaxy using two methods: 
+Roles can be used from the Ansible Galaxy using two methods:
 
 1. Specify a `requirements.yml` file in your Ansible repository. For more details see [here](http://docs.ansible.com/ansible/galaxy.html).
 
@@ -79,7 +89,7 @@ Roles can be used from the Ansible Galaxy using two methods:
 To  use a single ~/.kitchen/config.yml file with multiple reposities by setting the WORKSPACE environment variable:
 
 ```yaml
-role_path: <%= ENV['WORKSPACE'] %>/roles 
+role_path: <%= ENV['WORKSPACE'] %>/roles
 ```
 
 You can easily skip previous instructions and jump directly to the broken statement you just fixed by passing an environment variable. Add the following to your `.kitchen.yml`:

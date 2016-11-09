@@ -68,6 +68,7 @@ ignore_paths_from_root | [] | allow extra paths to be ignored when copying from 
 kerberos_conf_file | | Path of krb5.conf file using in Windows support
 library_plugins_path | library | Ansible repo library plugins directory
 lookup_plugins_path | lookup_plugins | Ansible repo `lookup_plugins` directory
+max_retries | 1 | maximum number of retry attempts of converge command
 modules_path | | Ansible repo manifests directory
 no_proxy | nil | List of URLs or IPs that should be excluded from proxying
 playbook | default.yml | Playbook for `ansible-playbook` to run
@@ -82,12 +83,14 @@ require_pip | false | Set to `true` if Ansible is to be installed through `pip`)
 require_ruby_for_busser | false | Install Ruby to run Busser for tests
 require_windows_support | false | Install [Windows support](http://docs.ansible.com/ansible/intro_windows.html)
 requirements_path | | Path to Ansible Galaxy requirements
+retry_on_exit_code | [] | Array of exit codes to retry converge command against
 role_name | | use when the repo name does not match the name the role is published as.
 roles_path | roles | Ansible repo roles directory
 shell_command | 'sh' | Shell command to use, usually an alias for bash. may need to set to bash.
 ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent with Ansible
 update_package_repos | true | Update OS repository metadata
+wait_for_retry | 30 | number of seconds to wait before retrying converge command
 
 ## Configuring Provisioner Options
 
