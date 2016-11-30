@@ -87,12 +87,10 @@ module Kitchen
             if [ ! $(which ansible) ]; then
               if [ -f /etc/fedora-release ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Fedora.new('fedora', config).install_command}
-              elif [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-                if [ -z `grep -q 'Amazon Linux' /etc/system-release` ]; then
-                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
-                else
+              elif [ `grep -q 'Amazon Linux' /etc/system-release` ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Amazon.new('amazon', config).install_command}
-                fi
+              elif [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
               elif [ -f /etc/SuSE-release ] || [ -f /etc/SUSE-brand ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Suse.new('suse', config).install_command}
               elif [[ "$OSTYPE" == "darwin"* ]]; then
