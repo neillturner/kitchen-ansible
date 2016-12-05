@@ -50,6 +50,7 @@ provisioner:
   require_ansible_repo: true
   ansible_verbose: true
   ansible_version: latest
+  require_chef_for_busser: false
 
 platforms:
   - name: nocm_centos-6.5
@@ -61,6 +62,8 @@ platforms:
       - ['forwarded_port', {guest: 8080, host: 8080}]
       - ['private_network', {ip: '192.168.33.11'}]
 ```
+
+See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
 
 ## Windows Support
 
@@ -112,10 +115,10 @@ You save a lot of time not running working instructions.
 ## Ruby install to run Serverspec verify
 
 By default test-kitchen installs Chef to get a Ruby version suitable to run Serverspec in the `verify` step.
-Instead Ruby can just be installed by specifying the provisioner option:
+kitchen-verifier-serverspec installs its own ruby version so chef or ruby is not required to verify with serverspec :
 
 ```yaml
-require_ruby_for_busser: true
+require_chef_for_busser: false
 ```
 And set the verifier section:
 ```yaml
@@ -147,7 +150,7 @@ By using kitchen-verifier-serverspec and the Runner ansiblespec_runner tests can
 
 Serverspec uses ssh to communicate with the server to be tested and reads the Ansible playbook and inventory files to determine the hosts to test and the roles for each host.
 
-See example [https://github.com/neillturner/ansible_repo](https://github.com/neillturner/ansible_repo)
+See example [https://github.com/neillturner/ansible_ansiblespec_repo](https://github.com/neillturner/ansible_ansiblespec_repo)
 
 ### Example usage to create Tomcat servers:
 
