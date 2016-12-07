@@ -819,8 +819,8 @@ module Kitchen
         roles_paths = []
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
         if config[:additional_copy_role_path]
-          config[:additional_copy_role_path].each do |additional_role_path|
-            roles_paths << File.join(config[:root_path], File.basename(additional_role_path))
+          config[:additional_copy_path].each do |path|
+            roles_paths << File.join(config[:root_path], File.basename(path))
           end
         end
         if roles_paths.empty?
