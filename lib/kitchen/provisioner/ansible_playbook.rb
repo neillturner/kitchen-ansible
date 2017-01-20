@@ -299,9 +299,9 @@ module Kitchen
             info("Add #{host} to ~/.ssh/known_hosts")
             if host.include? ':'
               stripped_host, port = host.split(':')
-              commands << "ssh-keyscan -p #{port} #{stripped_host} > ~/.ssh/known_hosts 2> /dev/null"
+              commands << "ssh-keyscan -p #{port} #{stripped_host} >> ~/.ssh/known_hosts 2> /dev/null"
             else
-              commands << "ssh-keyscan #{host} > ~/.ssh/known_hosts 2> /dev/null"
+              commands << "ssh-keyscan #{host} >> ~/.ssh/known_hosts 2> /dev/null"
             end
           end
         end
