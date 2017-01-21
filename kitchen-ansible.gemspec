@@ -31,7 +31,9 @@ EOF
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
-  if RUBY_VERSION >= '2.0'
+  if RUBY_VERSION >= '2.3'
+    s.add_dependency 'net-ssh', '< 4.0'
+  elsif RUBY_VERSION >= '2.0'
     s.add_dependency 'net-ssh', '~> 3.0'
   else
     s.add_dependency 'net-ssh', '~> 2.9'
