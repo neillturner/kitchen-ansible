@@ -297,7 +297,12 @@ module Kitchen
         if config[:ssh_known_hosts]
           config[:ssh_known_hosts].each do |host|
             info("Add #{host} to ~/.ssh/known_hosts")
-            commands << "ssh-keyscan #{host} > ~/.ssh/known_hosts 2> /dev/null"
+            if host.include? ':'
+              stripped_host, port = host.split(':')
+              commands << "ssh-keyscan -p #{port} #{stripped_host} >> ~/.ssh/known_hosts 2> /dev/null"
+            else
+              commands << "ssh-keyscan #{host} >> ~/.ssh/known_hosts 2> /dev/null"
+            end
           end
         end
 
