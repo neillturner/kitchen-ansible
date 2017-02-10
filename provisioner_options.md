@@ -43,6 +43,7 @@ ansible_omnibus_url | `https://raw.githubusercontent.com` `/neillturner/omnibus-
 ansible_platform | Naively tries to determine | OS platform of server
 ansible_playbook_command | | Override the Ansible playbook command
 ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagement/SLE_12` `/systemsmanagement.repo` | Zypper SuSE Ansible repo
+ansible_source_url | `git://github.com/ansible/ansible.git` | Git URL of Ansible source
 ansible_source_rev | | Branch or tag to install Ansible source
 ansible_sudo | true | Determines whether `ansible-playbook` is executed as root or as the current authenticated user
 ansible_vault_password_file | | Path to Ansible Vault password file
