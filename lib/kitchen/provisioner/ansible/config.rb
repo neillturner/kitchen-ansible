@@ -63,6 +63,7 @@ module Kitchen
         default_config :ansible_connection, 'local'
         default_config :update_package_repos, true
         default_config :require_ansible_source, false
+        default_config :ansible_source_url, 'git://github.com/ansible/ansible.git'
         default_config :ansible_source_rev, nil
         default_config :http_proxy, nil
         default_config :https_proxy, nil
