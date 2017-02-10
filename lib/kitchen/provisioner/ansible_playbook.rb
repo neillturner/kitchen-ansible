@@ -87,7 +87,7 @@ module Kitchen
             if [ ! $(which ansible) ]; then
               if [ -f /etc/fedora-release ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Fedora.new('fedora', config).install_command}
-              elif [ `grep -q 'Amazon Linux' /etc/system-release` ]; then
+              elif [ -f /etc/system-release ] && [ `grep -q 'Amazon Linux' /etc/system-release` ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Amazon.new('amazon', config).install_command}
               elif [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_command}
