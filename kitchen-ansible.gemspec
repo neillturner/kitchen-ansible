@@ -32,7 +32,7 @@ EOF
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
   if RUBY_VERSION >= '2.0'
-    s.add_dependency 'net-ssh', '~> 3'
+    s.add_dependency 'net-ssh', '>= 3'
   else
     s.add_dependency 'net-ssh', '~> 2.9'
   end
