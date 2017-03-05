@@ -57,6 +57,7 @@ chef_bootstrap_url | `https://www.getchef.com/chef/install.sh` | The Chef instal
 enable_yum_epel | false | Enable the `yum` EPEL repo
 env_vars | Hash.new | Hash to set environment variable to use with `ansible-playbook` command
 extra_vars | Hash.new | Hash to set the `extra_vars` passed to `ansible-playbook` command
+extra_vars_file | nil | file containing environment variables e.g. `private_vars/production.yml site.yml` Only if extra_vars not specified. Don't prefix with a @ sign.
 filter_plugins_path | filter_plugins | Ansible repo `filter_plugins` directory
 group_vars_path | group_vars | Ansible repo group_vars directory
 host_vars_path | host_vars | Ansible repo hosts directory

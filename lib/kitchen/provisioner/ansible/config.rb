@@ -39,6 +39,7 @@ module Kitchen
         default_config :require_ansible_repo, true
         default_config :enable_yum_epel, false
         default_config :extra_vars, {}
+        default_config :extra_vars_file, nil
         default_config :env_vars, {}
         default_config :tags, []
         default_config :ansible_apt_repo, 'ppa:ansible/ansible'

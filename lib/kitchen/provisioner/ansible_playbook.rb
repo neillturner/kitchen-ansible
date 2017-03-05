@@ -747,11 +747,15 @@ module Kitchen
           bash_vars = config[:attributes][:extra_vars]
         end
 
-        return nil if bash_vars.none?
-        bash_vars = JSON.dump(bash_vars)
-        bash_vars = "-e '#{bash_vars}'"
-        debug(bash_vars)
-        bash_vars
+        return nil if bash_vars.none? && config[:extra_vars_file].nil?
+        if !bash_vars.none?
+          bash_extra_vars = JSON.dump(bash_vars)
+        else
+          bash_extra_vars = "\@#{config[:extra_vars_file]}"
+        end
+        bash_extra_vars = "-e '#{bash_extra_vars}'"
+        debug(bash_extra_vars)
+        bash_extra_vars
       end
 
       def tags
