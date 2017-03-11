@@ -106,7 +106,8 @@ module Kitchen
         else
           return
         end
-        result = cmd + install_windows_support + install_busser_prereqs
+
+        result = custom_pre_install_command + cmd + install_windows_support + install_busser_prereqs + custom_post_install_command
         debug("Going to install ansible with: #{result}")
         result
       end
@@ -234,6 +235,19 @@ module Kitchen
         install
       end
 
+      def custom_pre_install_command
+        <<-INSTALL
+
+          #{config[:custom_pre_install_command]}
+        INSTALL
+      end
+
+      def custom_post_install_command
+        <<-INSTALL
+          #{config[:custom_post_install_command]}
+        INSTALL
+      end
+
       def init_command
         dirs = %w(modules roles group_vars host_vars)
                .map { |dir| File.join(config[:root_path], dir) }.join(' ')
@@ -346,54 +360,64 @@ module Kitchen
       end
 
       def run_command
-        if !config[:ansible_playbook_command].nil?
-          return config[:ansible_playbook_command]
+        return config[:ansible_playbook_command] unless config[:ansible_playbook_command].nil?
+        if config[:require_ansible_source] && !config[:ansible_binary_path]
+          # this is an ugly hack to get around the fact that extra vars uses ' and "
+          cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man ansible-playbook")
+        elsif config[:ansible_binary_path]
+          cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
         else
-
-          if config[:require_ansible_source] && !config[:ansible_binary_path]
-            # this is an ugly hack to get around the fact that extra vars uses ' and "
-            cmd = ansible_command("PATH=#{config[:root_path]}/ansible/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games PYTHONPATH=#{config[:root_path]}/ansible/lib MANPATH=#{config[:root_path]}/ansible/docs/man ansible-playbook")
-          elsif config[:ansible_binary_path]
-            cmd = ansible_command("#{config[:ansible_binary_path]}/ansible-playbook")
-          else
-            cmd = ansible_command('ansible-playbook')
-          end
-
-          cmd = "#{env_vars} #{cmd}" if !config[:env_vars].none?
-          cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
-          cmd = "HTTP_PROXY=#{http_proxy} #{cmd}" if http_proxy
-          cmd = "NO_PROXY=#{no_proxy} #{cmd}" if no_proxy
-          cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}" if ansible_roles_path
-          cmd = "ANSIBLE_HOST_KEY_CHECKING=false #{cmd}" if !ansible_host_key_checking
-
-          cmd = "#{cd_ansible} #{cmd}" if !config[:ansible_sudo].nil? && !config[:ansible_sudo]
-          cmd = "#{copy_private_key_cmd} #{cmd}" if config[:private_key]
-
-          result = [
-            cmd,
-            ansible_inventory_flag,
-            ansible_limit_flag,
-            ansible_connection_flag,
-            "-M #{File.join(config[:root_path], 'modules')}",
-            ansible_verbose_flag,
-            ansible_check_flag,
-            ansible_diff_flag,
-            ansible_vault_flag,
-            private_key,
-            extra_vars,
-            extra_vars_file,
-            tags,
-            ansible_extra_flags,
-            "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
-          ].join(' ')
-          debug("Going to invoke ansible-playbook with: #{result}")
-          if config[:idempotency_test]
-            result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
-            debug("Full cmd with idempotency test: #{result}")
-          end
-
-          result
+          cmd = ansible_command('ansible-playbook')
         end
+
+        cmd = "#{env_vars} #{cmd}" if !config[:env_vars].none?
+        cmd = "HTTPS_PROXY=#{https_proxy} #{cmd}" if https_proxy
+        cmd = "HTTP_PROXY=#{http_proxy} #{cmd}" if http_proxy
+        cmd = "NO_PROXY=#{no_proxy} #{cmd}" if no_proxy
+        cmd = "ANSIBLE_ROLES_PATH=#{ansible_roles_path} #{cmd}" if ansible_roles_path
+        cmd = "ANSIBLE_HOST_KEY_CHECKING=false #{cmd}" if !ansible_host_key_checking
+
+        cmd = "#{cd_ansible} #{cmd}" if !config[:ansible_sudo].nil? && !config[:ansible_sudo]
+        cmd = "#{copy_private_key_cmd} #{cmd}" if config[:private_key]
+
+        result = [
+          cmd,
+          ansible_inventory_flag,
+          ansible_limit_flag,
+          ansible_connection_flag,
+          "-M #{File.join(config[:root_path], 'modules')}",
+          ansible_verbose_flag,
+          ansible_check_flag,
+          ansible_diff_flag,
+          ansible_vault_flag,
+          private_key,
+          extra_vars,
+          extra_vars_file,
+          tags,
+          ansible_extra_flags,
+          "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
+        ].join(' ')
+        if config[:custom_post_play_command]
+          custom_post_play_trap = <<-TRAP
+            function custom_post_play_command {
+              #{config[:custom_post_play_command]}
+            }
+            trap custom_post_play_command EXIT
+          TRAP
+        end
+        result = <<-RUN
+          #{config[:custom_pre_play_command]}
+          #{custom_post_play_trap}
+          #{result}
+        RUN
+        debug("Going to invoke ansible-playbook with: #{result}")
+        if config[:idempotency_test]
+          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
+          debug("Full cmd with idempotency test: #{result}")
+        end
+
+        result
+
       end
 
       def ansible_command(script)

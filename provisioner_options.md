@@ -54,10 +54,14 @@ ansible_yum_repo | nil | `yum` repo for EL platforms
 ansiblefile_path | | Path to Ansiblefile
 callback_plugins_path | callback_plugins | Ansible repo `callback_plugins` directory
 chef_bootstrap_url | `https://www.getchef.com/chef/install.sh` | The Chef install
+custom_pre_install_command | nil | Custom shell command to be used at beginning of install stage. Can be multiline.
+custom_pre_play_command | nil | Custom shell command to be used before the ansible play stage. Can be multiline. See examples below.
+custom_post_install_command | nil | Custom shell command to be used at after the install stage. Can be multiline.
+custom_post_play_command | nil | Custom shell command to be used after the ansible play stage. Can be multiline. See examples below.
 enable_yum_epel | false | Enable the `yum` EPEL repo
 env_vars | Hash.new | Hash to set environment variable to use with `ansible-playbook` command
 extra_vars | Hash.new | Hash to set the `extra_vars` passed to `ansible-playbook` command
-extra_vars_file | nil | file containing environment variables e.g. `private_vars/production.yml site.yml` Only if extra_vars not specified. Don't prefix with a @ sign.
+extra_vars_file | nil | file containing environment variables e.g. `private_vars/production.yml site.yml` Don't prefix with a @ sign.
 filter_plugins_path | filter_plugins | Ansible repo `filter_plugins` directory
 group_vars_path | group_vars | Ansible repo group_vars directory
 host_vars_path | host_vars | Ansible repo hosts directory
@@ -131,4 +135,16 @@ It can be beneficial to keep different Ansible layouts for different suites. Rat
 $kitchen_root/ansible/$suite_name/roles
 $kitchen_root/ansible/$suite_name/modules
 $kitchen_root/ansible/$suite_name/Ansiblefile
+```
+
+Multiple Line Structure
+```yaml
+provisioner::
+  command: |
+    sudo -s <<SERVERSPEC
+    cd /opt/gdc/serverspec-core
+    export SERVERSPEC_ENV=$EC2DATA_ENVIRONMENT
+    export SERVERSPEC_BACKEND=exec
+    serverspec junit=true tag=~skip_in_kitchen check:role:$EC2DATA_TYPE
+    SERVERSPEC
 ```

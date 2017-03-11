@@ -80,6 +80,10 @@ module Kitchen
         default_config :role_name, nil
         default_config :additional_copy_role_path, false
         default_config :shell_command, 'sh'
+        default_config :custom_pre_install_command, nil
+        default_config :custom_pre_play_command, nil
+        default_config :custom_post_install_command, nil
+        default_config :custom_post_play_command, nil
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||
