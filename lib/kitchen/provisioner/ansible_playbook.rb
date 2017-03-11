@@ -381,6 +381,7 @@ module Kitchen
             ansible_vault_flag,
             private_key,
             extra_vars,
+            extra_vars_file,
             tags,
             ansible_extra_flags,
             "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
@@ -747,13 +748,16 @@ module Kitchen
           bash_vars = config[:attributes][:extra_vars]
         end
 
-        return nil if bash_vars.none? && config[:extra_vars_file].nil?
-        if !bash_vars.none?
-          bash_extra_vars = JSON.dump(bash_vars)
-        else
-          bash_extra_vars = "\@#{config[:extra_vars_file]}"
-        end
-        bash_extra_vars = "-e '#{bash_extra_vars}'"
+        return nil if bash_vars.none?
+        bash_vars = JSON.dump(bash_vars)
+        bash_vars = "-e '#{bash_vars}'"
+        debug(bash_vars)
+        bash_vars
+      end
+
+      def extra_vars_file
+        return nil if config[:extra_vars_file].nil?
+        bash_extra_vars = "-e '\@#{config[:extra_vars_file]}'"
         debug(bash_extra_vars)
         bash_extra_vars
       end
