@@ -397,6 +397,9 @@ module Kitchen
           ansible_extra_flags,
           "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
         ].join(' ')
+        if config[:idempotency_test]
+          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
+        end
         if config[:custom_post_play_command]
           custom_post_play_trap = <<-TRAP
             function custom_post_play_command {
@@ -410,12 +413,8 @@ module Kitchen
           #{custom_post_play_trap}
           #{result}
         RUN
-        debug("Going to invoke ansible-playbook with: #{result}")
-        if config[:idempotency_test]
-          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
-          debug("Full cmd with idempotency test: #{result}")
-        end
 
+        debug("Going to invoke ansible-playbook with: #{result}")
         result
 
       end
