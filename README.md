@@ -51,6 +51,8 @@ provisioner:
   ansible_verbose: true
   ansible_version: latest
   require_chef_for_busser: false
+  additional_ssh_private_keys:
+  - /mykey/id_rsa
 
 platforms:
   - name: nocm_centos-6.5

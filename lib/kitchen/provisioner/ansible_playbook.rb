@@ -279,6 +279,7 @@ module Kitchen
         prepare_lookup_plugins
         prepare_ansible_vault_password_file
         prepare_kerberos_conf_file
+        prepare_additional_ssh_private_keys
         info('Finished Preparing files for transfer')
       end
 
@@ -320,6 +321,12 @@ module Kitchen
           end
         end
 
+        if config[:additional_ssh_private_keys]
+          commands << [
+            sudo_env('cp -r'), File.join(config[:root_path], 'ssh_private_keys'), '~/.ssh'
+          ].join(' ')
+        end
+
         if ansible_inventory
           if File.directory?(ansible_inventory)
             Dir.foreach(ansible_inventory) do |f|
@@ -355,6 +362,7 @@ module Kitchen
         end
 
         command = commands.join(' && ')
+        debug("*** COMMAND TO RUN:")
         debug(command)
         command
       end
@@ -569,6 +577,10 @@ module Kitchen
 
       def tmp_lookup_plugins_dir
         File.join(sandbox_path, 'lookup_plugins')
+      end
+
+      def tmp_additional_ssh_private_keys_dir
+        File.join(sandbox_path, 'ssh_private_keys')
       end
 
       def tmp_ansible_vault_password_file_path
@@ -1093,6 +1105,19 @@ module Kitchen
           FileUtils.cp_r(Dir.glob("#{lookup_plugins}/*.py"), tmp_lookup_plugins_dir, remove_destination: true)
         else
           info 'nothing to do for lookup_plugins'
+        end
+      end
+
+      def prepare_additional_ssh_private_keys
+        info('Preparing additional_ssh_private_keys')
+        FileUtils.mkdir_p(tmp_additional_ssh_private_keys_dir)
+        if config[:additional_ssh_private_keys]
+          config[:additional_ssh_private_keys].each do |key|
+            debug("Adding additional_ssh_private_key file #{key}")
+            FileUtils.cp_r(key, tmp_additional_ssh_private_keys_dir, remove_destination: true)
+          end
+        else
+          info 'nothing to do for additional_ssh_private_keys'
         end
       end
 

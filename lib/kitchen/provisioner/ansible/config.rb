@@ -56,6 +56,7 @@ module Kitchen
         default_config :require_pip, false
         default_config :requirements_path, false
         default_config :ssh_known_hosts, nil
+        default_config :additional_ssh_private_keys, nil
         default_config :ansible_verbose, false
         default_config :ansible_verbosity, 1
         default_config :ansible_check, false
