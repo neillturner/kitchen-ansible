@@ -46,17 +46,22 @@ module Kitchen
               ## Fix debconf tty warning messages
               export DEBIAN_FRONTEND=noninteractive
 
-              ## 13.10, 14.04 include add-apt-repository in software-properties-common
-              #{sudo_env('apt-get')} -y install software-properties-common
+              if [ -f /etc/os-release ] && [ `grep 'ID=debian' /etc/os-release` ]; then
+                #{sudo_env('echo')} "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" | sudo tee -a /etc/apt/sources.list
+                #{sudo_env('apt-key')} adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+              else
+                ## 13.10, 14.04 include add-apt-repository in software-properties-common
+                #{sudo_env('apt-get')} -y install software-properties-common
 
-              ## 10.04, 12.04 include add-apt-repository in
-              #{sudo_env('apt-get')} -y install python-software-properties
+                ## 10.04, 12.04 include add-apt-repository in
+                #{sudo_env('apt-get')} -y install python-software-properties
 
-              ## 10.04 version of add-apt-repository doesn't accept --yes
-              ## later versions require interaction from user, so we must specify --yes
-              ## First try with -y flag, else if it fails, try without.
-              ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
-              #{sudo_env('add-apt-repository')} -y #{@config[:ansible_apt_repo]} || #{sudo_env('add-apt-repository')} #{@config[:ansible_apt_repo]}
+                ## 10.04 version of add-apt-repository doesn't accept --yes
+                ## later versions require interaction from user, so we must specify --yes
+                ## First try with -y flag, else if it fails, try without.
+                ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
+                #{sudo_env('add-apt-repository')} -y #{@config[:ansible_apt_repo]} || #{sudo_env('add-apt-repository')} #{@config[:ansible_apt_repo]}
+              fi
               #{sudo_env('apt-get')} update
               #{sudo_env('apt-get')} -y install ansible#{ansible_debian_version}
             fi
