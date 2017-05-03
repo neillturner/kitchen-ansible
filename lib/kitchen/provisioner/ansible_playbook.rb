@@ -1127,7 +1127,7 @@ module Kitchen
         info('Preparing ansible vault password')
         debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
 
-        FileUtils.cp(ansible_vault_password_file, tmp_ansible_vault_password_file_path)
+        FileUtils.cp(File.expand_path(ansible_vault_password_file), tmp_ansible_vault_password_file_path)
       end
 
       def prepare_kerberos_conf_file
