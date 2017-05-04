@@ -455,7 +455,7 @@ module Kitchen
         ansible_version = "==#{config[:ansible_version]}" unless config[:ansible_version] == 'latest'
 
         <<-INSTALL
-        if [ ! -d #{config[:root_path]}/ansible ]; then
+        if [ ! $(which ansible) ]; then
           if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
             #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
             #{update_packages_redhat_cmd}
