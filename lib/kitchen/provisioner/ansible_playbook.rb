@@ -493,8 +493,11 @@ module Kitchen
       end
 
       def install_ansible_from_pip_command
-        ansible_version = ''
-        ansible_version = "==#{config[:ansible_version]}" unless config[:ansible_version] == 'latest'
+        if config[:ansible_version]=='latest' or config[:ansible_version].nil?
+          ansible_version = ''
+        else
+          ansible_version = "==#{config[:ansible_version]}"
+        end
 
         <<-INSTALL
         if [ ! $(which ansible) ]; then
