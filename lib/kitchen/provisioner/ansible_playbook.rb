@@ -112,24 +112,35 @@ module Kitchen
         result
       end
 
+      def detect_debug
+        if ARGV.include? 'debug'
+          result = "1"
+        else
+          result = "/dev/null"
+        end
+        return result
+      end
+
       def install_windows_support
         install = ''
         if require_windows_support
-          install << <<-INSTALL
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc
-          else
-            if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
-            else
-              #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential
-            fi
-          fi
-          #{export_http_proxy}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install pywinrm kerberos
-          INSTALL
+            info ("Installing Windows Support")
+            info ("Installing pip")
+            install << <<-INSTALL
+              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc > #{detect_debug}
+              else
+                if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
+                  #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
+                  #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5 > #{detect_debug}
+                else
+                  #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential > #{detect_debug}
+                fi
+              fi
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip > #{detect_debug}
+            #{sudo_env('pip')} install pywinrm kerberos > #{detect_debug}
+            INSTALL
         end
         install
       end
@@ -156,9 +167,9 @@ module Kitchen
             if [ -n "$rhelversion6" ] || [ -n "$rhelversion7" ]; then
             if [ ! -d "/opt/rh/ruby200" ]; then
               echo "-----> Installing ruby200 SCL in CentOS6/CentOS7/RHEL6/RHEL7 to install busser to run tests"
-              #{sudo_env('yum')} install -y centos-release-scl
-              #{sudo_env('yum')} install -y ruby200
-              #{sudo_env('yum')} install -y ruby200-ruby-devel
+              #{sudo_env('yum')} install -y centos-release-scl > #{detect_debug}
+              #{sudo_env('yum')} install -y ruby200 > #{detect_debug}
+              #{sudo_env('yum')} install -y ruby200-ruby-devel > #{detect_debug}
               echo "-----> Enabling ruby200"
               source /opt/rh/ruby200/enable
               echo "/opt/rh/ruby200/root/usr/lib64" | sudo tee -a /etc/ld.so.conf
@@ -168,21 +179,21 @@ module Kitchen
             fi
             else
               if [ ! $(which ruby) ]; then
-                #{update_packages_redhat_cmd}
-                #{sudo_env('yum')} -y install ruby ruby-devel
+                #{update_packages_redhat_cmd} > #{detect_debug}
+                #{sudo_env('yum')} -y install ruby ruby-devel > #{detect_debug}
               fi
             fi
             else
-                #{update_packages_redhat_cmd}
-                #{sudo_env('yum')} -y install ruby ruby-devel gcc
+                #{update_packages_redhat_cmd} > #{detect_debug}
+                #{sudo_env('yum')} -y install ruby ruby-devel gcc > #{detect_debug}
             fi
             elif [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
-                #{update_packages_suse_cmd}
-                #{sudo_env('zypper')} --non-interactive install ruby ruby-devel ca-certificates ca-certificates-cacert ca-certificates-mozilla
+                #{update_packages_suse_cmd} > #{detect_debug}
+                #{sudo_env('zypper')} --non-interactive install ruby ruby-devel ca-certificates ca-certificates-cacert ca-certificates-mozilla > #{detect_debug}
                 #{sudo_env('gem')} sources --add https://rubygems.org/
             elif [ -f /etc/alpine-release ]  || [ -d /etc/apk ]; then
                 #{update_packages_alpine_cmd}
-                #{sudo_env('apk')} add ruby ruby-dev ruby-io-console ca-certificates
+                #{sudo_env('apk')} add ruby ruby-dev ruby-io-console ca-certificates > #{detect_debug}
             else
               if [ ! $(which ruby) ]; then
                 #{update_packages_debian_cmd}
@@ -203,14 +214,14 @@ module Kitchen
                     PACKAGES="ruby ruby-dev"
                   fi
                 fi
-                #{sudo_env('apt-get')} -y install $PACKAGES
+                #{sudo_env('apt-get')} -y install $PACKAGES > #{detect_debug}
                 if [ $debvers -eq 6 ]; then
                     # in squeeze we need to update alternatives
                     # for enable ruby1.9.1
                     ALTERNATIVES_STRING="--install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 10 --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz --slave /usr/bin/erb erb /usr/bin/erb1.9.1 --slave /usr/bin/gem gem /usr/bin/gem1.9.1 --slave /usr/bin/irb irb /usr/bin/irb1.9.1 --slave /usr/bin/rake rake /usr/bin/rake1.9.1 --slave /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1 --slave /usr/bin/testrb testrb /usr/bin/testrb1.9.1 --slave /usr/share/man/man1/erb.1.gz erb.1.gz /usr/share/man/man1/erb1.9.1.1.gz --slave /usr/share/man/man1/gem.1.gz gem.1.gz /usr/share/man/man1/gem1.9.1.1.gz --slave /usr/share/man/man1/irb.1.gz irb.1.gz /usr/share/man/man1/irb1.9.1.1.gz --slave /usr/share/man/man1/rake.1.gz rake.1.gz /usr/share/man/man1/rake1.9.1.1.gz --slave /usr/share/man/man1/rdoc.1.gz rdoc.1.gz /usr/share/man/man1/rdoc1.9.1.1.gz --slave /usr/share/man/man1/testrb.1.gz testrb.1.gz /usr/share/man/man1/testrb1.9.1.1.gz"
                     #{sudo_env('update-alternatives')} $ALTERNATIVES_STRING
                     # need to update gem tool because gem 1.3.7 from ruby 1.9.1 is broken
-                    #{sudo_env('gem')} install rubygems-update
+                    #{sudo_env('gem')} install rubygems-update > #{detect_debug}
                     #{sudo_env('/var/lib/gems/1.9.1/bin/update_rubygems')}
                     # clear local gem cache
                     #{sudo_env('rm')} -r /home/vagrant/.gem
@@ -227,7 +238,7 @@ module Kitchen
               echo "-----> Installing Chef Omnibus to install busser to run tests"
               #{export_http_proxy}
               do_download #{chef_url} /tmp/install.sh
-              #{sudo_env('sh')} /tmp/install.sh
+              #{sudo_env('sh')} /tmp/install.sh > #{detect_debug}
             fi
             INSTALL
         end
@@ -466,30 +477,30 @@ module Kitchen
       end
 
       def install_ansible_from_source_command
-        <<-INSTALL
-        if [ ! -d #{config[:root_path]}/ansible ]; then
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
-            #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
-          else
-            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{update_packages_suse_cmd}
-              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
+          <<-INSTALL
+          if [ ! -d #{config[:root_path]}/ansible ]; then
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+              #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+              #{update_packages_redhat_cmd} > #{detect_debug}
+              #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel > #{detect_debug}
             else
-              #{update_packages_debian_cmd}
-              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
+              if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
+                #{update_packages_suse_cmd} > #{detect_debug}
+                #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
+              else
+                #{update_packages_debian_cmd} > #{detect_debug}
+                #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
+              fi
             fi
-          fi
 
-          #{export_http_proxy}
-          git clone #{config[:ansible_source_url]} --recursive #{config[:root_path]}/ansible #{install_source_rev}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install -U setuptools
-          #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
-        fi
-        INSTALL
+            #{export_http_proxy}
+            git clone #{config[:ansible_source_url]} --recursive #{config[:root_path]}/ansible #{install_source_rev}
+            #{sudo_env('easy_install')} pip > #{detect_debug}
+            #{sudo_env('pip')} install -U setuptools > #{detect_debug}
+            #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2 > #{detect_debug}
+          fi
+          INSTALL
       end
 
       def install_ansible_from_pip_command
@@ -498,30 +509,29 @@ module Kitchen
         else
           ansible_version = "==#{config[:ansible_version]}"
         end
+          <<-INSTALL
+            if [ ! $(which ansible) ]; then
+              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+                #{update_packages_redhat_cmd} > #{detect_debug}
+                #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc > #{detect_debug}
+              else
+                if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                  #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
+                  #{update_packages_suse_cmd} > #{detect_debug}
+                  #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
+                else
+                  #{update_packages_debian_cmd} > #{detect_debug}
+                  #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
+                fi
+              fi
 
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
-            #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc
-          else
-            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{update_packages_suse_cmd}
-              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
-            else
-              #{update_packages_debian_cmd}
-              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
-            fi
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip > #{detect_debug}
+            #{sudo_env('pip')} install -U setuptools > #{detect_debug}
+            #{sudo_env('pip')} install ansible#{ansible_version} > #{detect_debug}
           fi
-
-          #{export_http_proxy}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install -U setuptools
-          #{sudo_env('pip')} install ansible#{ansible_version}
-        fi
-        INSTALL
+          INSTALL
       end
 
       def install_omnibus_command
@@ -537,7 +547,7 @@ module Kitchen
           echo "-----> Installing Ansible Omnibus"
           #{export_http_proxy}
           do_download #{config[:ansible_omnibus_url]} /tmp/ansible_install.sh
-          #{sudo_env(config[:shell_command])} /tmp/ansible_install.sh #{version}
+          #{sudo_env(config[:shell_command])} /tmp/ansible_install.sh #{version} > #{detect_debug}
         fi
         INSTALL
       end
