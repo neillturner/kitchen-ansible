@@ -115,23 +115,45 @@ module Kitchen
       def install_windows_support
         install = ''
         if require_windows_support
-          install << <<-INSTALL
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc
+          if ARGV.include? 'debug'
+            debug ("Installing Windows Support")
+            debug ("Installing pip")
+            install << <<-INSTALL
+              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc
+              else
+                if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
+                  #{sudo_env('zypper')} ar #{python_sles_repo}
+                  #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
+                else
+                  #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential
+                fi
+              fi
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip
+            #{sudo_env('pip')} install pywinrm kerberos
+            INSTALL
           else
-            if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5
+            info ("Installing Windows Support")
+            info ("Installing pip")
+            install << <<-INSTALL
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+              #{sudo_env('yum')} -y install python-devel krb5-devel krb5-libs krb5-workstation gcc > /dev/null
             else
-              #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential
+              if [ -f /etc/SuSE-release ]  || [ -f /etc/SUSE-brand ]; then
+                #{sudo_env('zypper')} ar #{python_sles_repo} > /dev/null
+                #{sudo_env('zypper')} --non-interactive install python python-devel krb5-client pam_krb5 > /dev/null
+              else
+                #{sudo_env('apt-get')} -y install python-dev libkrb5-dev build-essential > /dev/null
+              fi
             fi
-          fi
-          #{export_http_proxy}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install pywinrm kerberos
-          INSTALL
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip > /dev/null
+            #{sudo_env('pip')} install pywinrm kerberos > /dev/null
+            INSTALL
+          end
+          install
         end
-        install
       end
 
       def install_busser_prereqs
@@ -466,30 +488,57 @@ module Kitchen
       end
 
       def install_ansible_from_source_command
-        <<-INSTALL
-        if [ ! -d #{config[:root_path]}/ansible ]; then
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
-            #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
-          else
-            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{update_packages_suse_cmd}
-              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
+        if ARGV.include? 'debug'
+          <<-INSTALL
+          if [ ! -d #{config[:root_path]}/ansible ]; then
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+              #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+              #{update_packages_redhat_cmd}
+              #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel
             else
-              #{update_packages_debian_cmd}
-              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
+              if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                #{sudo_env('zypper')} ar #{python_sles_repo}
+                #{update_packages_suse_cmd}
+                #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
+              else
+                #{update_packages_debian_cmd}
+                #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
+              fi
             fi
-          fi
 
-          #{export_http_proxy}
-          git clone #{config[:ansible_source_url]} --recursive #{config[:root_path]}/ansible #{install_source_rev}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install -U setuptools
-          #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
-        fi
-        INSTALL
+            #{export_http_proxy}
+            git clone #{config[:ansible_source_url]} --recursive #{config[:root_path]}/ansible #{install_source_rev}
+            #{sudo_env('easy_install')} pip
+            #{sudo_env('pip')} install -U setuptools
+            #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2
+          fi
+          INSTALL
+        else
+          <<-INSTALL
+          if [ ! -d #{config[:root_path]}/ansible ]; then
+            if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+              #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+              #{update_packages_redhat_cmd} > /dev/null
+              #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel libssl-devel > /dev/null
+            else
+              if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                #{sudo_env('zypper')} ar #{python_sles_repo}
+                #{update_packages_suse_cmd} > /dev/null
+                #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > /dev/null
+              else
+                #{update_packages_debian_cmd} > /dev/null
+                #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev > /dev/null
+              fi
+            fi
+
+            #{export_http_proxy}
+            git clone #{config[:ansible_source_url]} --recursive #{config[:root_path]}/ansible #{install_source_rev}
+            #{sudo_env('easy_install')} pip > /dev/null
+            #{sudo_env('pip')} install -U setuptools > /dev/null
+            #{sudo_env('pip')} install six paramiko PyYAML Jinja2 httplib2 > /dev/null
+          fi
+          INSTALL
+        end
       end
 
       def install_ansible_from_pip_command
@@ -498,30 +547,55 @@ module Kitchen
         else
           ansible_version = "==#{config[:ansible_version]}"
         end
+        if ARGV.include? 'debug'
+          <<-INSTALL
+            if [ ! $(which ansible) ]; then
+              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+                #{update_packages_redhat_cmd}
+                #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc
+              else
+                if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                  #{sudo_env('zypper')} ar #{python_sles_repo}
+                  #{update_packages_suse_cmd}
+                  #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
+                else
+                  #{update_packages_debian_cmd}
+                  #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
+                fi
+              fi
 
-        <<-INSTALL
-        if [ ! $(which ansible) ]; then
-          if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
-            #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
-            #{update_packages_redhat_cmd}
-            #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc
-          else
-            if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
-              #{sudo_env('zypper')} ar #{python_sles_repo}
-              #{update_packages_suse_cmd}
-              #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel
-            else
-              #{update_packages_debian_cmd}
-              #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev
-            fi
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip
+            #{sudo_env('pip')} install -U setuptools
+            #{sudo_env('pip')} install ansible#{ansible_version}
           fi
+          INSTALL
+        else
+          <<-INSTALL
+            if [ ! $(which ansible) ]; then
+              if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+                #{update_packages_redhat_cmd} > /dev/null
+                #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc > /dev/null
+              else
+                if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                  #{sudo_env('zypper')} ar #{python_sles_repo}
+                  #{update_packages_suse_cmd} > /dev/null
+                  #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > /dev/null
+                else
+                  #{update_packages_debian_cmd} > /dev/null
+                  #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev > /dev/null
+                fi
+              fi
 
-          #{export_http_proxy}
-          #{sudo_env('easy_install')} pip
-          #{sudo_env('pip')} install -U setuptools
-          #{sudo_env('pip')} install ansible#{ansible_version}
-        fi
-        INSTALL
+            #{export_http_proxy}
+            #{sudo_env('easy_install')} pip > /dev/null
+            #{sudo_env('pip')} install -U setuptools > /dev/null
+            #{sudo_env('pip')} install ansible#{ansible_version} > /dev/null
+          fi
+          INSTALL
+        end
       end
 
       def install_omnibus_command
