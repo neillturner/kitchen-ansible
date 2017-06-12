@@ -880,8 +880,12 @@ module Kitchen
         roles_paths = []
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
         if config[:additional_copy_role_path]
-          config[:additional_copy_path].each do |path|
-            roles_paths << File.join(config[:root_path], File.basename(path))
+          if config[:additional_copy_role_path].is_a? String
+            roles_paths << File.expand_path(config[:additional_copy_role_path])
+          else
+            config[:additional_copy_path].each do |path|
+              roles_paths << File.join(config[:root_path], File.expand_path(File.basename(path)))
+            end
           end
         end
         if roles_paths.empty?
@@ -902,7 +906,7 @@ module Kitchen
         if galaxy_requirements
           dest = File.join(sandbox_path, galaxy_requirements)
           FileUtils.mkdir_p(File.dirname(dest))
-          FileUtils.cp(galaxy_requirements, dest)
+          FileUtils.cp(File.expand_path(galaxy_requirements), dest)
         end
 
         FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
@@ -994,10 +998,10 @@ module Kitchen
         info('Preparing additional_copy_path')
         additional_files.each do |file|
            info("Copy additional path: #{file}")
-           destination = File.join(sandbox_path, File.basename(file))
-           if File.directory?(file)
-             debug("Copy dir: #{file} #{destination}")
-             FileUtils.cp_r(file, destination)
+           destination = File.join(sandbox_path, File.basename(File.expand_path(file)))
+           if File.directory?(File.expand_path(file)) && File.basename(File.expand_path(file))!= ?.
+             debug("Copy dir: #{File.expand_path(file)} #{destination}")
+             FileUtils.cp_r(File.expand_path(file), destination)
            else
              debug("Copy file: #{file} #{destination}")
              FileUtils.cp(file, destination)
@@ -1008,7 +1012,9 @@ module Kitchen
           Find.find(file) do |files|
             destination = File.join(sandbox_path, files)
             Find.prune if config[:ignore_paths_from_root].include? File.basename(files)
+            Find.prune if "?.".include? File.basename(files)
             Find.prune if config[:ignore_extensions_from_root].include? File.extname(files)
+            debug File.basename(files)
             if File.directory?(files)
               FileUtils.mkdir_p(destination)
             else
