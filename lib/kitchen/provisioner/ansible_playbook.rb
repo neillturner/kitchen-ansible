@@ -1133,7 +1133,7 @@ module Kitchen
         if config[:additional_ssh_private_keys]
           config[:additional_ssh_private_keys].each do |key|
             debug("Adding additional_ssh_private_key file #{key}")
-            FileUtils.cp_r(key, tmp_additional_ssh_private_keys_dir, remove_destination: true)
+            FileUtils.cp_r(File.expand_path(key), tmp_additional_ssh_private_keys_dir, remove_destination: true)
           end
         else
           info 'nothing to do for additional_ssh_private_keys'
@@ -1155,7 +1155,7 @@ module Kitchen
         info('Preparing kerberos configuration file')
         debug("Copying kerberos configuration file from #{kerberos_conf_file} to #{tmp_kerberos_conf_file_path}")
 
-        FileUtils.cp(kerberos_conf_file, tmp_kerberos_conf_file_path)
+        FileUtils.cp(File.expand_path(kerberos_conf_file), tmp_kerberos_conf_file_path)
       end
 
       def resolve_with_librarian
