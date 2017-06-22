@@ -881,10 +881,10 @@ module Kitchen
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
         if config[:additional_copy_role_path]
           if config[:additional_copy_role_path].is_a? String
-            roles_paths << File.expand_path(config[:additional_copy_role_path])
+            roles_paths << File.join(config[:root_path], File.basename(config[:additional_copy_role_path]))
           else
-            config[:additional_copy_path].each do |path|
-              roles_paths << File.join(config[:root_path], File.expand_path(File.basename(path)))
+            config[:additional_copy_role_path].each do |path|
+              roles_paths << File.join(config[:root_path], File.basename(File.expand_path(path)))
             end
           end
         end
@@ -899,7 +899,7 @@ module Kitchen
 
       def prepare_roles
         info('Preparing roles')
-        debug("Using roles from #{roles}")
+        debug("Using roles from #{File.expand_path(roles)}")
 
         resolve_with_librarian if File.exist?(ansiblefile)
 
@@ -907,6 +907,21 @@ module Kitchen
           dest = File.join(sandbox_path, galaxy_requirements)
           FileUtils.mkdir_p(File.dirname(dest))
           FileUtils.cp(File.expand_path(galaxy_requirements), dest)
+        end
+
+        if config[:additional_copy_role_path]
+          if config[:additional_copy_role_path].is_a? String
+            debug("Using additional roles copy from #{File.expand_path(config[:additional_copy_role_path])}")
+            dest = File.join(sandbox_path, File.basename(File.expand_path(config[:additional_copy_role_path])))
+            FileUtils.mkdir_p(File.dirname(dest))
+            FileUtils.cp_r(File.expand_path(config[:additional_copy_role_path]), dest)
+          else
+            config[:additional_copy_role_path].each do |path|
+              dest = File.join(sandbox_path, File.basename(File.expand_path(path)))
+              FileUtils.mkdir_p(File.dirname(dest))
+              FileUtils.cp_r(File.expand_path(path), dest)
+            end
+          end
         end
 
         FileUtils.mkdir_p(File.join(tmp_roles_dir, role_name))
@@ -917,7 +932,6 @@ module Kitchen
           unless roles =~ /\/roles$/
             role_path = "#{role_name}/#{role_path}"
           end
-
           target = File.join(tmp_roles_dir, role_path)
 
           Find.prune if config[:ignore_paths_from_root].include? File.basename(source)
