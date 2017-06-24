@@ -66,7 +66,7 @@ extra_vars_file | nil | file containing environment variables e.g. `private_vars
 filter_plugins_path | filter_plugins | Ansible repo `filter_plugins` directory
 group_vars_path | group_vars | Ansible repo group_vars directory
 host_vars_path | host_vars | Ansible repo hosts directory
-hosts |  | Create Ansible hosts file for localhost with this server group
+hosts |  | Create Ansible hosts file for localhost with this server group or list of groups
 http_proxy | nil | Use HTTP proxy when installing Ansible, packages and running Ansible
 https_proxy | nil | Use HTTPS proxy when installing Ansible, packages and running Ansible
 idempotency_test | false | Enable to test Ansible playbook idempotency

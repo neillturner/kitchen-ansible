@@ -980,6 +980,15 @@ module Kitchen
 
         if config[:hosts].nil?
           fail 'No hosts have been set. Please specify one in .kitchen.yml'
+        elsif config[:hosts].is_a?(Array)
+          debug("Using an array of hosts from #{hosts}")
+          File.open(File.join(sandbox_path, 'hosts'), 'wb') do |file|
+            hoststring="localhost ansible_connection=local\n"
+            config[:hosts].each do |h|
+              hoststring+="[#{h}]\nlocalhost\n\n"
+            end
+            file.write(hoststring)
+          end
         else
           debug("Using host from #{hosts}")
           File.open(File.join(sandbox_path, 'hosts'), 'wb') do |file|
