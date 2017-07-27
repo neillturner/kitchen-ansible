@@ -114,7 +114,7 @@ module Kitchen
 
       def detect_debug
         if ARGV.include? 'debug'
-          result = "1"
+          result = "/dev/stdout"
         else
           result = "/dev/null"
         end
