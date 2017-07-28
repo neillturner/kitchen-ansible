@@ -94,6 +94,7 @@ retry_on_exit_code | [] | Array of exit codes to retry converge command against
 role_name | | use when the repo name does not match the name the role is published as.
 roles_path | roles | Ansible repo roles directory
 shell_command | 'sh' | Shell command to use, usually an alias for bash. may need to set to bash.
+show_command_output | false | Show output of commands that are run to provision system.
 ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent with Ansible
 update_package_repos | true | Update OS repository metadata

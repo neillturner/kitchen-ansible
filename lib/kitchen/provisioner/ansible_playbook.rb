@@ -113,7 +113,7 @@ module Kitchen
       end
 
       def detect_debug
-        if ARGV.include? 'debug'
+        if ARGV.include? 'debug' or config[:show_command_output]
           result = "/dev/stdout"
         else
           result = "/dev/null"
