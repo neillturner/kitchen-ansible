@@ -31,6 +31,9 @@ EOF
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
+  if RUBY_VERSION < '2.2'
+    s.add_dependency 'mixlib-shellout', '<= 2.2.7'
+  end  
   if RUBY_VERSION >= '2.0'
     s.add_dependency 'net-ssh', '>= 3'
   else
