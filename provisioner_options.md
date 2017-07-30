@@ -26,8 +26,8 @@ kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ans
 
 key | default value | Notes
 ----|---------------|--------
-additional_copy_path | | Arbitrary array of files and directories to copy into test environment, relative to the current dir, e.g. vars or included playbooks
-additional_copy_role_path | false | additional_copy_path directories are appended to the ANSIBLE_ROLES_PATH env var when running ansible
+additional_copy_path | | Arbitrary array of files and directories to copy into test environment e.g. vars or included playbooks. See below section Copying Additional Files
+additional_copy_role_path | |  Arbitrary array of files and directories to copy into test environment and are appended to the ANSIBLE_ROLES_PATH env var when running ansible. See below section Copying Additional Files
 additional_ssh_private_keys | | List of additional ssh private key files to be added to ~/.ssh
 ansible_apt_repo | ppa:ansible/ansible | `apt` repo; see `https://launchpad.net` `/~ansible/+archive/ubuntu/ansible` or `rquillo/ansible`
 ansible_binary_path | NULL | If specified this will override the location where `kitchen` tries to run `ansible-playbook` from, i.e. `ansible_binary_path: /usr/local/bin`
@@ -70,8 +70,8 @@ hosts |  | Create Ansible hosts file for localhost with this server group or lis
 http_proxy | nil | Use HTTP proxy when installing Ansible, packages and running Ansible
 https_proxy | nil | Use HTTPS proxy when installing Ansible, packages and running Ansible
 idempotency_test | false | Enable to test Ansible playbook idempotency
-ignore_extensions_from_root | ['.pyc'] | allow extensions to be ignored when copying from roles and recursive_additional_copy_path
-ignore_paths_from_root | [] | allow extra paths to be ignored when copying from roles and recursive_additional_copy_path
+ignore_extensions_from_root | ['.pyc'] | allow extensions to be ignored when copying from roles using additional_copy_role_path or doing recursive_additional_copy_path
+ignore_paths_from_root | [] | allow extra paths to be ignored when copying from roles using additional_copy_role_path or using recursive_additional_copy_path
 kerberos_conf_file | | Path of krb5.conf file using in Windows support
 library_plugins_path | library | Ansible repo library plugins directory
 lookup_plugins_path | lookup_plugins | Ansible repo `lookup_plugins` directory
@@ -81,7 +81,7 @@ no_proxy | nil | List of URLs or IPs that should be excluded from proxying
 playbook | default.yml | Playbook for `ansible-playbook` to run
 private_key | | ssh private key file for ssh connection
 python_sles_repo | `http://download.opensuse.org/repositories` `/devel:/languages:/python/SLE_12` `/devel:languages:python.repo` | Zypper SuSE python repo
-recursive_additional_copy_path | | Arbitrary array of files and directories to copy into test environment, relative to the current dir, e.g. vars or included playbooks
+recursive_additional_copy_path | | Arbitrary array of files and directories to copy into test environment. See below section Copying Additional Files
 require_ansible_omnibus | false | Set to `true` if using Omnibus Ansible `pip` install
 require_ansible_repo | true | Set if installing Ansible from a `yum` or `apt` repo
 require_ansible_source | false | Install Ansible from source using method described [here](http://docs.ansible.com/intro_installation.html#running-from-source). Only works on Debian/Ubuntu at present
@@ -99,6 +99,54 @@ ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent with Ansible
 update_package_repos | true | Update OS repository metadata
 wait_for_retry | 30 | number of seconds to wait before retrying converge command
+
+## Copying Additional Files
+
+Several parameters have been developed rather organically to support the requirement to copy additional files beyond the ones in the standard ansible locations.
+* These could be used for the verification phase later
+* additional files required by the application
+* or these could be ansible roles
+
+### additional_copy_path  - Arbitrary array of files and directories to copy into test environment
+* If you specify a directory it will copy all the files to /tmp/kitchen with the directory structure
+* if you specify the full file name they are copied to the top of the /tmp/kitchen folder in the server and the path is ignored.
+i.e. if we have a directory data/ containing file xyz.txt
+```
+  additional_copy_path:
+    - data/xyz.txt
+```
+it will copy data/xyz.txt to /tmp/kitchen/xyz.txt
+* if you specify the directory without the filename it will preserve the path when copying to /tmp/kitchen.
+```
+  additional_copy_path:
+    - data
+```
+it will copy data/xyz.txt to /tmp/kitchen/data/xyz.txt
+NOTE: additional_copy_path does copy files that are links but if you specify the full file path only the file name is copied to /tmp/kitchen
+
+### recursive_additional_copy_path
+This copies the directories in a resursive fashion which can work better for some directory structures
+* It does not support specifying files with paths. i.e. you can only specify files at the top level of the repository
+```
+  recursive_additional_copy_path:
+  - xyz.txt
+```
+* It does support copying directories in a similar fashion to additional_copy_path but uses recursion to discover the files in the directory structure which can be
+problematic with files with links.
+```
+  recursive_additional_copy_path:
+    - data
+```
+### additional_copy_role_path
+This is the same as additional_copy_path but adds the extra paths to the ANSIBLE_ROLES_PATH ansible command parameter.
+
+### ignore_paths_from_root and ignore_extensions_from_root
+During recursive_additional_copy_path or additional_copy_role_path there are 2 additional parameters.
+(NOTE: These don't apply with additional_copy_path)
+* ignore_paths_from_root defaults to empty array []. This causes these paths to be ignored.
+* ignore_extensions_from_root defaults to an array containg ['.pyc']. This causes files with these extensions to be ignored.
+as these are implemented with the 'Find.prune' command they can be problematic with file links.
+
 
 ## Configuring Provisioner Options
 
