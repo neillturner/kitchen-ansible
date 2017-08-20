@@ -26,13 +26,11 @@ Ansible Provisioner for Test Kitchen
 Supports running ansible-playbook
 
 EOF
-  s.add_runtime_dependency 'test-kitchen', '~> 1.4'
-
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
   if RUBY_VERSION < '2.3'
-    s.add_dependency 'test-kitchen', '<= 1.16.0'
+    s.add_dependency 'test-kitchen', '<= 1.16.0', '>= 1.4'
   else
     s.add_dependency 'test-kitchen', '>= 1.17.0'
   end
