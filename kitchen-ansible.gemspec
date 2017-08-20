@@ -31,6 +31,11 @@ EOF
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
+  if RUBY_VERSION < '2.3'
+    s.add_dependency 'test-kitchen', '<= 1.16.0'
+  else
+    s.add_dependency 'test-kitchen', '>= 1.17.0'
+  end
   if RUBY_VERSION < '2.2'
     s.add_dependency 'mixlib-shellout', '<= 2.2.7'
   else
