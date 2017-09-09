@@ -17,7 +17,14 @@ It has been tested against the Ubuntu 12.04/14.04/16.04, Centos 6/7 and Debian 6
 - a driver box without a Chef installation so Ansible can be installed.
 
 ## Installation & Setup
-Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver:
+
+1. install the latest Ruby on your workstations (for windows see https://rubyinstaller.org/downloads/)
+
+2. If using Ruby version less than 2.3 first install earlier version of test-kitchen
+```
+gem install test-kitchen -v 1.16
+```
+3. Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver:
 
 ```
 gem install kitchen-ansible
