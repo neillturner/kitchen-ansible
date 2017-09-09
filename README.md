@@ -22,7 +22,7 @@ It has been tested against the Ubuntu 12.04/14.04/16.04, Centos 6/7 and Debian 6
 
 2. If using Ruby version less than 2.3 first install earlier version of test-kitchen
 ```
-gem install test-kitchen -v 1.16
+gem install test-kitchen -v 1.16.0
 ```
 3. Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver:
 
