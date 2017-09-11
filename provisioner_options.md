@@ -100,6 +100,66 @@ sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent
 update_package_repos | true | Update OS repository metadata
 wait_for_retry | 30 | number of seconds to wait before retrying converge command
 
+## Ansible Inventory 
+
+Ansible has the concept of an [inventory](http://docs.ansible.com/ansible/latest/intro_inventory.html).
+
+Ansible then connects to these servers and processes the playbook against the server.
+
+See also [Host inventories](https://ansible-tips-and-tricks.readthedocs.io/en/latest/ansible/inventory/).
+
+
+### ansible Inventory parameter 
+
+if you have an ansible inventory file you can specify it in the ansible_inventory parameter in the .kitchen.yml file.
+```yaml
+  ansible_inventory: myinventoryfile.txt
+```  
+of it you have an ansible.cfg  file specify
+```yaml
+  ansible_inventory: none 
+``` 
+it will look for the file in the root of your repository. 
+
+or it can be a directory from the root of your repository and contain scripts to implement [dynamic inventory](http://docs.ansible.com/ansible/latest/intro_dynamic_inventory.html) 
+
+### hosts parameter
+
+if you don't specify an inventory file then you must specify the hosts parameter in the .kitchen.yml file. 
+
+kitchen ansible uses this information to create a hosts file that is used by ansible with the ansible command is run. 
+  
+it can either be a name of a single server
+
+```yaml
+hosts: myhost 
+```
+
+or any array of hosts: 
+
+```yaml
+hosts: 
+  - myhost1
+  - myhost2
+```  
+
+the hosts file that is generated always contains in the first line 
+
+```yaml
+localhost ansible_connection=local
+```
+so that it will process against the locahost. 
+
+and it will create a hosts file that includes the hosts you specify
+
+```yaml
+localhost ansible_connection=local
+myhost1
+myhost2
+localhost
+```
+
+
 ## Copying Additional Files
 
 Several parameters have been developed rather organically to support the requirement to copy additional files beyond the ones in the standard ansible locations.
