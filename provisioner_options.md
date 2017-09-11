@@ -115,7 +115,7 @@ if you have an ansible inventory file you can specify it in the ansible_inventor
 ```yaml
   ansible_inventory: myinventoryfile.txt
 ```  
-of it you have an ansible.cfg  file specify
+or if you have an ansible.cfg  file specify
 ```yaml
   ansible_inventory: none 
 ``` 
