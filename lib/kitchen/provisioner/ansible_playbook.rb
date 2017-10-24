@@ -97,6 +97,8 @@ module Kitchen
                 #{Kitchen::Provisioner::Ansible::Os::Darwin.new('darwin', config).install_command}
               elif [ -f /etc/alpine-release ] || [ -d /etc/apk ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Alpine.new('alpine', config).install_command}
+              elif [ $(uname -s) = "OpenBSD" ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Openbsd.new('openbsd', config).install_command}
               else
                 #{Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).install_command}
               fi
