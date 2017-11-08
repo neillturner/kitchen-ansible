@@ -19,6 +19,8 @@ It installs it in the following order:
 * if require_ansible_repo is set to true (the default)
 
   Installs from the operation system repository only with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
+  
+NOTE:  Set to ansible_package_name to 'ansible' when installing from the CentOS/Redhat extras repo, instead of the EPEL.
 
 # Provisioner Options
 
@@ -41,6 +43,7 @@ ansible_inventory |  | Static or dynamic inventory file or directory or 'none' i
 ansible_limit |  | Further limits the selected host/group patterns
 ansible_omnibus_remote_path | /opt/ansible | Server installation location of an Omnibus Ansible install
 ansible_omnibus_url | `https://raw.githubusercontent.com` `/neillturner/omnibus-ansible` `/master/ansible_install.sh` | Omnibus Ansible install location
+ansible_package_name |  | Set to ansible when installing from the CentOS/Redhat extras repo, instead of the EPEL.
 ansible_platform | Naively tries to determine | OS platform of server
 ansible_playbook_command | | Override the Ansible playbook command
 ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagement/SLE_12` `/systemsmanagement.repo` | Zypper SuSE Ansible repo
