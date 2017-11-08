@@ -42,11 +42,21 @@ module Kitchen
             @config[:enable_yum_epel] ? sudo_env('yum install epel-release -y') : nil
           end
 
-          def ansible_package_name
-            if @config[:ansible_version] == 'latest' || @config[:ansible_version] == nil
-              "ansible"
+          def ansible_package_version_suffix
+            return unless @config[:ansible_version] && @config[:ansible_version] != 'latest'
+
+            if @config[:ansible_package_name]
+              "-#{@config[:ansible_version]}"
             else
-              "ansible#{@config[:ansible_version][0..2]}-#{@config[:ansible_version]}"
+              "#{@config[:ansible_version][0..2]}-#{@config[:ansible_version]}"
+            end
+          end
+
+          def ansible_package_name
+            if @config[:ansible_package_name]
+              "#{@config[:ansible_package_name]}#{ansible_package_version_suffix}"
+            else
+              "ansible#{ansible_package_version_suffix}"
             end
           end
 
