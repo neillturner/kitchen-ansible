@@ -41,7 +41,8 @@ module Kitchen
               #{update_packages_command}
 
               ## Install apt-utils to silence debconf warning: http://serverfault.com/q/358943/77156
-              #{sudo_env('apt-get')} -y install apt-utils git
+              ## Install dirmngr to handle GPG key management for stretch, addressing https://github.com/neillturner/kitchen-ansible/issues/257
+              #{sudo_env('apt-get')} -y install apt-utils git dirmngr
 
               ## Fix debconf tty warning messages
               export DEBIAN_FRONTEND=noninteractive
