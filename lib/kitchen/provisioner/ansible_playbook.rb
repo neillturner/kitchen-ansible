@@ -343,7 +343,7 @@ module Kitchen
         if ansible_inventory
           if File.directory?(ansible_inventory)
             Dir.foreach(ansible_inventory) do |f|
-              next if f == "." or f == ".."
+              next if File.directory?("#{ansible_inventory}/#{f}")
               contents = File.open("#{ansible_inventory}/#{f}", 'rb') { |g| g.read }
               if contents.start_with?('#!')
                 commands << [
