@@ -598,8 +598,8 @@ module Kitchen
         File.join(sandbox_path, 'ssh_private_keys')
       end
 
-      def tmp_ansible_vault_password_file_path
-        File.join(sandbox_path, File.basename(ansible_vault_password_file).reverse.chomp('.').reverse)
+      def tmp_ansible_vault_password_file_path(f)
+        File.join(sandbox_path, File.basename(f).reverse.chomp('.').reverse)
       end
 
       def tmp_kerberos_conf_file_path
@@ -690,7 +690,11 @@ module Kitchen
       end
 
       def ansible_vault_password_file
-        config[:ansible_vault_password_file]
+        password_files = []
+        if config[:ansible_vault_password_file]
+          password_files = config[:ansible_vault_password_file].is_a?(Array) ? config[:ansible_vault_password_file] : [config[:ansible_vault_password_file]]
+        end
+        password_files.map(&:to_s)
       end
 
       def ansible_inventory
@@ -726,7 +730,15 @@ module Kitchen
 
       def ansible_vault_flag
         debug(config[:ansible_vault_password_file])
-        config[:ansible_vault_password_file] ? "--vault-password-file=#{File.join(config[:root_path], File.basename(config[:ansible_vault_password_file]).reverse.chomp('.').reverse)}" : nil
+        return nil if not ansible_vault_password_file
+
+        files = []
+
+        ansible_vault_password_file.each do |f|
+          files << "--vault-password-file=#{File.join(config[:root_path], File.basename(f).reverse.chomp('.').reverse)}"
+        end
+
+        files.join(' ')
       end
 
       def ansible_inventory_flag
@@ -1169,9 +1181,11 @@ module Kitchen
         return unless ansible_vault_password_file
 
         info('Preparing ansible vault password')
-        debug("Copying ansible vault password file from #{ansible_vault_password_file} to #{tmp_ansible_vault_password_file_path}")
+        ansible_vault_password_file.each do |f|
+          debug("Copying ansible vault password file from #{f} to #{tmp_ansible_vault_password_file_path(f)}")
 
-        FileUtils.cp(File.expand_path(ansible_vault_password_file), tmp_ansible_vault_password_file_path)
+          FileUtils.cp(File.expand_path(f), tmp_ansible_vault_password_file_path(f))
+        end
       end
 
       def prepare_kerberos_conf_file

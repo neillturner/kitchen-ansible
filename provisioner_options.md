@@ -50,7 +50,7 @@ ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagem
 ansible_source_url | `git://github.com/ansible/ansible.git` | Git URL of Ansible source
 ansible_source_rev | | Branch or tag to install Ansible source
 ansible_sudo | true | Determines whether `ansible-playbook` is executed as root or as the current authenticated user
-ansible_vault_password_file | | Path to Ansible Vault password file
+ansible_vault_password_file | | Path to Ansible Vault password file. Can also be an array of files.
 ansible_verbose | false | Extra information logging
 ansible_verbosity | 1 | Sets the verbosity flag appropriately, e.g.: `1 => '-v', 2 => '-vv', 3 => '-vvv' ...`. Valid values are: `1, 2, 3, 4` or `:info, :warn, :debug, :trace`
 ansible_version | latest | Desired version, only affects `apt-get` installs
