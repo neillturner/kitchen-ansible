@@ -18,18 +18,20 @@ It has been tested against the Ubuntu 12.04/14.04/16.04, Centos 6/7 and Debian 6
 
 ## Installation & Setup
 
-1. install the latest Ruby on your workstations (for windows see https://rubyinstaller.org/downloads/)
+1. install the latest Ruby on your workstation (for windows see https://rubyinstaller.org/downloads/)
 
 2. If using Ruby version less than 2.3 first install earlier version of test-kitchen
 ```
 gem install test-kitchen -v 1.16.0
 ```
-3. Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver:
+3. Install the `kitchen-ansible` gem in your system, along with [kitchen-vagrant](https://github.com/test-kitchen/kitchen-vagrant) or [kitchen-docker](https://github.com/test-kitchen/kitchen-docker) or any other suitable driver or the exec driver to run from your workstation:
 
 ```
 gem install kitchen-ansible
 gem install kitchen-vagrant
 ```
+
+
 
 ## Resources
 * https://blog.superk.org/home/ansible-role-development
@@ -88,6 +90,13 @@ In `.kitchen.yml` set:
 ```
 
 See the [Ansible Windows repo](https://github.com/neillturner/ansible_windows_repo) example.
+
+## Test Kitchen Exec Driver
+
+By using the test-kitchen exec driver ansible to be driven from your workstation, (This provides similar functionality to to the kitchen-ansiblepush driver). This allows remote servers, as specified in the ansible inventory, to be built with ansible automatically installed and run from your workstation.
+
+See example [https://github.com/neillturner/ansible_exec_repo](https://github.com/neillturner/ansible_exec_repo)
+
 
 ## Using Roles from Ansible Galaxy
 
