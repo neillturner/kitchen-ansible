@@ -93,7 +93,7 @@ See the [Ansible Windows repo](https://github.com/neillturner/ansible_windows_re
 
 ## Test Kitchen Exec Driver
 
-By using the test-kitchen exec driver ansible to be driven from your workstation, (This provides similar functionality to to the kitchen-ansiblepush driver). This allows remote servers, as specified in the ansible inventory, to be built with ansible automatically installed and run from your workstation.
+By using the test-kitchen exec driver ansible to be driven from your workstation, (This provides similar functionality to to the [https://github.com/ahelal/kitchen-ansiblepush](kitchen-ansiblepush driver)). This allows remote servers, as specified in the ansible inventory, to be built with ansible automatically installed and run from your workstation.
 
 See example [https://github.com/neillturner/ansible_exec_repo](https://github.com/neillturner/ansible_exec_repo)
 
