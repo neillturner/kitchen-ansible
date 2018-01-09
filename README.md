@@ -97,6 +97,11 @@ By using the test-kitchen exec driver ansible can be driven from your workstatio
 
 See example [https://github.com/neillturner/ansible_exec_repo](https://github.com/neillturner/ansible_exec_repo)
 
+## Ansible AWX
+ 
+Kitchen ansible supports installing and using the open source version of Ansible Tower [Ansible AWX](https://github.com/ansible/awx) on a Centos 7. In future it will support the tower-cli for testing. 
+
+See example [https://github.com/neillturner/ansible_awx_repo](https://github.com/neillturner/ansible_awx_repo)
 
 ## Using Roles from Ansible Galaxy
 
