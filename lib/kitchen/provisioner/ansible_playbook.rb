@@ -280,7 +280,8 @@ module Kitchen
         prepare_inventory
         prepare_modules
         prepare_roles
-        prepare_ansible_cfg
+        if not config[:ignore_ansible_cfg]
+          prepare_ansible_cfg
         prepare_group_vars
         prepare_additional_copy_path
         prepare_host_vars

@@ -102,6 +102,7 @@ ssh_known_hosts | | List of hosts that should be added to ~/.ssh/known_hosts
 sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent with Ansible
 update_package_repos | true | Update OS repository metadata
 wait_for_retry | 30 | number of seconds to wait before retrying converge command
+ignore_ansible_cfg | false | If true, values from ansible.cfg file will not be loaded.
 
 ## Ansible Inventory 
 
