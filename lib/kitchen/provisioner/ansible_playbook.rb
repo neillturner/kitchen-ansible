@@ -280,9 +280,7 @@ module Kitchen
         prepare_inventory
         prepare_modules
         prepare_roles
-        if not config[:ignore_ansible_cfg]
-          prepare_ansible_cfg
-        end
+        prepare_ansible_cfg
         prepare_group_vars
         prepare_additional_copy_path
         prepare_host_vars
@@ -964,7 +962,7 @@ module Kitchen
       def prepare_ansible_cfg
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
-        if !ansible_cfg_path.nil? && File.exist?(ansible_cfg_path)
+        if !ansible_cfg_path.nil? && File.exist?(ansible_cfg_path) && !config[:ignore_ansible_cfg]
           info('Found existing ansible.cfg')
           FileUtils.cp_r(ansible_cfg_path, ansible_config_file)
         else
