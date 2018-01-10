@@ -282,6 +282,7 @@ module Kitchen
         prepare_roles
         if not config[:ignore_ansible_cfg]
           prepare_ansible_cfg
+        end
         prepare_group_vars
         prepare_additional_copy_path
         prepare_host_vars
