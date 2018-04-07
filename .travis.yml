@@ -7,7 +7,6 @@ rvm:
   - 2.3.1
   - 2.3.4
   - 2.4.1
-# remove until https://github.com/test-kitchen/test-kitchen/pull/1328 Remove safe_yaml #1328 is in test-kitchen   
   - 2.5.0
 before_install:
   - gem install bundler -v 1.10.6
