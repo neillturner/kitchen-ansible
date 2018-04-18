@@ -19,7 +19,7 @@ It installs it in the following order:
 * if require_ansible_repo is set to true (the default)
 
   Installs from the operation system repository only with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
-  
+
 NOTE:  Set to ansible_package_name to 'ansible' when installing from the CentOS/Redhat extras repo, instead of the EPEL.
 
 # Provisioner Options
@@ -57,7 +57,7 @@ ansible_version | latest | Desired version, only affects `apt-get` installs
 ansible_yum_repo | nil | `yum` repo for EL platforms
 ansiblefile_path | | Path to Ansiblefile
 callback_plugins_path | callback_plugins | Ansible repo `callback_plugins` directory
-chef_bootstrap_url | `https://www.getchef.com/chef/install.sh` | The Chef install
+chef_bootstrap_url | `https://www.chef.io/chef/install.sh` | The Chef install
 custom_pre_install_command | nil | Custom shell command to be used at beginning of install stage. Can be multiline.
 custom_pre_play_command | nil | Custom shell command to be used before the ansible play stage. Can be multiline. See examples below.
 custom_post_install_command | nil | Custom shell command to be used at after the install stage. Can be multiline.
@@ -104,7 +104,7 @@ update_package_repos | true | Update OS repository metadata
 wait_for_retry | 30 | number of seconds to wait before retrying converge command
 ignore_ansible_cfg | false | If true, values from ansible.cfg file will not be loaded.
 
-## Ansible Inventory 
+## Ansible Inventory
 
 Ansible has the concept of an [inventory](http://docs.ansible.com/ansible/latest/intro_inventory.html).
 
@@ -113,46 +113,46 @@ Ansible then connects to these servers and processes the playbook against the se
 See also [Host inventories](https://ansible-tips-and-tricks.readthedocs.io/en/latest/ansible/inventory/).
 
 
-### ansible Inventory parameter 
+### ansible Inventory parameter
 
 if you have an ansible inventory file you can specify it in the ansible_inventory parameter in the .kitchen.yml file.
 ```yaml
   ansible_inventory: myinventoryfile.txt
-```  
+```
 or if you have an ansible.cfg  file specify
 ```yaml
-  ansible_inventory: none 
-``` 
-it will look for the file in the root of your repository. 
+  ansible_inventory: none
+```
+it will look for the file in the root of your repository.
 
-or it can be a directory from the root of your repository and contain scripts to implement [dynamic inventory](http://docs.ansible.com/ansible/latest/intro_dynamic_inventory.html) 
+or it can be a directory from the root of your repository and contain scripts to implement [dynamic inventory](http://docs.ansible.com/ansible/latest/intro_dynamic_inventory.html)
 
 ### hosts parameter
 
-if you don't specify an inventory file then you must specify the hosts parameter in the .kitchen.yml file. 
+if you don't specify an inventory file then you must specify the hosts parameter in the .kitchen.yml file.
 
-kitchen ansible uses this information to create a hosts file that is used by ansible with the ansible command is run. 
-  
+kitchen ansible uses this information to create a hosts file that is used by ansible with the ansible command is run.
+
 it can either be a name of a single server
 
 ```yaml
-hosts: myhost 
+hosts: myhost
 ```
 
-or any array of hosts: 
+or any array of hosts:
 
 ```yaml
-hosts: 
+hosts:
   - myhost1
   - myhost2
-```  
+```
 
-the hosts file that is generated always contains in the first line 
+the hosts file that is generated always contains in the first line
 
 ```yaml
 localhost ansible_connection=local
 ```
-so that it will process against the locahost. 
+so that it will process against the locahost.
 
 and it will create a hosts file that includes the hosts you specify
 

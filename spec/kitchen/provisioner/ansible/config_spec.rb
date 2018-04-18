@@ -35,7 +35,7 @@ describe Kitchen::Provisioner::Ansible::Config do
       [:ansible_yum_repo, nil],
       [:ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo'],
       [:python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo'],
-      [:chef_bootstrap_url, 'https://www.getchef.com/chef/install.sh'],
+      [:chef_bootstrap_url, 'https://www.chef.io/chef/install.sh'],
       [:requirements_path, false],
       [:ansible_verbose, false],
       [:ansible_verbosity, 1],
