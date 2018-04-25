@@ -419,7 +419,7 @@ module Kitchen
           "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
         ].join(' ')
         if config[:idempotency_test]
-          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; grep -q 'changed=0.*failed=0' /tmp/idempotency_test.txt && (echo 'Idempotence test: PASS' && exit 0) || (echo 'Idempotence test: FAIL' && exit 1))"
+          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; if grep -qE 'changed=[1-9].*failed=|changed=.*failed=[1-9]' /tmp/idempotency_test.txt; then echo 'Idempotence test: FAIL' && exit 1; else echo 'Idempotence test: PASS' && exit 0; fi)"
         end
         if config[:custom_post_play_command]
           custom_post_play_trap = <<-TRAP
