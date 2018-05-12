@@ -524,7 +524,7 @@ module Kitchen
                   #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
                 else
                   #{update_packages_debian_cmd} > #{detect_debug}
-                  #{sudo_env('apt-get')} -y install git python python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
+                  #{sudo_env('apt-get')} -y install git python python-pip python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
                 fi
               fi
 
