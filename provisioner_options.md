@@ -73,6 +73,8 @@ hosts |  | Create Ansible hosts file for localhost with this server group or lis
 http_proxy | nil | Use HTTP proxy when installing Ansible, packages and running Ansible
 https_proxy | nil | Use HTTPS proxy when installing Ansible, packages and running Ansible
 idempotency_test | false | Enable to test Ansible playbook idempotency
+idempotency_tags | [] | Adds a `--tags` parameter with the specified tags to the second invocation of `ansible-playbook` when `idempotency_test` is set to `true`
+idempotency_skip_tags | [] | Adds a `--skip-tags` parameter with the specified tags to the second invocation of `ansible-playbook` when `idempotency_test` is set to `true`
 ignore_extensions_from_root | ['.pyc'] | allow extensions to be ignored when copying from roles using additional_copy_role_path or doing recursive_additional_copy_path
 ignore_paths_from_root | [] | allow extra paths to be ignored when copying from roles using additional_copy_role_path or using recursive_additional_copy_path
 kerberos_conf_file | | Path of krb5.conf file using in Windows support

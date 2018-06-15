@@ -401,25 +401,29 @@ module Kitchen
         cmd = "#{cd_ansible} #{cmd}" if !config[:ansible_sudo].nil? && !config[:ansible_sudo]
         cmd = "#{copy_private_key_cmd} #{cmd}" if config[:private_key]
 
-        result = [
-          cmd,
-          ansible_inventory_flag,
-          ansible_limit_flag,
-          ansible_connection_flag,
-          "-M #{File.join(config[:root_path], 'modules')}",
-          ansible_verbose_flag,
-          ansible_check_flag,
-          ansible_diff_flag,
-          ansible_vault_flag,
-          private_key,
-          extra_vars,
-          extra_vars_file,
-          tags,
-          ansible_extra_flags,
-          "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
-        ].join(' ')
+        def _run(cmd, idempotence = false)
+          [
+            cmd,
+            ansible_inventory_flag,
+            ansible_limit_flag,
+            ansible_connection_flag,
+            "-M #{File.join(config[:root_path], 'modules')}",
+            ansible_verbose_flag,
+            ansible_check_flag,
+            ansible_diff_flag,
+            ansible_vault_flag,
+            private_key,
+            extra_vars,
+            extra_vars_file,
+            tags(idempotence),
+            ansible_extra_flags,
+            "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
+          ].join(' ')
+        end
+        result = _run(cmd)
         if config[:idempotency_test]
-          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{result} | tee /tmp/idempotency_test.txt; if grep -qE 'changed=[1-9].*failed=|changed=.*failed=[1-9]' /tmp/idempotency_test.txt; then echo 'Idempotence test: FAIL' && exit 1; else echo 'Idempotence test: PASS' && exit 0; fi)"
+          idempotency_result = _run(cmd, true)
+          result = "#{result} && (echo 'Going to invoke ansible-playbook second time:'; #{idempotency_result} | tee /tmp/idempotency_test.txt; if grep -qE 'changed=[1-9].*failed=|changed=.*failed=[1-9]' /tmp/idempotency_test.txt; then echo 'Idempotence test: FAIL' && exit 1; else echo 'Idempotence test: PASS' && exit 0; fi)"
         end
         if config[:custom_post_play_command]
           custom_post_play_trap = <<-TRAP
@@ -824,14 +828,24 @@ module Kitchen
         bash_extra_vars
       end
 
-      def tags
+      def tags(idempotence = false)
         bash_tags = config.key?(:attributes) && config[:attributes].key?(:tags) && config[:attributes][:tags].is_a?(Array) ? config[:attributes][:tags] : config[:tags]
-        return nil if bash_tags.empty?
+        bash_skip_tags = []
+        if idempotence and config[:idempotency_test]
+          bash_tags += config[:idempotency_tags]
+          bash_skip_tags += config[:idempotency_skip_tags]
+        end
+        return nil if (bash_tags.empty? and bash_skip_tags.empty?)
 
-        bash_tags = bash_tags.join(',')
-        bash_tags = "-t '#{bash_tags}'"
-        debug(bash_tags)
-        bash_tags
+        result = ''
+        if not bash_tags.empty?
+          result += " --tags=#{bash_tags.join(',')}"
+        end
+        if not bash_skip_tags.empty?
+          result += " --skip-tags=#{bash_skip_tags.join(',')}"
+        end
+        debug(result)
+        result
       end
 
       def chef_url
