@@ -73,6 +73,8 @@ module Kitchen
         default_config :ansible_playbook_command, nil
         default_config :ansible_host_key_checking, true
         default_config :idempotency_test, nil
+        default_config :idempotency_tags, []
+        default_config :idempotency_skip_tags, []
         default_config :ansible_inventory, nil
         default_config :ansible_inventory_file, nil
         default_config :ansible_limit, nil

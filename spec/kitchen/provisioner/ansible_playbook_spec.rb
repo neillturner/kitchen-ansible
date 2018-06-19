@@ -64,6 +64,31 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
     it 'should give a sane run_command' do
       expect(provisioner.run_command).to match(/ansible-playbook.*--skip-tags=skipme.*/)
     end
+
+    idempotence_msg = 'Going to invoke ansible-playbook second time:'
+    describe "with idempotence" do
+      let(:config) do
+        custom_config.dup.merge!(idempotency_test: true)
+      end
+
+      it 'should add an idempotence phase to the run command' do
+        expect(provisioner.run_command).to match(/ansible-playbook.*#{idempotence_msg}.*ansible-playbook.*/)
+      end
+    end
+
+    describe "with idempotence tags" do
+      let(:config) do
+        custom_config.dup.merge!({
+          idempotency_test: true,
+          idempotency_tags: ['UUT'],
+          idempotency_skip_tags: ['setup']
+        })
+      end
+
+      it 'should add the idempotence tags to the run command' do
+        expect(provisioner.run_command).to match(/ansible-playbook.*#{idempotence_msg}.*ansible-playbook.*--tags=UUT.*--skip-tags=setup.*/)
+      end
+    end
   end
 
   describe '#prepare_ansible_vault_password_file' do
