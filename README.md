@@ -35,6 +35,7 @@ gem install kitchen-vagrant
 
 ## Resources
 * https://blog.superk.org/home/ansible-role-development
+* https://alexharv074.github.io/2016/05/25/testing-an-ansible-role-using-test-kitchen.html
 * https://alexharv074.github.io/2016/06/13/integration-testing-using-ansible-and-test-kitchen.html
 * https://github.com/MattHodge/ansible-testkitchen-windows
 * https://readme.fr/continuous-integration-for-ansible/
