@@ -458,6 +458,7 @@ module Kitchen
       def ansible_galaxy_command
         cmd = [
             'ansible-galaxy', 'install', '--force',
+            galaxy_cert_ignore,
             '-p', File.join(config[:root_path], 'roles'),
             '-r', File.join(config[:root_path], galaxy_requirements)
         ].join(' ')
@@ -1216,6 +1217,11 @@ module Kitchen
           Ansible::Librarian.new(ansiblefile, tmp_roles_dir, logger).resolve
         end
       end
+
+      def galaxy_cert_ignore
+        config[:galaxy_ignore_certs] ? '--ignore-certs' : nil
+      end
+
     end
   end
 end

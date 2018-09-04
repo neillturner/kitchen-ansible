@@ -89,6 +89,7 @@ module Kitchen
         default_config :custom_post_play_command, nil
         default_config :show_command_output, false
         default_config :ignore_ansible_cfg, false
+        default_config :galaxy_ignore_certs, false
 
         default_config :playbook do |provisioner|
           provisioner.calculate_path('default.yml', :file) ||
