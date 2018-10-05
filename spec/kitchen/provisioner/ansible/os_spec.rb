@@ -38,7 +38,9 @@ describe Kitchen::Provisioner::Ansible::Os do
       ['fedora', Kitchen::Provisioner::Ansible::Os::Fedora],
       ['amazon', Kitchen::Provisioner::Ansible::Os::Amazon],
       ['suse', Kitchen::Provisioner::Ansible::Os::Suse],
-      ['alpine', Kitchen::Provisioner::Ansible::Os::Alpine]
+      ['alpine', Kitchen::Provisioner::Ansible::Os::Alpine],
+      ['openbsd', Kitchen::Provisioner::Ansible::Os::Openbsd],
+      ['freebsd', Kitchen::Provisioner::Ansible::Os::Freebsd]
     ].each do |item|
       it "return the correct class for '#{item[0]}'" do
         c = Kitchen::Provisioner::Ansible::Os.make(item[0], [])
@@ -79,6 +81,20 @@ describe Kitchen::Provisioner::Ansible::Os do
                                                                   http_proxy: 'http://localhost:5678',
                                                                   no_proxy: 'http://localhost:9999'))
       expect(c.sudo_env('ls')).to eq('sudo env http_proxy=http://localhost:5678 https_proxy=https://localhost:1234 no_proxy=http://localhost:9999 ls')
+    end
+  end
+
+  describe 'etc_ansible_path' do
+    it 'returns /etc/ansible' do
+      c = Kitchen::Provisioner::Ansible::Os.new('testing', empty_config)
+      expect(c.etc_ansible_path).to eq '/etc/ansible'
+    end
+
+    context 'when OS is FreeBSD' do
+      it 'returns /use/local/etc/ansible' do
+        c = Kitchen::Provisioner::Ansible::Os.make('freebsd', empty_config)
+        expect(c.etc_ansible_path).to eq '/usr/local/etc/ansible'
+      end
     end
   end
 end
