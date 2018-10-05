@@ -303,23 +303,24 @@ module Kitchen
       end
 
       def prepare_command
+        etc_ansible_path = @os.nil? ? '/etc/ansible' : @os.etc_ansible_path
         commands = []
 
-        # Prevent failure when ansible package installation doesn't contain /etc/ansible
+        # Prevent failure when ansible package installation doesn't contain #{@os.etc_ansible_path}
         commands << [
-          sudo_env("#{config[:shell_command]} -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          sudo_env("#{config[:shell_command]} -c '[ -d #{etc_ansible_path} ] || mkdir #{etc_ansible_path}'")
         ]
 
         commands << [
-          sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), '/etc/ansible'
+          sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), etc_ansible_path
         ].join(' ')
 
         commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '/etc/ansible/.'
+          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), "#{etc_ansible_path}/."
         ].join(' ')
 
         commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '/etc/ansible/.'
+          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), "#{etc_ansible_path}/."
         ].join(' ')
 
         if config[:ssh_known_hosts]

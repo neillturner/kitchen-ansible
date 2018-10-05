@@ -26,6 +26,7 @@ require 'kitchen/provisioner/ansible/os/suse'
 require 'kitchen/provisioner/ansible/os/darwin'
 require 'kitchen/provisioner/ansible/os/alpine'
 require 'kitchen/provisioner/ansible/os/openbsd'
+require 'kitchen/provisioner/ansible/os/freebsd'
 
 module Kitchen
   module Provisioner
@@ -58,6 +59,8 @@ module Kitchen
             return Alpine.new(platform, config)
           when 'openbsd'
             return Openbsd.new(platform, config)
+          when 'freebsd'
+            return Freebsd.new(platform, config)
           end
 
           nil
@@ -74,6 +77,10 @@ module Kitchen
         # Taken from https://github.com/test-kitchen/test-kitchen/blob/master/lib/kitchen/provisioner/base.rb
         def sudo(script)
           @config[:sudo] ? "#{@config[:sudo_command]} #{script}" : script
+        end
+
+        def etc_ansible_path
+          '/etc/ansible'
         end
       end
     end
