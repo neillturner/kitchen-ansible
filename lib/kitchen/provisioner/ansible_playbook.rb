@@ -99,6 +99,8 @@ module Kitchen
                 #{Kitchen::Provisioner::Ansible::Os::Alpine.new('alpine', config).install_command}
               elif [ $(uname -s) = "OpenBSD" ]; then
                 #{Kitchen::Provisioner::Ansible::Os::Openbsd.new('openbsd', config).install_command}
+              elif [ $(uname -s) = "FreeBSD" ]; then
+                #{Kitchen::Provisioner::Ansible::Os::Freebsd.new('freebsd', config).install_command}
               else
                 #{Kitchen::Provisioner::Ansible::Os::Debian.new('debian', config).install_command}
               fi
@@ -305,21 +307,24 @@ module Kitchen
       def prepare_command
         commands = []
 
+        commands << [
+          "if [ $(uname -s) == 'FreeBSD' ]; then ETC_ANSIBLE='/usr/local/etc/ansible'; else ETC_ANSIBLE='/etc/ansible'; fi"
+        ]
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
-          sudo_env("#{config[:shell_command]} -c '[ -d /etc/ansible ] || mkdir /etc/ansible'")
+          sudo_env("#{config[:shell_command]} -c \"[ -d $ETC_ANSIBLE ] || mkdir $ETC_ANSIBLE\"")
         ]
 
         commands << [
-          sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), '/etc/ansible'
+          sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), '$ETC_ANSIBLE/.'
         ].join(' ')
 
         commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '/etc/ansible/.'
+          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '$ETC_ANSIBLE/.'
         ].join(' ')
 
         commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '/etc/ansible/.'
+          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '$ETC_ANSIBLE/.'
         ].join(' ')
 
         if config[:ssh_known_hosts]
