@@ -422,7 +422,7 @@ module Kitchen
             extra_vars_file,
             tags(idempotence),
             ansible_extra_flags,
-            "#{File.join(config[:root_path], File.basename(config[:playbook]))}"
+            playbook_remote_path
           ].join(' ')
         end
         result = _run(cmd)
@@ -573,7 +573,8 @@ module Kitchen
       end
 
       def tmp_playbook_path
-        File.join(sandbox_path, File.basename(playbook))
+        return File.join(sandbox_path, playbook).to_s if config[:keep_playbook_path]
+        File.join(sandbox_path, File.basename(playbook)).to_s
       end
 
       def tmp_host_vars_dir
@@ -635,6 +636,11 @@ module Kitchen
 
       def playbook
         config[:playbook]
+      end
+
+      def playbook_remote_path
+        return File.join(config[:root_path], config[:playbook]).to_s if config[:keep_playbook_path]
+        File.join(config[:root_path], File.basename(config[:playbook])).to_s
       end
 
       def hosts
@@ -1034,6 +1040,7 @@ module Kitchen
       def prepare_playbook
         info('Preparing playbook')
         debug("Copying playbook from #{playbook} to #{tmp_playbook_path}")
+        FileUtils.mkdir_p(File.dirname(tmp_playbook_path)) if config[:keep_playbook_path]
         FileUtils.cp_r(playbook, tmp_playbook_path)
       end
 

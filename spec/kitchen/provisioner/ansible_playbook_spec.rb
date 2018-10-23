@@ -108,6 +108,40 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
     end
   end
 
+  describe '#prepare playbook' do
+    it 'should correct cp with default options' do
+
+      config[:playbook] = '.gitignore'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_playbook) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, config[:playbook]))).to eq(true)
+    end
+    it 'should correct copy deep playbook into root_path by default' do
+
+      config[:playbook] = 'spec/data/requirements.yml'
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_playbook) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, File.basename(config[:playbook])))).to eq(true)
+    end
+    it 'should correct copy deep playbook deep with keep_playbook_path=true' do
+
+      config[:playbook] = 'spec/data/requirements.yml'
+      config[:keep_playbook_path] = true
+
+      sandbox_path = Dir.mktmpdir
+      allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
+
+      expect { provisioner.send(:prepare_playbook) }.to_not raise_error
+      expect(File.exists?(File.join(sandbox_path, config[:playbook]))).to eq(true)
+    end
+  end
+
   describe '#prepare_inventory' do
     it 'copies the inventory file to the sandbox when present' do
       allow(provisioner).to receive(:sandbox_path).and_return(Dir.mktmpdir)
