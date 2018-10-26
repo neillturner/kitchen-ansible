@@ -79,6 +79,7 @@ idempotency_skip_tags | [] | Adds a `--skip-tags` parameter with the specified t
 ignore_extensions_from_root | ['.pyc'] | allow extensions to be ignored when copying from roles using additional_copy_role_path or doing recursive_additional_copy_path
 ignore_paths_from_root | [] | allow extra paths to be ignored when copying from roles using additional_copy_role_path or using recursive_additional_copy_path
 kerberos_conf_file | | Path of krb5.conf file using in Windows support
+keep_playbook_path | false | Keep directory structure of `playbook`, e.g. when including vars with relativ paths from playbook
 library_plugins_path | library | Ansible repo library plugins directory
 lookup_plugins_path | lookup_plugins | Ansible repo `lookup_plugins` directory
 max_retries | 1 | maximum number of retry attempts of converge command
