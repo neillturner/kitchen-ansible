@@ -984,14 +984,14 @@ module Kitchen
         end
       end
 
-      # copy ansible.cfg if found
+      # copy ansible.cfg if found and ansible_cfg_overwrite is set to true
       def prepare_ansible_cfg
         info('Preparing ansible.cfg file')
         ansible_config_file = "#{File.join(sandbox_path, 'ansible.cfg')}"
         if !ansible_cfg_path.nil? && File.exist?(ansible_cfg_path) && !config[:ignore_ansible_cfg]
           info('Found existing ansible.cfg')
           FileUtils.cp_r(ansible_cfg_path, ansible_config_file)
-        else
+        else if config[:ansible_cfg_overwrite]
           info('Empty ansible.cfg generated')
           File.open(ansible_config_file, 'wb') do |file|
             file.write("#no config parameters\n")

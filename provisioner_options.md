@@ -36,6 +36,7 @@ ansible_binary_path | NULL | If specified this will override the location where 
 ansible_check | false | Sets the `--check` flag when running Ansible
 ansible_connection | local | use `ssh` if the host is not `localhost` (Linux) or `winrm` (Windows) or `none` if defined in inventory
 ansible_cfg_path | ansible.cfg | location of custom ansible.cfg to get copied into test environment
+ansible_cfg_overwrite | true | whether the ansible.cfg in the test environment should be overwritten or not.
 ansible_diff | false | Sets the `--diff` flag when running Ansible
 ansible_extra_flags |  | Additional options to pass to ansible-playbook, e.g. `'--skip-tags=redis'`
 ansible_host_key_checking | true | Strict host key checking in ssh
