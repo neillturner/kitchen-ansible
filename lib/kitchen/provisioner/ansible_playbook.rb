@@ -991,7 +991,7 @@ module Kitchen
         if !ansible_cfg_path.nil? && File.exist?(ansible_cfg_path) && !config[:ignore_ansible_cfg]
           info('Found existing ansible.cfg')
           FileUtils.cp_r(ansible_cfg_path, ansible_config_file)
-        else if config[:ansible_cfg_overwrite]
+        elsif config[:ansible_cfg_overwrite]
           info('Empty ansible.cfg generated')
           File.open(ansible_config_file, 'wb') do |file|
             file.write("#no config parameters\n")
