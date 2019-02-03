@@ -89,6 +89,7 @@ module Kitchen
         default_config :custom_post_play_command, nil
         default_config :show_command_output, false
         default_config :ignore_ansible_cfg, false
+        default_config :ansible_cfg_overwrite, true
         default_config :galaxy_ignore_certs, false
         default_config :keep_playbook_path, false
 
