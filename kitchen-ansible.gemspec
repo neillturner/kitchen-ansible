@@ -29,7 +29,6 @@ EOF
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
-  s.required_ruby_version = '>= 2.0'
-  s.add_dependency 'test-kitchen', '~> 1.4'
+  s.add_dependency 'test-kitchen', '>= 1.4'
   s.add_dependency 'net-ssh', '>= 3'
 end
