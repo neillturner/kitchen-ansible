@@ -921,10 +921,10 @@ module Kitchen
         roles_paths << File.join(config[:root_path], 'roles') unless config[:roles_path].nil?
         if config[:additional_copy_role_path]
           if config[:additional_copy_role_path].is_a? String
-            roles_paths << File.join(config[:root_path], File.basename(config[:additional_copy_role_path]))
+            roles_paths << File.join(config[:root_path], 'roles', File.basename(config[:additional_copy_role_path]))
           else
             config[:additional_copy_role_path].each do |path|
-              roles_paths << File.join(config[:root_path], File.basename(File.expand_path(path)))
+              roles_paths << File.join(config[:root_path], 'roles', File.basename(File.expand_path(path)))
             end
           end
         end
@@ -952,12 +952,12 @@ module Kitchen
         if config[:additional_copy_role_path]
           if config[:additional_copy_role_path].is_a? String
             debug("Using additional roles copy from #{File.expand_path(config[:additional_copy_role_path])}")
-            dest = File.join(sandbox_path, File.basename(File.expand_path(config[:additional_copy_role_path])))
+            dest = File.join(sandbox_path, 'roles', File.basename(File.expand_path(config[:additional_copy_role_path])))
             FileUtils.mkdir_p(File.dirname(dest))
             FileUtils.cp_r(File.expand_path(config[:additional_copy_role_path]), dest)
           else
             config[:additional_copy_role_path].each do |path|
-              dest = File.join(sandbox_path, File.basename(File.expand_path(path)))
+              dest = File.join(sandbox_path, 'roles', File.basename(File.expand_path(path)))
               FileUtils.mkdir_p(File.dirname(dest))
               FileUtils.cp_r(File.expand_path(path), dest)
             end
