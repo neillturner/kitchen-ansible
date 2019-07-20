@@ -29,7 +29,13 @@ module Kitchen
             if [ ! $(which ansible) ]; then
             #{redhat_yum_repo}
             #{update_packages_command}
-            #{sudo_env('dnf')} -y install #{ansible_package_name} libselinux-python git python2-dnf
+            FEDORA_RELEASE=$(rpm --query --queryformat="%{VERSION}" --file /etc/fedora-release)
+
+            if [ ${FEDORA_RELEASE} -le 28 ]; then
+              #{sudo_env('dnf')} -y install #{ansible_package_name} libselinux-python git python2-dnf
+            else
+              #{sudo_env('dnf')} -y install #{ansible_package_name} python3-libselinux git python3-dnf
+            fi
             fi
             INSTALL
           end
