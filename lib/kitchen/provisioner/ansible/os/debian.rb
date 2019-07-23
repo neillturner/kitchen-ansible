@@ -55,7 +55,9 @@ module Kitchen
                 #{sudo_env('apt-get')} -y install software-properties-common
 
                 ## 10.04, 12.04 include add-apt-repository in
-                #{sudo_env('apt-get')} -y install python-software-properties
+                if [apt-cache pkgnames | grep -q 'python-software-properties']; then
+                   #{sudo_env('apt-get')} -y install python-software-properties
+                fi
 
                 ## 10.04 version of add-apt-repository doesn't accept --yes
                 ## later versions require interaction from user, so we must specify --yes
