@@ -55,6 +55,7 @@ module Kitchen
         default_config :require_windows_support, false
         default_config :require_pip, false
         default_config :requirements_path, false
+        default_config :requirements_collection_path, false
         default_config :ssh_known_hosts, nil
         default_config :additional_ssh_private_keys, nil
         default_config :ansible_verbose, false
