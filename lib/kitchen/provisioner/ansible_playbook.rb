@@ -264,7 +264,7 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w(modules roles group_vars host_vars)
+        dirs = %w(modules roles group_vars host_vars collections)
                .map { |dir| File.join(config[:root_path], dir) }.join(' ')
         cmd = "#{sudo_env('rm')} -rf #{dirs};"
         cmd += " mkdir -p #{config[:root_path]}"
