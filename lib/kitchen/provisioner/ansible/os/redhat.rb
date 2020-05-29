@@ -29,7 +29,13 @@ module Kitchen
             #{install_epel_repo}
             #{redhat_yum_repo}
             #{update_packages_command}
-            #{sudo_env('yum')} -y install #{ansible_package_name} libselinux-python git
+            EL_RELEASE=$(rpm -E %{rhel})
+
+            if [ "${EL_RELEASE}" -lt 8 ]; then
+              #{sudo_env('yum')} -y install #{ansible_package_name} libselinux-python git
+            else
+              #{sudo_env('yum')} -y install #{ansible_package_name} python3-libselinux git
+            fi
             fi
             INSTALL
           end
