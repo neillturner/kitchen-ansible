@@ -264,7 +264,7 @@ module Kitchen
       end
 
       def init_command
-        dirs = %w(modules roles group_vars host_vars)
+        dirs = %w(modules roles group_vars host_vars collections)
                .map { |dir| File.join(config[:root_path], dir) }.join(' ')
         cmd = "#{sudo_env('rm')} -rf #{dirs};"
         cmd += " mkdir -p #{config[:root_path]}"
@@ -373,6 +373,10 @@ module Kitchen
           commands << ansible_galaxy_command
         end
 
+        if galaxy_requirements_collections
+          commands << ansible_galacy_collection_command
+        end
+
         if kerberos_conf_file
           commands << [
             sudo_env('cp -f'), File.join(config[:root_path], 'krb5.conf'), '/etc'
@@ -466,6 +470,18 @@ module Kitchen
             galaxy_cert_ignore,
             '-p', File.join(config[:root_path], 'roles'),
             '-r', File.join(config[:root_path], galaxy_requirements)
+        ].join(' ')
+        cmd = "https_proxy=#{https_proxy} #{cmd}" if https_proxy
+        cmd = "http_proxy=#{http_proxy} #{cmd}" if http_proxy
+        cmd = "no_proxy=#{no_proxy} #{cmd}" if no_proxy
+        cmd
+      end
+
+      def ansible_galacy_collection_command
+        cmd = [
+          'ansible-galaxy', 'collection', 'install', '--force',
+          '-p', File.join(config[:root_path], 'collections'),
+          '-r', File.join(config[:root_path], galaxy_requirements_collections)
         ].join(' ')
         cmd = "https_proxy=#{https_proxy} #{cmd}" if https_proxy
         cmd = "http_proxy=#{http_proxy} #{cmd}" if http_proxy
@@ -627,6 +643,10 @@ module Kitchen
 
       def galaxy_requirements
         config[:requirements_path] || nil
+      end
+
+      def galaxy_requirements_collections
+        config[:requirements_collection_path] || nil
       end
 
       def env_vars

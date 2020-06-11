@@ -98,6 +98,7 @@ require_pip | false | Set to `true` if Ansible is to be installed through `pip`)
 require_ruby_for_busser | false | Install Ruby to run Busser for tests
 require_windows_support | false | Install [Windows support](http://docs.ansible.com/ansible/intro_windows.html)
 requirements_path | | Path to Ansible Galaxy requirements
+requirements_collection_path | | Path to Ansible Galaxy requirements
 retry_on_exit_code | [] | Array of exit codes to retry converge command against
 role_name | | use when the repo name does not match the name the role is published as.
 roles_path | roles | Ansible repo roles directory
