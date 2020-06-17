@@ -54,6 +54,7 @@ module Kitchen
         default_config :require_ruby_for_busser, false
         default_config :require_windows_support, false
         default_config :require_pip, false
+        default_config :require_pip3, false
         default_config :requirements_path, false
         default_config :requirements_collection_path, false
         default_config :ssh_known_hosts, nil
@@ -102,6 +103,12 @@ module Kitchen
         default_config :roles_path do |provisioner|
           provisioner.calculate_path('roles') ||
             fail('No roles_path detected. Please specify one in .kitchen.yml')
+        end
+
+        default_config :ansible_binary_path do |provisioner|
+          if provisioner[:require_pip3]
+            fail('No ansible_binary_path detected. Please specify one in .kitchen.yml')
+          end
         end
 
         default_config :group_vars_path do |provisioner|

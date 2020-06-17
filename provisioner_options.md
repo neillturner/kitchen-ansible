@@ -16,6 +16,12 @@ It installs it in the following order:
 
   Install require packages and then installs ansible using the python pip command and ansible version must be specified. This allows a specific version of ansible to be installed.
 
+* if require_pip3 is set to true
+
+  Install require packages and then installs ansible using the python pip3 command and ansible version must be specified. This allows a specific version of ansible to be installed.
+
+  Currently only works for Redhat/Centos.
+
 * if require_ansible_repo is set to true (the default)
 
   Installs from the operation system repository only with the ansible version that is in the particular repository and will use the ansible_version in the package name where appropriate.
@@ -95,6 +101,7 @@ require_ansible_repo | true | Set if installing Ansible from a `yum` or `apt` re
 require_ansible_source | false | Install Ansible from source using method described [here](http://docs.ansible.com/intro_installation.html#running-from-source). Only works on Debian/Ubuntu at present
 require_chef_for_busser | true | Install Chef to run Busser for tests. NOTE: kitchen 1.4 only requires Ruby to run Busser so this is not required.
 require_pip | false | Set to `true` if Ansible is to be installed through `pip`).
+require_pip3 | false | Set to `true` if Ansible is to be installed through `pip3`).
 require_ruby_for_busser | false | Install Ruby to run Busser for tests
 require_windows_support | false | Install [Windows support](http://docs.ansible.com/ansible/intro_windows.html)
 requirements_path | | Path to Ansible Galaxy requirements
@@ -109,6 +116,19 @@ sudo_command | sudo -E | `sudo` command; change to `sudo -E -H` to be consistent
 update_package_repos | true | Update OS repository metadata
 wait_for_retry | 30 | number of seconds to wait before retrying converge command
 ignore_ansible_cfg | false | If true, values from ansible.cfg file will not be loaded.
+
+## require_pip3
+
+if using python 3 and wish to install via pip specify
+```yaml
+  ansible_binary_path: /usr/local/bin
+  require_pip3: true
+```
+
+
+you must specify ansible_binary_path as well.
+
+Currently this only works for Centos and Redhat
 
 ## Ansible Inventory
 

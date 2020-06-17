@@ -76,6 +76,9 @@ module Kitchen
         elsif config[:require_pip]
           info('Installing ansible through pip')
           cmd = install_ansible_from_pip_command
+        elsif config[:require_pip3]
+          info('Installing ansible through pip3')
+          cmd = install_ansible_from_pip3_command
         elsif config[:require_ansible_repo]
           if !@os.nil?
             info("Installing ansible on #{@os.name}")
@@ -560,6 +563,36 @@ module Kitchen
             #{sudo_env('pip')} install ansible#{ansible_version} > #{detect_debug}
           fi
           INSTALL
+      end
+
+      def install_ansible_from_pip3_command
+              if config[:ansible_version]=='latest' or config[:ansible_version].nil?
+                ansible_version = ''
+              else
+                ansible_version = "==#{config[:ansible_version]}"
+              end
+                <<-INSTALL
+                  if [ ! $(which ansible) ]; then
+                    if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                      #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
+                      #{update_packages_redhat_cmd} > #{detect_debug}
+                      #{sudo_env('yum')} -y install python3-libselinux python3-devel python3-pip git libffi-devel openssl-devel gcc > #{detect_debug}
+                    else
+                      if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
+                        #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
+                        #{update_packages_suse_cmd} > #{detect_debug}
+                        #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
+                      else
+                        #{update_packages_debian_cmd} > #{detect_debug}
+                        #{sudo_env('apt-get')} -y install git python python-pip python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
+                      fi
+                    fi
+
+                  #{export_http_proxy}
+                  #{sudo_env('pip3')} install -U setuptools > #{detect_debug}
+                  #{sudo_env('pip3')} install ansible#{ansible_version} > #{detect_debug}
+                fi
+                INSTALL
       end
 
       def install_omnibus_command
