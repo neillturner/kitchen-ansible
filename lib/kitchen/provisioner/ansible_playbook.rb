@@ -311,7 +311,7 @@ module Kitchen
         commands = []
 
         commands << [
-          "if [ $(uname -s) == 'FreeBSD' ]; then ETC_ANSIBLE='/usr/local/etc/ansible'; else ETC_ANSIBLE='/etc/ansible'; fi"
+          "if [ $(uname -s) = 'FreeBSD' ]; then ETC_ANSIBLE='/usr/local/etc/ansible'; else ETC_ANSIBLE='/etc/ansible'; fi"
         ]
         # Prevent failure when ansible package installation doesn't contain /etc/ansible
         commands << [
