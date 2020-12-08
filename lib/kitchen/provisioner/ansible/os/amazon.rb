@@ -35,7 +35,7 @@ module Kitchen
                 #{sudo_env('yum')} clean all
                 #{sudo_env('yum')} install yum-python26 -y
               else
-                #{sudo_env('amazon-linux-extras') install -y ansible2
+                #{sudo_env('amazon-linux-extras')} install -y ansible2
               fi
             fi
             INSTALL
