@@ -49,7 +49,7 @@ module Kitchen
             return Redhat.new(platform, config)
           when 'fedora'
             return Fedora.new(platform, config)
-          when 'amazon'
+          when 'amazon', 'amazonlinux'
             return Amazon.new(platform, config)
           when 'suse', 'opensuse', 'sles'
             return Suse.new(platform, config)
