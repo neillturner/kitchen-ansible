@@ -29,12 +29,15 @@ module Kitchen
               #{install_epel_repo}
               #{sudo_env('yum-config-manager')} --enable epel/x86_64
               #{sudo_env('yum')} -y install git
+
               if `grep -q "Amazon Linux AMI" /etc/os-release`; then
+                ## Amazon Linux 1
                 #{sudo_env('yum')} -y install #{ansible_package_name}
                 #{sudo_env('alternatives')} --set python /usr/bin/python2.6
                 #{sudo_env('yum')} clean all
                 #{sudo_env('yum')} install yum-python26 -y
               else
+                ## Amazon Linux 2
                 #{sudo_env('amazon-linux-extras')} install -y ansible2
               fi
             fi
