@@ -65,7 +65,7 @@ module Kitchen
                 ## "add-apt-repository: error: no such option: -y" is returned but is ok to ignore, we just retry
                 ## There is no official Ubuntu 20.04 ansible release in the ppa, but Ubuntu has a package with the latest 2.9 Ansible
                 ## This "fixes" issue #321 for now
-                if `grep -q 'VERSION_ID=\"20.04\"' /etc/os-release`; then
+                if ! `grep -q 'VERSION_ID=\"20.04\"' /etc/os-release`; then
                   #{sudo_env('add-apt-repository')} -y #{@config[:ansible_apt_repo]} || #{sudo_env('add-apt-repository')} #{@config[:ansible_apt_repo]}
                 fi
               fi
