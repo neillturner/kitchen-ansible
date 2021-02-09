@@ -72,7 +72,7 @@ custom_post_play_command | nil | Custom shell command to be used after the ansib
 enable_yum_epel | false | Enable the `yum` EPEL repo
 env_vars | Hash.new | Hash to set environment variable to use with `ansible-playbook` command
 extra_vars | Hash.new | Hash to set the `extra_vars` passed to `ansible-playbook` command
-extra_vars_file | nil | String containing a filename or an Array of filenames containing environment variables e.g. `private_vars/production.yml site.yml` Don't prefix with a @ sign.
+extra_vars_file | nil | String containing a filename or an Array of filenames containing environment variables e.g. `private_vars/production.yml` or `[file1.yml, file2.yml]` Don't prefix with a @ sign.
 filter_plugins_path | filter_plugins | Ansible repo `filter_plugins` directory
 galaxy_ignore_certs | false | Ignore certificate errors when installing roles with ansible-galaxy.
 group_vars_path | group_vars | Ansible repo group_vars directory
