@@ -888,7 +888,16 @@ module Kitchen
 
       def extra_vars_file
         return nil if config[:extra_vars_file].nil?
-        bash_extra_vars = "-e '\@#{config[:extra_vars_file]}'"
+        bash_extra_vars = ''
+        if config[:extra_vars_file].is_a?(String)
+          bash_extra_vars = "-e '\@#{config[:extra_vars_file]}'"
+        elsif config[:extra_vars_file].is_a?(Array)
+          config[:extra_vars_file].each { |x|
+            info("Adding -e '\@#{x}'")
+            bash_extra_vars += " -e '\@#{x}'"
+          }
+        end
+
         debug(bash_extra_vars)
         bash_extra_vars
       end
