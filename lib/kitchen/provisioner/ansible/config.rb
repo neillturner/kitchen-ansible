@@ -44,8 +44,8 @@ module Kitchen
         default_config :tags, []
         default_config :ansible_apt_repo, 'ppa:ansible/ansible'
         default_config :ansible_yum_repo, nil
-        default_config :ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/SLE_12/systemsmanagement.repo'
-        default_config :python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/SLE_12/devel:languages:python.repo'
+        default_config :ansible_sles_repo, 'http://download.opensuse.org/repositories/systemsmanagement/openSUSE_Leap_15.2/systemsmanagement.repo'
+        default_config :python_sles_repo, 'http://download.opensuse.org/repositories/devel:/languages:/python/openSUSE_Leap_15.2/devel:languages:python.repo'
         default_config :chef_bootstrap_url, 'https://www.chef.io/chef/install.sh'
         # Providing we have Ruby >= 2.0 we only need Ruby. Leaving default to install Chef Omnibus for backwards compatibility.
         # Note: if using kitchen-verifer-serverspec your we can avoid needing Ruby too.

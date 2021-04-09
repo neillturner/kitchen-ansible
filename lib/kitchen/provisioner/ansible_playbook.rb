@@ -543,9 +543,13 @@ module Kitchen
           <<-INSTALL
             if [ ! $(which ansible) ]; then
               if [ -f /etc/centos-release ] || [ -f /etc/redhat-release ]; then
+                EL_RELEASE=$(rpm -E %{rhel})
+                if [ "${EL_RELEASE}" -ge 8 ]; then
+                  echo "*** Redhat/Centos 8 does not support pip2 with kitchen-ansible ***"
+                fi
                 #{Kitchen::Provisioner::Ansible::Os::Redhat.new('redhat', config).install_epel_repo}
                 #{update_packages_redhat_cmd} > #{detect_debug}
-                #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools python-setuptools-dev libffi-devel openssl-devel gcc > #{detect_debug}
+                #{sudo_env('yum')} -y install libselinux-python python2-devel git python-setuptools libffi-devel openssl-devel gcc > #{detect_debug}
               else
                 if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
                   #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
@@ -558,7 +562,8 @@ module Kitchen
               fi
 
             #{export_http_proxy}
-            #{sudo_env('easy_install')} pip > #{detect_debug}
+            #{sudo_env('curl')} 'https://bootstrap.pypa.io/pip/2.7/get-pip.py' -o 'get-pip.py' > #{detect_debug}
+	    #{sudo_env('python')} 'get-pip.py' > #{detect_debug}
             #{sudo_env('pip')} install -U setuptools > #{detect_debug}
             #{sudo_env('pip')} install ansible#{ansible_version} > #{detect_debug}
           fi
@@ -581,14 +586,15 @@ module Kitchen
                       if [ -f /etc/SUSE-brand ] || [ -f /etc/SuSE-release ]; then
                         #{sudo_env('zypper')} ar #{python_sles_repo} > #{detect_debug}
                         #{update_packages_suse_cmd} > #{detect_debug}
-                        #{sudo_env('zypper')} --non-interactive install python python-devel git python-setuptools python-pip python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
+                        #{sudo_env('zypper')} --non-interactive install python3 python3-pip  python3-setuptools python-devel git python-six libyaml-devel libffi-devel libopenssl-devel > #{detect_debug}
                       else
                         #{update_packages_debian_cmd} > #{detect_debug}
-                        #{sudo_env('apt-get')} -y install git python python-pip python-setuptools build-essential python-dev libffi-dev libssl-dev > #{detect_debug}
+                        #{sudo_env('apt-get')} -y install git python3 python3-pip python3-setuptools build-essential python3-dev libffi-dev libssl-dev > #{detect_debug}
                       fi
                     fi
 
                   #{export_http_proxy}
+                  #{sudo_env('python3')} -m pip install --upgrade pip > #{detect_debug}
                   #{sudo_env('pip3')} install -U setuptools > #{detect_debug}
                   #{sudo_env('pip3')} install ansible#{ansible_version} > #{detect_debug}
                 fi

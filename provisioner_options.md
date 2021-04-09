@@ -28,6 +28,21 @@ It installs it in the following order:
 
 NOTE:  Set to ansible_package_name to 'ansible' when installing from the CentOS/Redhat extras repo, instead of the EPEL.
 
+# Install Options Maxtrix
+
+Install options require_XXXX parameter by operation system
+
+OS | repo | pip | pip3 | ansible_source | ansible_omnibus
+---|------|-----|------|----------------|----------------
+centos-72 | YES | YES | YES | NO | YES
+centos-8 | YES | NO | YES | NO | NO
+ubuntu-1604 | YES | YES | NO | NO | YES
+ubuntu-2004 | YES | NO | YES | NO | YES
+debian-9 | YES | YES | YES | NO | YES
+debian-10 | YES | YES | YES | NO | YES
+suse-15 | YES | YES | YES | NO | NO
+alpine-38 | UNTESTED | NO | NO | NO | NO
+
 # Provisioner Options
 
 kitchen-ansible runs the ansible playbook command http://linux.die.net/man/1/ansible-playbook with options from parameters in the kitchen.yml file:
@@ -53,7 +68,7 @@ ansible_omnibus_url | `https://raw.githubusercontent.com` `/neillturner/omnibus-
 ansible_package_name |  | Set to ansible when installing from the CentOS/Redhat extras repo, instead of the EPEL.
 ansible_platform | Naively tries to determine | OS platform of server
 ansible_playbook_command | | Override the Ansible playbook command
-ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagement/SLE_12` `/systemsmanagement.repo` | Zypper SuSE Ansible repo
+ansible_sles_repo | `http://download.opensuse.org/repositories` `/systemsmanagement/openSUSE_Leap_15.2` `/systemsmanagement.repo` | Zypper SuSE Ansible repo
 ansible_source_url | `git://github.com/ansible/ansible.git` | Git URL of Ansible source
 ansible_source_rev | | Branch or tag to install Ansible source
 ansible_sudo | true | Determines whether `ansible-playbook` is executed as root or as the current authenticated user
@@ -94,7 +109,7 @@ modules_path | | Ansible repo manifests directory
 no_proxy | nil | List of URLs or IPs that should be excluded from proxying
 playbook | default.yml | Playbook for `ansible-playbook` to run
 private_key | | ssh private key file for ssh connection
-python_sles_repo | `http://download.opensuse.org/repositories` `/devel:/languages:/python/SLE_12` `/devel:languages:python.repo` | Zypper SuSE python repo
+python_sles_repo | `http://download.opensuse.org/repositories` `/devel:/languages:/python/openSUSE_Leap_15.2` `/devel:languages:python.repo` | Zypper SuSE python repo
 recursive_additional_copy_path | | Arbitrary array of files and directories to copy into test environment. See below section Copying Additional Files
 require_ansible_omnibus | false | Set to `true` if using Omnibus Ansible `pip` install
 require_ansible_repo | true | Set if installing Ansible from a `yum` or `apt` repo
