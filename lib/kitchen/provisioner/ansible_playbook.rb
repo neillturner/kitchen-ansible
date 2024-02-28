@@ -344,7 +344,15 @@ module Kitchen
 
         if config[:additional_ssh_private_keys]
           commands << [
-            sudo_env('cp -r'), File.join(config[:root_path], 'ssh_private_keys'), '~/.ssh'
+            sudo_env('chmod -R 600'), File.join(config[:root_path], 'ssh_private_keys/*')
+          ].join(' ')
+
+          commands << [
+            sudo_env('chown -R'), "#{instance.transport[:username]}:#{instance.transport[:username]}", File.join(config[:root_path], 'ssh_private_keys/*')
+          ].join(' ')
+
+          commands << [
+            sudo_env('cp -rp'), File.join(config[:root_path], 'ssh_private_keys/*'), '~/.ssh'
           ].join(' ')
         end
 
