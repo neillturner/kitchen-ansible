@@ -491,6 +491,7 @@ module Kitchen
       def ansible_galacy_collection_command
         cmd = [
           'ansible-galaxy', 'collection', 'install', '--force',
+          galaxy_cert_ignore,
           '-p', File.join(config[:root_path], 'collections'),
           '-r', File.join(config[:root_path], galaxy_requirements_collections)
         ].join(' ')
