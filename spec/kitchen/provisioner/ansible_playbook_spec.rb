@@ -117,7 +117,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_playbook) }.to_not raise_error
-      expect(File.exists?(File.join(sandbox_path, config[:playbook]))).to eq(true)
+      expect(File.exist?(File.join(sandbox_path, config[:playbook]))).to eq(true)
     end
     it 'should correct copy deep playbook into root_path by default' do
 
@@ -127,7 +127,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_playbook) }.to_not raise_error
-      expect(File.exists?(File.join(sandbox_path, File.basename(config[:playbook])))).to eq(true)
+      expect(File.exist?(File.join(sandbox_path, File.basename(config[:playbook])))).to eq(true)
     end
     it 'should correct copy deep playbook deep with keep_playbook_path=true' do
 
@@ -138,7 +138,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_playbook) }.to_not raise_error
-      expect(File.exists?(File.join(sandbox_path, config[:playbook]))).to eq(true)
+      expect(File.exist?(File.join(sandbox_path, config[:playbook]))).to eq(true)
     end
   end
 
@@ -223,7 +223,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_roles) }.to_not raise_error
-      expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+      expect(File.exist?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
     end
 
     it 'should correct cp when requirements_path include path' do
@@ -233,7 +233,7 @@ describe Kitchen::Provisioner::AnsiblePlaybook do
       allow(provisioner).to receive(:sandbox_path).and_return(sandbox_path)
 
       expect { provisioner.send(:prepare_roles) }.to_not raise_error
-      expect(File.exists?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
+      expect(File.exist?(File.join(sandbox_path, config[:requirements_path]))).to eq(true)
     end
 
     it 'should ignore .git directories when ignore_paths_from_root is set' do
