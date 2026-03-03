@@ -322,13 +322,17 @@ module Kitchen
           sudo_env('cp'), File.join(config[:root_path], 'ansible.cfg'), '$ETC_ANSIBLE/.'
         ].join(' ')
 
-        commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '$ETC_ANSIBLE/.'
-        ].join(' ')
+        if File.directory?(File.join(config[:root_path], 'group_vars'))
+          commands << [
+            sudo_env('cp -r'), File.join(config[:root_path], 'group_vars'), '$ETC_ANSIBLE/.'
+          ].join(' ')
+        end
 
-        commands << [
-          sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '$ETC_ANSIBLE/.'
-        ].join(' ')
+        if File.directory?(File.join(config[:root_path], 'host_vars'))
+          commands << [
+            sudo_env('cp -r'), File.join(config[:root_path], 'host_vars'), '$ETC_ANSIBLE/.'
+          ].join(' ')
+        end
 
         if config[:ssh_known_hosts]
           config[:ssh_known_hosts].each do |host|
