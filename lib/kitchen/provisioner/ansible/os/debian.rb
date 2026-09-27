@@ -55,7 +55,7 @@ module Kitchen
                 #{sudo_env('apt-get')} -y install software-properties-common
 
                 ## 10.04, 12.04 include add-apt-repository in
-                if [apt-cache pkgnames | grep -q 'python-software-properties']; then
+                if [ $(apt-cache pkgnames | grep -q 'python-software-properties') ]; then
                    #{sudo_env('apt-get')} -y install python-software-properties
                 fi
 
